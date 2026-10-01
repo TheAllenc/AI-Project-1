@@ -1,0 +1,92 @@
+/* ============================================================
+   style.css — colors and layout for the whole game.
+   Colors are defined once as variables here, then reused.
+   ============================================================ */
+
+:root {
+  --bg: #fdf6ec;          /* warm kitchen cream */
+  --panel: #ffffff;
+  --text: #2b2420;
+  --muted: #7a6e66;
+  --accent: #c8553d;      /* tomato red */
+  --accent-2: #2a6f97;    /* French blue */
+  --good: #2e8b57;
+  --warn: #c98a00;
+  --border: #e8dccb;
+  --row-alt: #faf2e6;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1e1a17;
+    --panel: #2a2420;
+    --text: #f3ebe2;
+    --muted: #b3a79c;
+    --accent: #e0745c;
+    --accent-2: #6fb3dc;
+    --good: #5cc28b;
+    --warn: #e5b23a;
+    --border: #3d352f;
+    --row-alt: #26201c;
+  }
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  padding: 16px;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+  line-height: 1.5;
+}
+
+main {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+h1 { color: var(--accent); margin-bottom: 0.25em; }
+.subtitle { color: var(--muted); margin-top: 0; }
+
+.button {
+  display: inline-block;
+  padding: 0.6em 1.2em;
+  border: none;
+  border-radius: 8px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 1rem;
+  text-decoration: none;
+  cursor: pointer;
+}
+.button.secondary { background: var(--accent-2); }
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin: 16px 0;
+}
+
+/* ---------- Title screen ---------- */
+.title-emoji { font-size: 3rem; letter-spacing: 0.2em; }
+
+/* ---------- Vocab check page ---------- */
+.filters { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.filters label { color: var(--muted); }
+
+.table-wrap { overflow-x: auto; }
+
+table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--border); vertical-align: top; }
+tbody tr:nth-child(even) { background: var(--row-alt); }
+td.emoji { font-size: 1.5rem; text-align: center; }
+td.none { color: var(--muted); font-size: 0.8rem; }
+
+tr.needs-check td:first-child { border-left: 4px solid var(--warn); }
+.verify-note { color: var(--warn); font-size: 0.85rem; }
+
+.stats { color: var(--muted); }
