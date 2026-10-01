@@ -44,3 +44,24 @@ A running record of how AI was used to build *La Cuisine*. Add to it after every
 - The README credits AI help and the vocab source.
 - Automated tests (`tests/vocab.test.js`) catch data mistakes like duplicate ids, articles that don't match gender, or two words with the same emoji.
 - Nothing ships until I've checked every word in `vocab-check.html`.
+
+---
+
+## Session 2: Vocab answers + Milestone 1 (core loop)
+
+### Discern: my answers to the vocab check
+Recorded in the Session 1 table above. Kitchen tools & actions were dropped so the game uses only the class list.
+
+### Describe: what Milestone 1 should do
+One playable recipe. The player reads the French ingredient list, clicks the matching pictures on a shelf with distractors, gets right/wrong feedback, and sees a "recipe finished" screen.
+
+### Design decisions the AI made (for me to review)
+- **Recipe changed from the plan:** Level 1 is the picture level, but *la confiture*, *la farine* and *le sucre* have no emoji. So the first recipe is **une tartine au miel** (le pain, le beurre, le miel) instead of a jam tartine or crêpes.
+- **Wrong clicks still teach a word:** "Non ! Ça, c'est le canard. (That's duck.)"
+- **"C'est prêt !" instead of "est prête !"**, so the message is correct for masculine and feminine dishes.
+- A new test checks that every picture-level ingredient has an emoji, so this kind of problem gets caught automatically.
+
+### Play-test notes (fill in after playing)
+- What felt good:
+- What was confusing:
+- What I want changed:

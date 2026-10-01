@@ -74,6 +74,64 @@ h1 { color: var(--accent); margin-bottom: 0.25em; }
 /* ---------- Title screen ---------- */
 .title-emoji { font-size: 3rem; letter-spacing: 0.2em; }
 
+.muted { color: var(--muted); font-weight: normal; }
+h2 { font-size: 1.2rem; margin: 0.3em 0; }
+
+/* ---------- Kitchen screen ---------- */
+.level-tag { color: var(--accent-2); font-weight: bold; margin: 0; }
+
+.kitchen {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 16px;
+}
+.kitchen .panel { margin: 0; }
+@media (max-width: 640px) {
+  .kitchen { grid-template-columns: 1fr; }
+}
+
+.recipe-card ul { list-style: none; padding: 0; margin: 0; }
+.recipe-card li { font-size: 1.25rem; padding: 4px 0; }
+.recipe-card li::before { content: "☐ "; color: var(--muted); }
+.recipe-card li.done { color: var(--good); text-decoration: line-through; }
+.recipe-card li.done::before { content: "☑ "; color: var(--good); }
+
+.shelf {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+.food {
+  font-size: 2.5rem;
+  padding: 10px 0;
+  background: var(--row-alt);
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+.food:hover:not(:disabled) { transform: scale(1.08); border-color: var(--accent-2); }
+.food.used { opacity: 0.25; cursor: default; }
+.food.shake { animation: shake 0.4s; border-color: var(--accent); }
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  75% { transform: translateX(6px); }
+}
+
+.feedback { min-height: 1.5em; font-size: 1.1rem; font-weight: bold; }
+.feedback.good { color: var(--good); }
+.feedback.bad { color: var(--accent); }
+
+.bowl {
+  min-height: 3.5rem;
+  font-size: 2.2rem;
+  padding: 6px 12px;
+  border: 2px dashed var(--border);
+  border-radius: 0 0 40px 40px;
+  text-align: center;
+}
+
 /* ---------- Vocab check page ---------- */
 .filters { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 .filters label { color: var(--muted); }

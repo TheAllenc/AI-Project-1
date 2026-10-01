@@ -8,17 +8,48 @@
 </head>
 <body>
   <main>
-    <!-- Title screen. The game screens (level select, kitchen, report) come in Milestone 1–2. -->
+    <!-- Screen 1: title -->
     <section id="title-screen" class="panel">
       <div class="title-emoji">🥖🧀🍓</div>
       <h1>La Cuisine</h1>
       <p class="subtitle">Un jeu pour apprendre le vocabulaire de la nourriture.<br>
         A cooking game for learning French food vocabulary.</p>
-      <p><em>Le jeu arrive bientôt !</em> (The game is coming soon.)</p>
-      <p><a class="button secondary" href="vocab-check.html">Vérifier le vocabulaire →</a></p>
+      <p><button id="play-button" class="button">Jouer ▶</button></p>
+      <p><a href="vocab-check.html">Vérifier le vocabulaire</a></p>
+    </section>
+
+    <!-- Screen 2: the kitchen (where you play) -->
+    <section id="kitchen-screen" hidden>
+      <p class="level-tag" id="level-name"></p>
+      <div class="kitchen">
+        <div class="panel recipe-card">
+          <h2 id="recipe-name"></h2>
+          <p class="muted">Ingrédients :</p>
+          <ul id="recipe-list"></ul>
+        </div>
+        <div class="panel">
+          <h2>L'étagère <span class="muted">(the shelf)</span></h2>
+          <div id="shelf" class="shelf"></div>
+          <p id="feedback" class="feedback"></p>
+          <h2>Le bol <span class="muted">(the bowl)</span></h2>
+          <div id="bowl" class="bowl"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Screen 3: recipe finished -->
+    <section id="done-screen" class="panel" hidden>
+      <h1 id="done-title"></h1>
+      <p id="done-mistakes"></p>
+      <p>
+        <button id="replay-button" class="button">Rejouer ↻</button>
+        <button id="home-button" class="button secondary">Menu</button>
+      </p>
     </section>
   </main>
 
   <script src="js/vocab.js"></script>
+  <script src="js/recipes.js"></script>
+  <script src="js/game.js"></script>
 </body>
 </html>
