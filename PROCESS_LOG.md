@@ -29,12 +29,12 @@ A running record of how AI was used to build *La Cuisine*. Add to it after every
 
 | # | Issue the AI raised | What I found |
 |---|---|---|
-| 1 | Gender for words starting with *l'* or *les* isn't on the class list. The AI filled it in (e.g. *l'orange* = f, *l'ail* = m) | |
-| 2 | Footnotes on *l'entrée\** and *des œufs\*\** are missing their text | |
-| 3 | *le fromage* and *la glace* appear twice (dairy + dessert) | |
-| 4 | *déjeuner* listed for both "to have breakfast" and "to have lunch" (France vs. Québec?) | |
-| 5 | Kitchen tools & actions aren't on the class list. Add an extra set, or drop the category? | |
-| 6 | Some words have no good emoji, so they'll only appear in typing rounds | |
+| 1 | Gender for words starting with *l'* or *les* isn't on the class list. The AI filled it in (e.g. *l'orange* = f, *l'ail* = m) | Accepted the AI's genders as they are |
+| 2 | Footnotes on *l'entrée\** and *des œufs\*\** are missing their text | *l'entrée* = the starter; *des œufs* = eggs. Updated the English for *l'entrée* to "starter" |
+| 3 | *le fromage* and *la glace* appear twice (dairy + dessert) | Kept once, listed under both categories |
+| 4 | *déjeuner* listed for both "to have breakfast" and "to have lunch" (France vs. Québec?) | *déjeuner* = to have lunch. Fixed |
+| 5 | Kitchen tools & actions aren't on the class list. Add an extra set, or drop the category? | Dropped. The game sticks to the class list |
+| 6 | Some words have no good emoji, so they'll only appear in typing rounds | Fine |
 | 7 | *les frites* = "chips" (British) → shown as "fries / chips" | |
 | 8 | *la tartine* and *le pain grillé* are both "toast" | |
 

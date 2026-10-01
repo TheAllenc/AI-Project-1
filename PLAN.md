@@ -69,7 +69,9 @@ I won't change the list on my own. Please check these with your French teacher:
 - **M4, Full menu & polish (days 12–14):** Level 4, animations, mobile/laptop layout, sound effects if time allows.
 - **M5, Play-test & ship (days 15+):** 2–3 classmates play it while you record what confused them, then we fix it, publish a shareable link (GitHub Pages or a claude.ai artifact), and prepare showcase talking points.
 
-Stretch goals (only if ahead of schedule): French text-to-speech pronunciation (built into the browser, free), saving progress in the browser, extra kitchen-action level.
+Stretch goals (only if ahead of schedule): French text-to-speech pronunciation (built into the browser, free), saving progress in the browser.
+
+**Answers from the vocab check:** genders accepted as filled in; *l'entrée* = starter, *des œufs* = eggs; *déjeuner* (verb) = to have lunch; kitchen tools & actions **dropped** (class list only).
 
 ## 4D framework, built into the process
 - **Delegate:** AI writes the code and drafts recipes. You own the vocab accuracy, the game design decisions, play-testing, and the final call on everything.
