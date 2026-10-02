@@ -38,10 +38,49 @@
           <p class="muted">Ingrédients :</p>
           <ul id="recipe-list"></ul>
         </div>
-        <div class="panel">
-          <h2>L'étagère <span class="muted">(the shelf)</span></h2>
-          <div id="shelf" class="shelf"></div>
-          <p id="feedback" class="feedback"></p>
+        <div class="panel play-area">
+          <p id="prompt" class="prompt"></p>
+
+          <!-- Levels 1 & 2: the shelf of pictures -->
+          <div id="shelf-area">
+            <h2>L'étagère <span class="muted">(the shelf)</span></h2>
+            <div id="shelf" class="shelf"></div>
+          </div>
+
+          <!-- Level 2: pick the article -->
+          <div id="article-area" class="article-area" hidden>
+            <button type="button" class="button article-button">le</button>
+            <button type="button" class="button article-button">la</button>
+            <button type="button" class="button article-button">les</button>
+          </div>
+
+          <!-- Level 3: type the word -->
+          <div id="type-area" hidden>
+            <div id="clue" class="clue"></div>
+            <form id="type-form" class="type-form" autocomplete="off">
+              <label for="answer" class="visually-hidden">Ta réponse</label>
+              <input id="answer" type="text" lang="fr" spellcheck="false" autocapitalize="off" placeholder="ex : la pomme">
+              <button type="submit" class="button">Valider</button>
+            </form>
+            <div class="accent-row" aria-label="Accents">
+              <button type="button" class="accent-button">é</button>
+              <button type="button" class="accent-button">è</button>
+              <button type="button" class="accent-button">ê</button>
+              <button type="button" class="accent-button">à</button>
+              <button type="button" class="accent-button">â</button>
+              <button type="button" class="accent-button">ç</button>
+              <button type="button" class="accent-button">î</button>
+              <button type="button" class="accent-button">ï</button>
+              <button type="button" class="accent-button">ô</button>
+              <button type="button" class="accent-button">û</button>
+              <button type="button" class="accent-button">ù</button>
+              <button type="button" class="accent-button">œ</button>
+              <button type="button" class="accent-button">’</button>
+            </div>
+            <p><button type="button" id="dont-know-button" class="link-button">Je ne sais pas (show me)</button></p>
+          </div>
+
+          <p id="feedback" class="feedback" aria-live="polite"></p>
           <h2>Le bol <span class="muted">(the bowl)</span></h2>
           <div id="bowl" class="bowl"></div>
         </div>
@@ -90,6 +129,7 @@
   <script src="js/vocab.js"></script>
   <script src="js/recipes.js"></script>
   <script src="js/scoring.js"></script>
+  <script src="js/check.js"></script>
   <script src="js/game.js"></script>
 </body>
 </html>

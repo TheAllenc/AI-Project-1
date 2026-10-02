@@ -85,3 +85,25 @@ Level select, more recipes, a timer, 1–3 stars per recipe, and an end-of-level
 - What felt good:
 - What was confusing:
 - What I want changed:
+
+---
+
+## Session 4: Milestone 3 (gender + typing)
+
+### Describe: what Milestone 3 should do
+Level 2: pick **le / la / les** for each ingredient. Level 3: type the French word, with accent buttons and the accent rule from the plan (accept a missing accent, but show the correct spelling).
+
+### Design decisions the AI made (for me to review)
+- **Level 2 hides the article** on the recipe card ("___ fraise"). You click the picture, then choose le/la/les. For *l'* words the answer is the hidden gender (*l'orange* → **la**), and the game explains it: "(orange est féminin)". A wrong article counts as a mistake, and you try again.
+- **Level 3 clue:** the emoji, or the English word in quotes when there's no emoji. A test makes sure the English clue is never the same as the answer (e.g. *sauce* can't be used).
+- **Typing rules:** a missing accent or wrong article still counts but is flagged. Three wrong tries, or "Je ne sais pas", shows the answer and adds the word to the review list.
+- **"oe" is accepted as "œ"** with no flag, since it's a joined letter, not an accent, and hard to type.
+- **More time for harder levels:** 6 s per ingredient (click), 8 s (gender), 12 s (typing).
+- **Recipes:** Level 2: salade de fruits, coupe glacée, goûter d'anniversaire. Level 3: sandwich jambon-beurre, soupe de légumes, pâtes à la tomate. (The omelette was already in Level 1, so Level 3 got the jambon-beurre instead.)
+- **Recipe names aren't on the class list** (omelette, salade de fruits, etc.); only the ingredients are. Check that the recipe names read naturally to a French 1–2 student.
+
+### Play-test notes (fill in after playing)
+- Are 3 tries in Level 3 the right number?
+- What felt good:
+- What was confusing:
+- What I want changed:

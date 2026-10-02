@@ -32,6 +32,7 @@
 }
 
 * { box-sizing: border-box; }
+[hidden] { display: none !important; } /* hidden always wins over display rules */
 
 body {
   margin: 0;
@@ -162,9 +163,65 @@ h2 { font-size: 1.2rem; margin: 0.3em 0; }
   75% { transform: translateX(6px); }
 }
 
+.play-area { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.play-area h2, .play-area p { margin: 0; }
+
+.prompt { font-size: 1.25rem; font-weight: bold; color: var(--accent-2); min-height: 1.5em; }
+
 .feedback { min-height: 1.5em; font-size: 1.1rem; font-weight: bold; }
 .feedback.good { color: var(--good); }
+.feedback.warn { color: var(--warn); }
 .feedback.bad { color: var(--accent); }
+
+/* Level 2: le / la / les */
+.article-area { display: flex; gap: 10px; }
+.article-button { font-size: 1.3rem; min-width: 4.5rem; background: var(--accent-2); }
+.article-button:disabled { opacity: 0.35; cursor: default; }
+
+/* Level 3: typing */
+.clue { font-size: 4rem; text-align: center; line-height: 1.2; overflow-wrap: anywhere; }
+.clue-text { font-size: 2rem; padding: 0.5em 0; }
+.type-form { display: flex; gap: 8px; }
+.type-form input {
+  flex: 1;
+  min-width: 0;
+  font-size: 1.2rem;
+  padding: 0.5em 0.7em;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  background: var(--panel);
+  color: var(--text);
+}
+.type-form input:focus { outline: none; border-color: var(--accent-2); }
+.accent-row { display: flex; flex-wrap: wrap; gap: 6px; }
+.accent-button {
+  min-width: 2.4rem;
+  padding: 0.3em 0.5em;
+  font-size: 1.1rem;
+  background: var(--row-alt);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  cursor: pointer;
+}
+.accent-button:hover { border-color: var(--accent-2); }
+.link-button {
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--muted);
+  text-decoration: underline;
+  font: inherit;
+  cursor: pointer;
+}
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
 
 .bowl {
   min-height: 3.5rem;
@@ -172,8 +229,13 @@ h2 { font-size: 1.2rem; margin: 0.3em 0; }
   padding: 6px 12px;
   border: 2px dashed var(--border);
   border-radius: 0 0 40px 40px;
-  text-align: center;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
 }
+.bowl-word { font-size: 1rem; font-weight: bold; color: var(--muted); }
 
 /* ---------- Vocab check page ---------- */
 .filters { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }

@@ -4,9 +4,16 @@ const test = require("node:test");
 const assert = require("node:assert");
 const { targetTime, starsFor, starText } = require("../js/scoring.js");
 
-test("target time is 6 seconds per ingredient", () => {
+test("target time is 6 s per ingredient for clicking, more for harder levels", () => {
   assert.strictEqual(targetTime(3), 18);
-  assert.strictEqual(targetTime(4), 24);
+  assert.strictEqual(targetTime(4, "click"), 24);
+  assert.strictEqual(targetTime(3, "gender"), 24);
+  assert.strictEqual(targetTime(3, "type"), 36);
+});
+
+test("typing levels use their own target time", () => {
+  assert.strictEqual(starsFor(0, 30, 3, "type"), 3);  // 30 s is fine when typing 3 words
+  assert.strictEqual(starsFor(0, 30, 3, "click"), 2); // but too slow when clicking
 });
 
 test("perfect and fast = 3 stars", () => {
