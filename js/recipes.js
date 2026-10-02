@@ -5,6 +5,8 @@
 // Levels 1 and 2 use the picture shelf, so every ingredient there
 // MUST have an emoji. Level 3 (typing) can use any word: words with no
 // emoji show their English meaning as the clue. The tests check this.
+// Level 4 is a menu: each course has its own mode (gender or type)
+// and a course name from vocab.js (entree, plat-principal, dessert).
 // A level with no recipes yet shows as "Bientôt" (coming soon).
 // ============================================================
 
@@ -49,9 +51,16 @@ const LEVELS = [
     id: "diner",
     name: "Le Dîner",
     emoji: "🍽️",
-    goal: "Entrée, plat principal, dessert ! (A full menu.)",
+    goal: "L'entrée, le plat principal, le dessert ! (A full menu: articles + typing.)",
     mode: "menu",
-    recipes: [], // Milestone 4
+    recipes: [
+      { course: "entree", mode: "gender", name: "une salade composée", emoji: "🥗",
+        ingredients: ["laitue", "tomate", "concombre", "mais", "champignon"] },
+      { course: "plat-principal", mode: "type", name: "un poulet rôti aux légumes", emoji: "🍗",
+        ingredients: ["poulet", "pomme-de-terre", "haricot", "courgette", "ail"] },
+      { course: "dessert", mode: "type", name: "une tarte aux fraises", emoji: "🥧",
+        ingredients: ["farine", "beurre", "sucre", "oeuf", "fraise"] },
+    ],
   },
 ];
 

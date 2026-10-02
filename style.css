@@ -49,6 +49,7 @@ main {
 }
 
 h1 { color: var(--accent); margin-bottom: 0.25em; }
+a { color: var(--accent-2); }
 .subtitle { color: var(--muted); margin-top: 0; }
 
 .button {
@@ -74,6 +75,35 @@ h1 { color: var(--accent); margin-bottom: 0.25em; }
 
 /* ---------- Title screen ---------- */
 .title-emoji { font-size: 3rem; letter-spacing: 0.2em; }
+.how-to { border-top: 1px solid var(--border); padding-top: 8px; margin-top: 8px; }
+.how-to ol { padding-left: 1.4em; margin: 0.4em 0; }
+.how-to li { margin: 0.25em 0; }
+.title-links { display: flex; align-items: center; gap: 12px; }
+
+.sound-button {
+  padding: 0.1em 0.35em;
+  font-size: 1.1rem;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* ---------- Animations (turned off if the player prefers less motion) ---------- */
+.bowl-item { display: inline-block; animation: drop-in 0.35s ease-out; }
+@keyframes drop-in {
+  from { transform: translateY(-24px) scale(0.6); opacity: 0; }
+  to { transform: none; opacity: 1; }
+}
+.stars-big { animation: pop 0.5s ease-out; }
+@keyframes pop {
+  0% { transform: scale(0.5); opacity: 0; }
+  70% { transform: scale(1.15); opacity: 1; }
+  100% { transform: scale(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
 
 .muted { color: var(--muted); font-weight: normal; }
 h2 { font-size: 1.2rem; margin: 0.3em 0; }

@@ -4,6 +4,12 @@ const test = require("node:test");
 const assert = require("node:assert");
 const { getWord } = require("../js/vocab.js");
 const { LEVELS, SHELF_SIZE } = require("../js/recipes.js");
+const { SECONDS_PER_INGREDIENT } = require("../js/scoring.js");
+
+// Every recipe with the mode it is actually played in (Level 4 courses have their own).
+const allRecipes = LEVELS.flatMap((level) =>
+  level.recipes.map((recipe) => ({ level, recipe, mode: recipe.mode || level.mode }))
+);
 
 test("every recipe ingredient exists in vocab.js", () => {
   for (const level of LEVELS) {
@@ -15,13 +21,23 @@ test("every recipe ingredient exists in vocab.js", () => {
   }
 });
 
-test("picture-level ingredients all have an emoji", () => {
-  for (const level of LEVELS.filter((l) => l.mode === "click" || l.mode === "gender")) {
-    for (const recipe of level.recipes) {
-      for (const id of recipe.ingredients) {
-        assert.ok(getWord(id).emoji, `"${id}" in ${recipe.name} has no emoji, so it can't be in a picture level`);
-      }
+test("every recipe is played in a mode the game knows", () => {
+  for (const { recipe, mode } of allRecipes) {
+    assert.ok(SECONDS_PER_INGREDIENT[mode], `${recipe.name} has unknown mode "${mode}"`);
+  }
+});
+
+test("picture-mode ingredients all have an emoji", () => {
+  for (const { recipe, mode } of allRecipes.filter((r) => r.mode === "click" || r.mode === "gender")) {
+    for (const id of recipe.ingredients) {
+      assert.ok(getWord(id).emoji, `"${id}" in ${recipe.name} has no emoji, so it can't be in a picture level`);
     }
+  }
+});
+
+test("menu courses use course names from the class list", () => {
+  for (const { level, recipe } of allRecipes.filter((r) => r.level.mode === "menu")) {
+    assert.ok(getWord(recipe.course), `${recipe.name} in ${level.name} has unknown course "${recipe.course}"`);
   }
 });
 
@@ -35,11 +51,9 @@ test("each recipe fits on the shelf with room for distractors", () => {
 });
 
 test("gender-level ingredients are nouns (they have a gender)", () => {
-  for (const level of LEVELS.filter((l) => l.mode === "gender")) {
-    for (const recipe of level.recipes) {
-      for (const id of recipe.ingredients) {
-        assert.ok(getWord(id).gender, `"${id}" in ${recipe.name} has no gender`);
-      }
+  for (const { recipe } of allRecipes.filter((r) => r.mode === "gender")) {
+    for (const id of recipe.ingredients) {
+      assert.ok(getWord(id).gender, `"${id}" in ${recipe.name} has no gender`);
     }
   }
 });
@@ -48,12 +62,10 @@ test("typing clues never give the answer away", () => {
   // A word with no emoji shows its English meaning as the clue,
   // so the English must not be the same as the French (e.g. "sauce").
   const plain = (t) => t.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-  for (const level of LEVELS.filter((l) => l.mode === "type")) {
-    for (const recipe of level.recipes) {
-      for (const id of recipe.ingredients) {
-        const word = getWord(id);
-        if (!word.emoji) assert.notStrictEqual(plain(word.en), plain(word.fr), `"${id}" clue is the answer`);
-      }
+  for (const { recipe } of allRecipes.filter((r) => r.mode === "type")) {
+    for (const id of recipe.ingredients) {
+      const word = getWord(id);
+      if (!word.emoji) assert.notStrictEqual(plain(word.en), plain(word.fr), `"${id}" clue is the answer`);
     }
   }
 });

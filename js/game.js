@@ -6,9 +6,11 @@
 //   click   Level 1: read the French word, click the matching picture
 //   gender  Level 2: click the picture, then pick le / la / les
 //   type    Level 3: see the picture (or English word), type the French word
+// Level 4 (the menu) mixes them: each course says which mode it uses.
 //
 // Uses VOCAB/withArticle/getWord (vocab.js), LEVELS/SHELF_SIZE (recipes.js),
-// targetTime/starsFor/starText (scoring.js) and checkTyped/genderArticle (check.js).
+// targetTime/starsFor/starText (scoring.js), checkTyped/genderArticle (check.js)
+// and playSound/toggleSound (sound.js).
 // ============================================================
 
 // ---------- Game state: everything the game needs to remember ----------
@@ -16,6 +18,7 @@ const state = {
   level: null,          // the current level object from LEVELS
   recipeIndex: 0,       // which recipe of the level we are on
   recipe: null,         // the current recipe object
+  mode: "click",        // the mode of the current recipe: click, gender or type
   found: [],            // ids of ingredients already put in the bowl
   mistakes: 0,          // mistakes in this recipe
   tries: 0,             // wrong typed answers for the current word (type mode)
@@ -145,16 +148,20 @@ function startLevel(level) {
 }
 
 function startRecipe() {
-  const mode = state.level.mode;
   state.recipe = state.level.recipes[state.recipeIndex];
+  // A recipe can have its own mode (Level 4 courses); otherwise it uses the level's mode.
+  const mode = state.recipe.mode || state.level.mode;
+  state.mode = mode;
   state.found = [];
   state.mistakes = 0;
   state.tries = 0;
   state.pendingButton = null;
 
   const count = state.level.recipes.length;
+  // Menu courses show their name from the class list: l'entrée, le plat principal, le dessert.
+  const step = state.recipe.course ? withArticle(getWord(state.recipe.course)) : "recette";
   document.getElementById("level-name").textContent =
-    state.level.name + " · recette " + (state.recipeIndex + 1) + " / " + count;
+    state.level.name + " · " + step + " " + (state.recipeIndex + 1) + " / " + count;
   document.getElementById("recipe-name").textContent = state.recipe.emoji + " " + state.recipe.name;
   document.getElementById("target-time").textContent = targetTime(state.recipe.ingredients.length, mode);
   document.getElementById("bowl").innerHTML = "";
@@ -185,7 +192,7 @@ function startTimer() {
 // Tells the player what to do for the next ingredient.
 function askForNext() {
   const word = currentTarget();
-  const mode = state.level.mode;
+  const mode = state.mode;
   if (mode === "click") prompt("Trouve : " + withArticle(word));
   if (mode === "gender") prompt("Trouve : " + word.fr);
   if (mode === "type") {
@@ -213,9 +220,9 @@ function drawRecipeCard() {
       item.textContent = withArticle(word);
       item.className = "done";
     } else {
-      if (state.level.mode === "click") item.textContent = withArticle(word);
-      if (state.level.mode === "gender") item.textContent = "___ " + word.fr;
-      if (state.level.mode === "type") item.textContent = clueFor(word) + " = ?";
+      if (state.mode === "click") item.textContent = withArticle(word);
+      if (state.mode === "gender") item.textContent = "___ " + word.fr;
+      if (state.mode === "type") item.textContent = clueFor(word) + " = ?";
       if (target && id === target.id) item.className = "current";
     }
     list.appendChild(item);
@@ -240,7 +247,9 @@ function drawShelf() {
 }
 
 // Puts a found ingredient in the bowl, then moves on (or finishes the recipe).
-function collect(word) {
+// quiet = true skips the "good" sound (used when the game revealed the answer).
+function collect(word, quiet = false) {
+  if (!quiet) playSound("good");
   state.found.push(word.id);
   const item = document.createElement("span");
   item.className = word.emoji ? "bowl-item" : "bowl-item bowl-word";
@@ -259,6 +268,7 @@ function collect(word) {
 
 // Counts a mistake and remembers the word for the report.
 function mistake(word) {
+  playSound("bad");
   state.mistakes++;
   addMissed(word);
 }
@@ -273,12 +283,13 @@ function pickFood(word, button) {
     button.disabled = true;
     button.classList.add("used");
 
-    if (state.level.mode === "click") {
+    if (state.mode === "click") {
       say("Oui ! " + withArticle(word) + " ✓", "good");
       collect(word);
     } else {
       // Gender mode: right picture, now ask for the article.
       state.pendingButton = button;
+      playSound("good");
       say("Oui, c'est ça ! Maintenant : le, la ou les ?", "good");
       prompt("___ " + word.fr + " : le, la ou les ?");
       showArticleButtons();
@@ -354,7 +365,7 @@ function submitTyped() {
 function revealAnswer(word) {
   if (state.tries === 0) mistake(word); // "Je ne sais pas" counts as one mistake
   say("La réponse : " + withArticle(word) + " (" + word.en + ")", "bad");
-  collect(word);
+  collect(word, true);
 }
 
 // Accent buttons type a letter into the box where the cursor is.
@@ -370,11 +381,12 @@ function typeLetter(letter) {
 // ---------- Finishing a recipe ----------
 
 function finishRecipe() {
-  const mode = state.level.mode;
+  const mode = state.mode;
   const count = state.recipe.ingredients.length;
   const seconds = elapsedSeconds();
   const stars = starsFor(state.mistakes, seconds, count, mode);
   state.results.push({ recipe: state.recipe, seconds, mistakes: state.mistakes, stars });
+  playSound("done");
 
   document.getElementById("done-title").textContent =
     "Bravo ! " + capitalize(state.recipe.name) + " : c'est prêt ! " + state.recipe.emoji;
@@ -384,7 +396,11 @@ function finishRecipe() {
     (state.mistakes === 0 ? "aucune erreur !" : "erreurs : " + state.mistakes);
 
   const isLast = state.recipeIndex === state.level.recipes.length - 1;
-  document.getElementById("next-button").textContent = isLast ? "Voir le bilan →" : "Recette suivante →";
+  const next = state.level.recipes[state.recipeIndex + 1];
+  let label = "Recette suivante →";
+  if (isLast) label = "Voir le bilan →";
+  else if (next.course) label = "Maintenant : " + withArticle(getWord(next.course)) + " →";
+  document.getElementById("next-button").textContent = label;
   showScreen("done-screen");
 }
 
@@ -451,7 +467,8 @@ function startPractice() {
     id: "practice",
     name: "Pratique",
     practice: true,
-    mode: state.level.mode,
+    // Menu practice is typed, since the menu mixes modes and typing works for every word.
+    mode: state.level.mode === "menu" ? "type" : state.level.mode,
     recipes: [{ name: "les mots à revoir", emoji: "📝", ingredients: ids }],
     returnTo: state.level.practice ? state.level.returnTo : state.level,
   };
@@ -475,6 +492,10 @@ document.getElementById("practice-button").addEventListener("click", startPracti
 document.getElementById("replay-level-button").addEventListener("click", replayLevel);
 document.getElementById("levels-button").addEventListener("click", showLevels);
 document.getElementById("back-title-button").addEventListener("click", () => showScreen("title-screen"));
+
+for (const button of document.querySelectorAll(".sound-button")) {
+  button.addEventListener("click", toggleSound);
+}
 
 for (const button of document.querySelectorAll(".article-button")) {
   button.addEventListener("click", () => pickArticle(button.textContent, button));

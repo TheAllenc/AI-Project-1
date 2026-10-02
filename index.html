@@ -15,7 +15,22 @@
       <p class="subtitle">Un jeu pour apprendre le vocabulaire de la nourriture.<br>
         A cooking game for learning French food vocabulary.</p>
       <p><button id="play-button" class="button">Jouer ▶</button></p>
-      <p><a href="vocab-check.html">Vérifier le vocabulaire</a></p>
+
+      <div class="how-to">
+        <h2>Comment jouer <span class="muted">(how to play)</span></h2>
+        <ol>
+          <li><strong>Le Petit-Déjeuner :</strong> read the French word, click the picture.</li>
+          <li><strong>Le Goûter :</strong> click the picture, then choose <em>le, la</em> or <em>les</em>.</li>
+          <li><strong>Le Déjeuner :</strong> see the picture, type the French word.</li>
+          <li><strong>Le Dîner :</strong> cook a whole menu: l'entrée, le plat principal, le dessert.</li>
+        </ol>
+        <p class="muted">Finish a level to open the next one. Be fast and careful to earn ★★★!</p>
+      </div>
+
+      <p class="title-links">
+        <a href="vocab-check.html">Vérifier le vocabulaire</a>
+        <button type="button" class="sound-button" aria-label="Couper le son (mute)">🔊</button>
+      </p>
     </section>
 
     <!-- Screen 2: level select -->
@@ -30,7 +45,8 @@
     <section id="kitchen-screen" hidden>
       <div class="kitchen-top">
         <p class="level-tag" id="level-name"></p>
-        <p class="timer">⏱ <span id="timer">0</span> s <span class="muted">/ objectif <span id="target-time"></span> s</span></p>
+        <p class="timer">⏱ <span id="timer">0</span> s <span class="muted">/ objectif <span id="target-time"></span> s</span>
+          <button type="button" class="sound-button" aria-label="Couper le son (mute)">🔊</button></p>
       </div>
       <div class="kitchen">
         <div class="panel recipe-card">
@@ -130,6 +146,7 @@
   <script src="js/recipes.js"></script>
   <script src="js/scoring.js"></script>
   <script src="js/check.js"></script>
+  <script src="js/sound.js"></script>
   <script src="js/game.js"></script>
 </body>
 </html>

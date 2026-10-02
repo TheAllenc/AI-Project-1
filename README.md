@@ -8,15 +8,15 @@ Players read French recipe cards and gather the right ingredients. The levels ge
 3. **Le Déjeuner**: see the picture and type the French word (recall)
 4. **Le Dîner**: build a full menu (*entrée → plat principal → dessert*) against the clock
 
-> **Status:** Milestone 3. Levels 1–3 are playable (3 recipes each). Level 4 (the full menu) comes next.
+> **Status:** Milestone 4. All 4 levels are playable. Next: play-testing with classmates.
 
 ## How to play
 No install needed. Download the folder and double-click **`index.html`**. It runs in any modern browser.
 
 ## Scoring
-Each recipe starts at ★★★. You lose 1 star for any mistake, 1 more for 3 or more mistakes, and 1 if you're slower than the target time: 6 seconds per ingredient in Level 1, 8 in Level 2, and 12 in Level 3. You always get at least ★ for finishing.
+Each recipe starts at ★★★. You lose 1 star for any mistake, 1 more for 3 or more mistakes, and 1 if you're slower than the target time: 6 seconds per ingredient for clicking (Level 1), 8 for choosing le/la/les (Level 2 and the entrée), and 12 for typing (Level 3, the plat principal and the dessert). You always get at least ★ for finishing.
 
-## Typing rules (Level 3)
+## Typing rules (Level 3 and the Level 4 plat principal and dessert)
 - Capital letters, extra spaces, and ’ vs ' don't matter. "oe" counts as "œ".
 - The article is optional: "pomme" and "la pomme" both work.
 - A missing accent counts, but the game shows the correct spelling ("Presque ! …").
@@ -37,6 +37,7 @@ Open **`vocab-check.html`** to see every word in a table. Rows marked with an or
 | `js/recipes.js` | The levels and their recipes |
 | `js/scoring.js` | Star rules (time + mistakes) |
 | `js/check.js` | Checks typed answers (accents, apostrophes, articles) and le/la/les choices |
+| `js/sound.js` | Sound effects (made by the browser, no files) and the mute button |
 | `js/game.js` | Game logic: levels, shelf, clicks, feedback, timer, report |
 | `tests/vocab.test.js` | Automatic checks for mistakes in the word list |
 | `tests/recipes.test.js` | Checks every recipe is playable |

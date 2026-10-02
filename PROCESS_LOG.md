@@ -107,3 +107,25 @@ Level 2: pick **le / la / les** for each ingredient. Level 3: type the French wo
 - What felt good:
 - What was confusing:
 - What I want changed:
+
+---
+
+## Session 5: Milestone 4 (full menu + polish)
+
+### Describe: what Milestone 4 should do
+Level 4, *Le Dîner*: build a full menu (*l'entrée → le plat principal → le dessert*) mixing the earlier skills. Then polish: animations, phone layout, and sound effects if there's time.
+
+### Design decisions the AI made (for me to review)
+- **Each course uses a different skill:** l'entrée = *une salade composée* (le/la/les), le plat principal = *un poulet rôti aux légumes* (typing), le dessert = *une tarte aux fraises* (typing). The dessert finally uses *la farine* and *le sucre*, which have no emoji.
+- **Course names come from the class list** (*l'entrée, le plat principal, le dessert*) and show in the header and on the "Maintenant : le plat principal →" button.
+- **"Against the clock"** uses the same timer and target time as the other levels, with no separate countdown.
+- **Practice after Level 4 is typed**, since the menu mixes modes.
+- **Sound effects** are made by the browser (no files): a ding, a buzz, and a short tune. A 🔊 button mutes them. Sound starts **on**; tell the AI if it should start off for class.
+- **Animations:** food drops into the bowl and stars pop in. They turn off automatically for players whose computer asks for less motion.
+- **Title screen** now explains how to play each level.
+
+### Play-test notes (fill in after playing)
+- Should sound start on or off?
+- What felt good:
+- What was confusing:
+- What I want changed:
