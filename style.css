@@ -77,8 +77,49 @@ h1 { color: var(--accent); margin-bottom: 0.25em; }
 .muted { color: var(--muted); font-weight: normal; }
 h2 { font-size: 1.2rem; margin: 0.3em 0; }
 
+.button:focus-visible, .food:focus-visible, .level-card:focus-visible {
+  outline: 3px solid var(--accent-2);
+  outline-offset: 2px;
+}
+.button-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.good-text { color: var(--good); font-weight: bold; }
+.stars-big { font-size: 2.2rem; color: var(--warn); margin: 0.2em 0; letter-spacing: 0.1em; }
+
+/* ---------- Level select ---------- */
+.level-list { display: grid; gap: 12px; }
+.level-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  padding: 14px 18px;
+  text-align: left;
+  font: inherit;
+  color: var(--text);
+  background: var(--panel);
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  cursor: pointer;
+}
+.level-card:hover:not(:disabled) { border-color: var(--accent-2); }
+.level-card:disabled { opacity: 0.55; cursor: default; }
+.level-emoji { font-size: 2.4rem; }
+.level-text { display: flex; flex-direction: column; min-width: 0; }
+.level-text strong { font-size: 1.15rem; }
+.level-text .goal { color: var(--muted); }
+.level-text .status { color: var(--accent-2); font-weight: bold; }
+
 /* ---------- Kitchen screen ---------- */
+.kitchen-top {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 8px;
+}
 .level-tag { color: var(--accent-2); font-weight: bold; margin: 0; }
+.timer { margin: 0; font-size: 1.1rem; font-variant-numeric: tabular-nums; }
 
 .kitchen {
   display: grid;
@@ -95,6 +136,8 @@ h2 { font-size: 1.2rem; margin: 0.3em 0; }
 .recipe-card li::before { content: "☐ "; color: var(--muted); }
 .recipe-card li.done { color: var(--good); text-decoration: line-through; }
 .recipe-card li.done::before { content: "☑ "; color: var(--good); }
+.recipe-card li.current { font-weight: bold; color: var(--accent-2); }
+.recipe-card li.current::before { content: "➜ "; color: var(--accent-2); }
 
 .shelf {
   display: grid;
@@ -141,7 +184,7 @@ h2 { font-size: 1.2rem; margin: 0.3em 0; }
 table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
 th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--border); vertical-align: top; }
 tbody tr:nth-child(even) { background: var(--row-alt); }
-td.emoji { font-size: 1.5rem; text-align: center; }
+td.emoji { font-size: 1.5rem; text-align: center; width: 3.5rem; }
 td.none { color: var(--muted); font-size: 0.8rem; }
 
 tr.needs-check td:first-child { border-left: 4px solid var(--warn); }

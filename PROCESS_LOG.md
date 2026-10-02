@@ -65,3 +65,23 @@ One playable recipe. The player reads the French ingredient list, clicks the mat
 - What felt good:
 - What was confusing:
 - What I want changed:
+
+---
+
+## Session 3: Milestone 2 (progression & scoring)
+
+### Describe: what Milestone 2 should do
+Level select, more recipes, a timer, 1–3 stars per recipe, and an end-of-level report listing missed words with a "Pratiquer ces mots" button.
+
+### Design decisions the AI made (for me to review)
+- **One ingredient at a time.** The recipe card now points (➜) at the ingredient to find next ("Trouve : le beurre"). Without this, the game couldn't tell which word you didn't know when you clicked a wrong picture. Now every wrong click adds that word to the report.
+- **Level 1 recipes:** une tartine au miel, un chocolat chaud et un croissant, une omelette au fromage. Every ingredient has an emoji.
+- **Star rules** live in `js/scoring.js`. You lose a star for any mistake, another for 3+ mistakes, and one for going over the target time of 6 s per ingredient. The minimum is 1 star.
+- **Levels 2–4 show "Bientôt" (coming soon).** Their recipes come with their new mechanics in Milestones 3–4, so Level 2 isn't just a repeat of Level 1.
+- **Best scores last only until you close the page**, as planned. Saving progress was a stretch goal.
+
+### Play-test notes (fill in after playing)
+- Is 6 seconds per ingredient too easy or too hard?
+- What felt good:
+- What was confusing:
+- What I want changed:

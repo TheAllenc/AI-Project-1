@@ -18,9 +18,20 @@
       <p><a href="vocab-check.html">Vérifier le vocabulaire</a></p>
     </section>
 
-    <!-- Screen 2: the kitchen (where you play) -->
+    <!-- Screen 2: level select -->
+    <section id="levels-screen" hidden>
+      <h1>Choisis un niveau</h1>
+      <p class="subtitle">Choose a level. Finish a level to open the next one.</p>
+      <div id="level-list" class="level-list"></div>
+      <p><button id="back-title-button" class="button secondary">← Retour</button></p>
+    </section>
+
+    <!-- Screen 3: the kitchen (where you play) -->
     <section id="kitchen-screen" hidden>
-      <p class="level-tag" id="level-name"></p>
+      <div class="kitchen-top">
+        <p class="level-tag" id="level-name"></p>
+        <p class="timer">⏱ <span id="timer">0</span> s <span class="muted">/ objectif <span id="target-time"></span> s</span></p>
+      </div>
       <div class="kitchen">
         <div class="panel recipe-card">
           <h2 id="recipe-name"></h2>
@@ -35,21 +46,50 @@
           <div id="bowl" class="bowl"></div>
         </div>
       </div>
+      <p><button id="quit-button" class="button secondary">Quitter</button></p>
     </section>
 
-    <!-- Screen 3: recipe finished -->
+    <!-- Screen 4: recipe finished -->
     <section id="done-screen" class="panel" hidden>
       <h1 id="done-title"></h1>
-      <p id="done-mistakes"></p>
-      <p>
-        <button id="replay-button" class="button">Rejouer ↻</button>
-        <button id="home-button" class="button secondary">Menu</button>
+      <p id="done-stars" class="stars-big"></p>
+      <p id="done-details"></p>
+      <p><button id="next-button" class="button">Recette suivante →</button></p>
+    </section>
+
+    <!-- Screen 5: end-of-level report -->
+    <section id="report-screen" class="panel" hidden>
+      <h1 id="report-title"></h1>
+      <p class="stars-big" id="report-total"></p>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Recette</th><th>Temps</th><th>Erreurs</th><th>Étoiles</th></tr></thead>
+          <tbody id="report-recipes"></tbody>
+        </table>
+      </div>
+
+      <div id="missed-section">
+        <h2>Les mots à revoir <span class="muted">(words to review)</span></h2>
+        <div class="table-wrap">
+          <table>
+            <tbody id="report-missed"></tbody>
+          </table>
+        </div>
+      </div>
+      <p id="no-missed" class="good-text">Aucun mot à revoir. Excellent ! (No words to review.)</p>
+
+      <p class="button-row">
+        <button id="practice-button" class="button">Pratiquer ces mots</button>
+        <button id="replay-level-button" class="button secondary">Rejouer le niveau ↻</button>
+        <button id="levels-button" class="button secondary">Niveaux</button>
       </p>
     </section>
   </main>
 
   <script src="js/vocab.js"></script>
   <script src="js/recipes.js"></script>
+  <script src="js/scoring.js"></script>
   <script src="js/game.js"></script>
 </body>
 </html>
