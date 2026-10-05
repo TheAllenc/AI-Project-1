@@ -8,6 +8,9 @@
 //   type    Level 3: see the picture (or English word), type the French word
 // Level 4 (the menu) mixes them: each course says which mode it uses.
 //
+// The two mini-games (Le Café, falling food) live in cafe.js and falling.js.
+// They unlock after Level 1 and use the helpers in this file.
+//
 // Uses VOCAB/withArticle/getWord (vocab.js), LEVELS/SHELF_SIZE/pickRecipes (recipes.js),
 // targetTime/starsFor/starText (scoring.js), checkTyped/genderArticle (check.js)
 // and playSound/toggleSound (sound.js).
@@ -29,7 +32,29 @@ const state = {
   results: [],          // one entry per finished recipe: { recipe, seconds, mistakes, stars }
   missed: [],           // ids of words the player got wrong in this level
   bestStars: {},        // best total stars per level id (only for this visit)
+  bestModes: {},        // best score per mini-game id (only for this visit)
+  modeReplay: null,     // function that restarts the mini-game just played
 };
+
+// The mini-games shown under the levels. They open once Level 1 is finished.
+const MINI_GAMES = [
+  {
+    id: "cafe",
+    name: "Le Café",
+    emoji: "☕",
+    goal: "Les clients commandent en français. Sers-les vite ! (Serve customers before they leave.)",
+    unit: " €",
+    start: () => startCafe(),
+  },
+  {
+    id: "falling",
+    name: "La Pluie de Nourriture",
+    emoji: "🌧️",
+    goal: "Attrape la nourriture qui tombe ! (Catch the falling food that matches the word.)",
+    unit: " mots",
+    start: () => startFalling(),
+  },
+];
 
 // After this many wrong typed answers, the game shows the answer.
 const MAX_TRIES = 3;
@@ -53,14 +78,18 @@ function shuffle(list) {
   return copy;
 }
 
-// Picks random food words with pictures that are NOT in the recipe.
-function pickDistractors(recipe, count) {
-  const candidates = VOCAB.filter((word) =>
+// All food words that have a picture (not meals or verbs).
+function pictureFoods() {
+  return VOCAB.filter((word) =>
     word.emoji &&
-    !recipe.ingredients.includes(word.id) &&
     !word.categories.includes("meals") &&
     !word.categories.includes("verbs")
   );
+}
+
+// Picks random food words with pictures that are NOT in the recipe.
+function pickDistractors(recipe, count) {
+  const candidates = pictureFoods().filter((word) => !recipe.ingredients.includes(word.id));
   return shuffle(candidates).slice(0, count);
 }
 
@@ -132,6 +161,29 @@ function showLevels() {
     button.addEventListener("click", () => startLevel(level));
     list.appendChild(button);
   });
+
+  // The mini-games: locked until Level 1 is finished.
+  const gamesOpen = state.bestStars[LEVELS[0].id] !== undefined;
+  const gameList = document.getElementById("game-list");
+  gameList.innerHTML = "";
+  for (const game of MINI_GAMES) {
+    const button = document.createElement("button");
+    button.className = "level-card game-card";
+    button.disabled = !gamesOpen;
+    let status;
+    if (!gamesOpen) status = "🔒 Finis Le Petit-Déjeuner d'abord (finish Level 1 first)";
+    else if (state.bestModes[game.id] !== undefined) status = "Record : " + state.bestModes[game.id] + game.unit;
+    else status = "Nouveau ! (New!)";
+
+    button.innerHTML =
+      '<span class="level-emoji"></span><span class="level-text"><strong></strong><small class="goal"></small><small class="status"></small></span>';
+    button.querySelector(".level-emoji").textContent = game.emoji;
+    button.querySelector("strong").textContent = game.name;
+    button.querySelector(".goal").textContent = game.goal;
+    button.querySelector(".status").textContent = status;
+    button.addEventListener("click", game.start);
+    gameList.appendChild(button);
+  }
 
   showScreen("levels-screen");
 }
@@ -450,6 +502,40 @@ function showReport() {
   showScreen("report-screen");
 }
 
+// ---------- Mini-game results (shared by Le Café and falling food) ----------
+
+// result = { id, title, score, scoreText, lines, missed, replay }
+function showModeResult(result) {
+  const best = state.bestModes[result.id];
+  const isRecord = best === undefined || result.score > best;
+  if (isRecord) state.bestModes[result.id] = result.score;
+  state.modeReplay = result.replay;
+
+  document.getElementById("mode-title").textContent = result.title;
+  document.getElementById("mode-score").textContent = result.scoreText;
+  document.getElementById("mode-record").textContent =
+    isRecord && result.score > 0 ? "🏆 Nouveau record ! (New best!)" : "Record : " + state.bestModes[result.id];
+
+  const lines = document.getElementById("mode-lines");
+  lines.innerHTML = "";
+  for (const text of result.lines) {
+    const item = document.createElement("li");
+    item.textContent = text;
+    lines.appendChild(item);
+  }
+
+  const missedRows = document.getElementById("mode-missed");
+  missedRows.innerHTML = "";
+  for (const id of result.missed) {
+    const word = getWord(id);
+    addRow(missedRows, [word.emoji || "", withArticle(word), word.en]);
+    missedRows.lastChild.firstChild.className = "emoji";
+  }
+  document.getElementById("mode-missed-section").hidden = result.missed.length === 0;
+
+  showScreen("mode-result-screen");
+}
+
 function addRow(tbody, cells) {
   const row = document.createElement("tr");
   for (const text of cells) {
@@ -492,6 +578,8 @@ document.getElementById("practice-button").addEventListener("click", startPracti
 document.getElementById("replay-level-button").addEventListener("click", replayLevel);
 document.getElementById("levels-button").addEventListener("click", showLevels);
 document.getElementById("back-title-button").addEventListener("click", () => showScreen("title-screen"));
+document.getElementById("mode-replay-button").addEventListener("click", () => state.modeReplay());
+document.getElementById("mode-levels-button").addEventListener("click", showLevels);
 
 for (const button of document.querySelectorAll(".sound-button")) {
   button.addEventListener("click", toggleSound);

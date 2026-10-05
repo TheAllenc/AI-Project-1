@@ -24,6 +24,7 @@
           <li><strong>Le Déjeuner :</strong> see the picture, type the French word.</li>
           <li><strong>Le Dîner :</strong> cook a whole menu: l'entrée, le plat principal, le dessert.</li>
         </ol>
+        <p><strong>Jeux :</strong> finish Level 1 to open two mini-games: <em>Le Café</em> (serve customers who order in French) and <em>La Pluie de Nourriture</em> (catch the falling food).</p>
         <p class="muted">Finish a level to open the next one. Be fast and careful to earn ★★★!</p>
       </div>
 
@@ -38,6 +39,8 @@
       <h1>Choisis un niveau</h1>
       <p class="subtitle">Choose a level. Finish a level to open the next one.</p>
       <div id="level-list" class="level-list"></div>
+      <h2 class="section-heading">Jeux <span class="muted">(mini-games)</span></h2>
+      <div id="game-list" class="level-list"></div>
       <p><button id="back-title-button" class="button secondary">← Retour</button></p>
     </section>
 
@@ -104,6 +107,62 @@
       <p><button id="quit-button" class="button secondary">Quitter</button></p>
     </section>
 
+    <!-- Mini-game: Le Café -->
+    <section id="cafe-screen" hidden>
+      <div class="kitchen-top">
+        <p class="level-tag">☕ Le Café</p>
+        <p class="timer"><span id="cafe-status"></span>
+          <button type="button" class="sound-button" aria-label="Couper le son (mute)">🔊</button></p>
+      </div>
+      <div class="kitchen">
+        <div class="panel customer-card">
+          <div id="cafe-face" class="customer-face"></div>
+          <p id="cafe-order" class="speech"></p>
+          <div class="patience" aria-label="Patience du client"><div id="cafe-patience" class="patience-fill"></div></div>
+          <p class="muted">Patience du client (customer's patience)</p>
+        </div>
+        <div class="panel play-area">
+          <h2>Le comptoir <span class="muted">(the counter)</span></h2>
+          <div id="cafe-counter" class="shelf"></div>
+          <p id="cafe-feedback" class="feedback" aria-live="polite"></p>
+          <h2>Le plateau <span class="muted">(the tray)</span></h2>
+          <div id="cafe-tray" class="bowl"></div>
+        </div>
+      </div>
+      <p><button id="cafe-quit-button" class="button secondary">Quitter</button></p>
+    </section>
+
+    <!-- Mini-game: falling food -->
+    <section id="falling-screen" hidden>
+      <div class="kitchen-top">
+        <p class="level-tag">🌧️ La Pluie de Nourriture</p>
+        <p class="timer"><span id="fall-status"></span>
+          <button type="button" class="sound-button" aria-label="Couper le son (mute)">🔊</button></p>
+      </div>
+      <p class="prompt">Attrape : <span id="fall-target" class="fall-target"></span></p>
+      <div id="fall-area" class="fall-area"></div>
+      <p id="fall-feedback" class="feedback" aria-live="polite"></p>
+      <p><button id="fall-quit-button" class="button secondary">Quitter</button></p>
+    </section>
+
+    <!-- Mini-game results -->
+    <section id="mode-result-screen" class="panel" hidden>
+      <h1 id="mode-title"></h1>
+      <p id="mode-score" class="stars-big"></p>
+      <p id="mode-record" class="good-text"></p>
+      <ul id="mode-lines"></ul>
+      <div id="mode-missed-section">
+        <h2>Les mots à revoir <span class="muted">(words to review)</span></h2>
+        <div class="table-wrap">
+          <table><tbody id="mode-missed"></tbody></table>
+        </div>
+      </div>
+      <p class="button-row">
+        <button id="mode-replay-button" class="button">Rejouer ↻</button>
+        <button id="mode-levels-button" class="button secondary">Niveaux et jeux</button>
+      </p>
+    </section>
+
     <!-- Screen 4: recipe finished -->
     <section id="done-screen" class="panel" hidden>
       <h1 id="done-title"></h1>
@@ -148,5 +207,7 @@
   <script src="js/check.js"></script>
   <script src="js/sound.js"></script>
   <script src="js/game.js"></script>
+  <script src="js/cafe.js"></script>
+  <script src="js/falling.js"></script>
 </body>
 </html>

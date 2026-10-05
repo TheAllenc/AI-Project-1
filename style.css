@@ -140,6 +140,50 @@ h2 { font-size: 1.2rem; margin: 0.3em 0; }
 .level-text .goal { color: var(--muted); }
 .level-text .status { color: var(--accent-2); font-weight: bold; }
 
+.section-heading { margin-top: 1.2em; }
+
+/* ---------- Mini-game: Le Café ---------- */
+.customer-card { display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; }
+.customer-face { font-size: 4rem; line-height: 1.1; }
+.speech {
+  position: relative;
+  margin: 0;
+  padding: 10px 14px;
+  font-size: 1.15rem;
+  font-weight: bold;
+  background: var(--row-alt);
+  border: 2px solid var(--border);
+  border-radius: 12px;
+}
+.patience { width: 100%; height: 14px; background: var(--row-alt); border: 1px solid var(--border); border-radius: 7px; overflow: hidden; }
+.patience-fill { height: 100%; width: 100%; background: var(--good); transition: width 0.1s linear; }
+.patience-fill.mid { background: var(--warn); }
+.patience-fill.low { background: var(--accent); }
+
+/* ---------- Mini-game: falling food ---------- */
+.fall-target { color: var(--accent); }
+.fall-area {
+  position: relative;
+  height: min(60vh, 440px);
+  overflow: hidden;
+  background: var(--panel);
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  touch-action: manipulation;
+}
+.falling-food {
+  position: absolute;
+  width: 56px;
+  height: 56px;
+  padding: 0;
+  font-size: 2.6rem;
+  line-height: 1;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+.falling-food:hover { transform: scale(1.12); }
+
 /* ---------- Kitchen screen ---------- */
 .kitchen-top {
   display: flex;
