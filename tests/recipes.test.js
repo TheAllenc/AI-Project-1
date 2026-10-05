@@ -3,20 +3,18 @@
 const test = require("node:test");
 const assert = require("node:assert");
 const { getWord } = require("../js/vocab.js");
-const { LEVELS, SHELF_SIZE } = require("../js/recipes.js");
+const { LEVELS, RECIPES_PER_LEVEL, SHELF_SIZE, pickRecipes, allRecipesOf } = require("../js/recipes.js");
 const { SECONDS_PER_INGREDIENT } = require("../js/scoring.js");
 
 // Every recipe with the mode it is actually played in (Level 4 courses have their own).
 const allRecipes = LEVELS.flatMap((level) =>
-  level.recipes.map((recipe) => ({ level, recipe, mode: recipe.mode || level.mode }))
+  allRecipesOf(level).map((recipe) => ({ level, recipe, mode: recipe.mode || level.mode }))
 );
 
 test("every recipe ingredient exists in vocab.js", () => {
-  for (const level of LEVELS) {
-    for (const recipe of level.recipes) {
-      for (const id of recipe.ingredients) {
-        assert.ok(getWord(id), `"${id}" in ${recipe.name} is not in vocab.js`);
-      }
+  for (const { recipe } of allRecipes) {
+    for (const id of recipe.ingredients) {
+      assert.ok(getWord(id), `"${id}" in ${recipe.name} is not in vocab.js`);
     }
   }
 });
@@ -42,11 +40,26 @@ test("menu courses use course names from the class list", () => {
 });
 
 test("each recipe fits on the shelf with room for distractors", () => {
-  for (const level of LEVELS) {
-    for (const recipe of level.recipes) {
-      assert.ok(recipe.ingredients.length < SHELF_SIZE, `${recipe.name} has too many ingredients`);
-      assert.strictEqual(new Set(recipe.ingredients).size, recipe.ingredients.length, `${recipe.name} lists an ingredient twice`);
+  for (const { recipe } of allRecipes) {
+    assert.ok(recipe.ingredients.length < SHELF_SIZE, `${recipe.name} has too many ingredients`);
+    assert.strictEqual(new Set(recipe.ingredients).size, recipe.ingredients.length, `${recipe.name} lists an ingredient twice`);
+  }
+});
+
+test("each game picks 3 different recipes (or one per course)", () => {
+  for (let i = 0; i < 50; i++) {
+    for (const level of LEVELS) {
+      const picked = pickRecipes(level);
+      assert.strictEqual(picked.length, RECIPES_PER_LEVEL, level.name);
+      assert.strictEqual(new Set(picked.map((r) => r.name)).size, picked.length, `${level.name} picked a recipe twice`);
+      if (level.courses) assert.deepStrictEqual(picked.map((r) => r.course), ["entree", "plat-principal", "dessert"]);
     }
+  }
+});
+
+test("each level has more recipes than one game uses, so games vary", () => {
+  for (const level of LEVELS) {
+    assert.ok(allRecipesOf(level).length > RECIPES_PER_LEVEL, `${level.name} needs more recipes`);
   }
 });
 

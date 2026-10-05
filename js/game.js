@@ -8,7 +8,7 @@
 //   type    Level 3: see the picture (or English word), type the French word
 // Level 4 (the menu) mixes them: each course says which mode it uses.
 //
-// Uses VOCAB/withArticle/getWord (vocab.js), LEVELS/SHELF_SIZE (recipes.js),
+// Uses VOCAB/withArticle/getWord (vocab.js), LEVELS/SHELF_SIZE/pickRecipes (recipes.js),
 // targetTime/starsFor/starText (scoring.js), checkTyped/genderArticle (check.js)
 // and playSound/toggleSound (sound.js).
 // ============================================================
@@ -16,6 +16,7 @@
 // ---------- Game state: everything the game needs to remember ----------
 const state = {
   level: null,          // the current level object from LEVELS
+  recipes: [],          // the recipes picked for this game of the level
   recipeIndex: 0,       // which recipe of the level we are on
   recipe: null,         // the current recipe object
   mode: "click",        // the mode of the current recipe: click, gender or type
@@ -102,9 +103,8 @@ function clueFor(word) {
 
 // ---------- Level select ----------
 
-// A level is open if it has recipes and the level before it was finished.
+// A level is open if the level before it was finished.
 function isUnlocked(index) {
-  if (LEVELS[index].recipes.length === 0) return false;
   return index === 0 || state.bestStars[LEVELS[index - 1].id] !== undefined;
 }
 
@@ -118,11 +118,10 @@ function showLevels() {
     button.disabled = !isUnlocked(index);
 
     let status;
-    if (level.recipes.length === 0) status = "Bientôt (coming soon)";
-    else if (!isUnlocked(index)) status = "🔒 Finis le niveau d'avant (finish the level before)";
+    if (!isUnlocked(index)) status = "🔒 Finis le niveau d'avant (finish the level before)";
     else if (state.bestStars[level.id] !== undefined)
-      status = "Meilleur score : " + state.bestStars[level.id] + " / " + level.recipes.length * 3 + " ★";
-    else status = level.recipes.length + " recettes";
+      status = "Meilleur score : " + state.bestStars[level.id] + " / 9 ★";
+    else status = level.courses ? "3 plats (3 courses)" : "3 recettes au hasard (3 random recipes)";
 
     button.innerHTML =
       '<span class="level-emoji"></span><span class="level-text"><strong></strong><small class="goal"></small><small class="status"></small></span>';
@@ -141,6 +140,7 @@ function showLevels() {
 
 function startLevel(level) {
   state.level = level;
+  state.recipes = pickRecipes(level); // a new random set every time
   state.recipeIndex = 0;
   state.results = [];
   state.missed = [];
@@ -148,7 +148,7 @@ function startLevel(level) {
 }
 
 function startRecipe() {
-  state.recipe = state.level.recipes[state.recipeIndex];
+  state.recipe = state.recipes[state.recipeIndex];
   // A recipe can have its own mode (Level 4 courses); otherwise it uses the level's mode.
   const mode = state.recipe.mode || state.level.mode;
   state.mode = mode;
@@ -157,7 +157,7 @@ function startRecipe() {
   state.tries = 0;
   state.pendingButton = null;
 
-  const count = state.level.recipes.length;
+  const count = state.recipes.length;
   // Menu courses show their name from the class list: l'entrée, le plat principal, le dessert.
   const step = state.recipe.course ? withArticle(getWord(state.recipe.course)) : "recette";
   document.getElementById("level-name").textContent =
@@ -395,8 +395,8 @@ function finishRecipe() {
     "Temps : " + seconds + " s (objectif : " + targetTime(count, mode) + " s) · " +
     (state.mistakes === 0 ? "aucune erreur !" : "erreurs : " + state.mistakes);
 
-  const isLast = state.recipeIndex === state.level.recipes.length - 1;
-  const next = state.level.recipes[state.recipeIndex + 1];
+  const isLast = state.recipeIndex === state.recipes.length - 1;
+  const next = state.recipes[state.recipeIndex + 1];
   let label = "Recette suivante →";
   if (isLast) label = "Voir le bilan →";
   else if (next.course) label = "Maintenant : " + withArticle(getWord(next.course)) + " →";
@@ -405,7 +405,7 @@ function finishRecipe() {
 }
 
 function nextRecipe() {
-  if (state.recipeIndex < state.level.recipes.length - 1) {
+  if (state.recipeIndex < state.recipes.length - 1) {
     state.recipeIndex++;
     startRecipe();
   } else {
