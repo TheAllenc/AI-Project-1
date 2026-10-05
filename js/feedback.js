@@ -2,8 +2,9 @@
 // feedback.js — the play-test feedback form ("Donner mon avis").
 //
 // In the ONLINE version (the claude.ai link), answers are saved to the
-// page's database ("feedback" collection). Only the owner (the student who
-// made the game) can read them, with the "Voir les avis" button.
+// page's database: each player gets one private entry, feedback/<their id>
+// (sending again updates it, so nobody is counted twice). Only the owner
+// (the student who made the game) can read them, with "Voir les avis".
 // If saving isn't possible (the downloaded file, or a viewer who isn't
 // allowed to save), the form shows the answers as text to copy and send.
 // Answers are anonymous: no names are stored.
@@ -11,6 +12,7 @@
 
 const feedback = {
   db: null,          // the database, or null if this view can't use one
+  userId: null,      // this player's id (needed to save their entry)
   canSave: false,
   isOwner: false,
   unsubscribe: null, // stops the live list of answers for the owner
@@ -23,9 +25,10 @@ async function setupFeedback() {
     feedback.db = await window.claude.use("db");
     const user = await window.claude.use("user");
     feedback.isOwner = user ? await user.isOwner() : false;
+    feedback.userId = user ? await user.id() : null;
     const canWrite = user ? await user.can("data.write") : null;
     // null means "not told": try to save and fall back if it fails.
-    feedback.canSave = !!feedback.db && canWrite !== false;
+    feedback.canSave = !!feedback.db && !!feedback.userId && canWrite !== false;
   } catch (error) {
     feedback.db = null;
   }
@@ -74,7 +77,7 @@ async function submitFeedback(event) {
   button.disabled = true;
   if (feedback.canSave) {
     try {
-      await feedback.db.collection("feedback").add(answers);
+      await feedback.db.doc("feedback/" + feedback.userId).set(answers);
       document.getElementById("feedback-form").hidden = true;
       document.getElementById("feedback-thanks").hidden = false;
       button.disabled = false;

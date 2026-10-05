@@ -129,3 +129,38 @@ Level 4, *Le Dîner*: build a full menu (*l'entrée → le plat principal → le
 - What felt good:
 - What was confusing:
 - What I want changed:
+
+---
+
+## Session 6: Milestone 5 (play-testing and changes)
+
+### Discern: what play-testers said (my notes)
+- Friend 1: "It's boring, not a lot of content"
+- Friend 2: "Needs more to do, it's not very fun"
+- Friend 3: "I think you should add different gamemodes, such as mix and match, to make it more fun."
+
+### Decisions I made from that feedback
+- **Add two new game modes:** *Le Café* (customer rush) and *Falling food*. The AI offered four options (mix & match, Le Café, speed round, falling food). I picked these two instead of mix & match.
+- **Add more recipes:** about 2 more per level.
+- **The new modes unlock after Level 1**, so players see the words first. (The AI had recommended making them open from the start.)
+- **Sound stays on** by default.
+- **Feedback from classmates** goes through an online form.
+- **For the showcase:** a code walkthrough guide (`CODE_GUIDE.md`).
+
+### Design decisions the AI made (for me to review)
+- **Random recipes:** each level now has 5 recipes and picks 3 at random every game; Level 4 picks one of two options for each course. This adds content without making levels longer.
+- **New recipes:** assiette de fruits, bol de fruits au miel, panier de fruits d'été, plateau de desserts, steak-frites, ratatouille, soupe à l'oignon, canard à l'orange, mousse au chocolat.
+- **Le Café:** 8 customers, orders grow from 1 to 3 items, a patience bar, tips in euros, and 3 angry customers end the round.
+- **Falling food:** click the falling food that matches the word; it speeds up; 3 hearts.
+- **Feedback form:** anonymous. Online answers are private to me. If saving isn't possible, players get a copy box instead.
+
+### French to check (Discern)
+- **Café order phrasing:** "Bonjour ! Pour moi, la pomme et le lait, s'il vous plaît." It uses the articles from the class list (le/la/les) instead of *un/du/de la*. Does it sound natural?
+- **Singular orders:** some orders sound odd in the singular (e.g. "la myrtille" for one blueberry).
+- **New recipe names** (not on the class list), e.g. *un panier de fruits d'été*, *un plateau de desserts*.
+
+### Play-test round 2 (fill in after classmates use the feedback form)
+- Average fun (1–5):
+- Average learned (1–5):
+- Most common confusion:
+- What I changed because of it:
