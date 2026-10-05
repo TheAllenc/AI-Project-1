@@ -28,6 +28,11 @@
         <p class="muted">Finish a level to open the next one. Be fast and careful to earn ★★★!</p>
       </div>
 
+      <p class="button-row">
+        <button type="button" class="button secondary open-feedback-button">Donner mon avis 💬</button>
+        <button type="button" id="see-feedback-button" class="button secondary" hidden>Voir les avis (owner)</button>
+      </p>
+
       <p class="title-links">
         <a href="vocab-check.html">Vérifier le vocabulaire</a>
         <button type="button" class="sound-button" aria-label="Couper le son (mute)">🔊</button>
@@ -160,7 +165,91 @@
       <p class="button-row">
         <button id="mode-replay-button" class="button">Rejouer ↻</button>
         <button id="mode-levels-button" class="button secondary">Niveaux et jeux</button>
+        <button type="button" class="button secondary open-feedback-button">Donner mon avis 💬</button>
       </p>
+    </section>
+
+    <!-- Feedback form -->
+    <section id="feedback-screen" class="panel" hidden>
+      <h1>Donner mon avis 💬</h1>
+      <p class="subtitle">Help improve the game! Your answers are anonymous.</p>
+      <p id="feedback-offline-note" class="muted" hidden>
+        Your answers can't be saved automatically here, so you'll get a text box to copy and send them.
+      </p>
+
+      <form id="feedback-form" class="feedback-form">
+        <fieldset>
+          <legend>1. C'était amusant ? (How fun was it?)</legend>
+          <div class="rating">
+            <label><input type="radio" name="fun" value="1"> 1</label>
+            <label><input type="radio" name="fun" value="2"> 2</label>
+            <label><input type="radio" name="fun" value="3"> 3</label>
+            <label><input type="radio" name="fun" value="4"> 4</label>
+            <label><input type="radio" name="fun" value="5"> 5</label>
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend>2. Tu as appris des mots ? (Did you learn new words?)</legend>
+          <div class="rating">
+            <label><input type="radio" name="learned" value="1"> 1</label>
+            <label><input type="radio" name="learned" value="2"> 2</label>
+            <label><input type="radio" name="learned" value="3"> 3</label>
+            <label><input type="radio" name="learned" value="4"> 4</label>
+            <label><input type="radio" name="learned" value="5"> 5</label>
+          </div>
+        </fieldset>
+        <label for="feedback-favorite">3. Ta partie préférée ? (Favorite part)</label>
+        <select id="feedback-favorite" name="favorite">
+          <option value="">—</option>
+          <option>Le Petit-Déjeuner</option>
+          <option>Le Goûter</option>
+          <option>Le Déjeuner</option>
+          <option>Le Dîner</option>
+          <option>Le Café</option>
+          <option>La Pluie de Nourriture</option>
+        </select>
+        <label for="feedback-level">4. Ton niveau de français ? (Your French class)</label>
+        <select id="feedback-level" name="frenchLevel">
+          <option value="">—</option>
+          <option>French 1</option>
+          <option>French 2</option>
+          <option>French 3</option>
+          <option>French 4 / AP</option>
+          <option>Not taking French</option>
+        </select>
+        <label for="feedback-confusing">5. Qu'est-ce qui était difficile ou pas clair ? (What was hard or confusing?)</label>
+        <textarea id="feedback-confusing" name="confusing" rows="3" maxlength="1000"></textarea>
+        <label for="feedback-ideas">6. Qu'est-ce qui rendrait le jeu plus amusant ? (What would make it more fun?)</label>
+        <textarea id="feedback-ideas" name="ideas" rows="3" maxlength="1000"></textarea>
+        <p id="feedback-error" class="feedback bad"></p>
+        <p><button type="submit" id="feedback-send" class="button">Envoyer (send)</button></p>
+      </form>
+
+      <div id="feedback-thanks" hidden>
+        <p class="good-text">Merci beaucoup ! Ton avis est envoyé. (Thanks! Your feedback was sent.)</p>
+      </div>
+
+      <div id="feedback-copy" hidden>
+        <p>Copy your answers and send them to the game's creator (message or email):</p>
+        <label for="feedback-copy-text" class="visually-hidden">Your answers</label>
+        <textarea id="feedback-copy-text" rows="8" readonly></textarea>
+        <p><button type="button" id="feedback-copy-button" class="button">Copier (copy)</button></p>
+      </div>
+
+      <p><button type="button" id="feedback-back-button" class="button secondary">← Retour</button></p>
+    </section>
+
+    <!-- Owner only: everyone's feedback -->
+    <section id="feedback-results-screen" class="panel" hidden>
+      <h1>Les avis</h1>
+      <p id="feedback-summary" class="subtitle">Chargement… (loading)</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Date</th><th>Fun / Learned</th><th>Favorite</th><th>Level</th><th>Confusing</th><th>Ideas</th></tr></thead>
+          <tbody id="feedback-rows"></tbody>
+        </table>
+      </div>
+      <p><button type="button" id="feedback-results-back" class="button secondary">← Retour</button></p>
     </section>
 
     <!-- Screen 4: recipe finished -->
@@ -197,6 +286,7 @@
         <button id="practice-button" class="button">Pratiquer ces mots</button>
         <button id="replay-level-button" class="button secondary">Rejouer le niveau ↻</button>
         <button id="levels-button" class="button secondary">Niveaux</button>
+        <button type="button" class="button secondary open-feedback-button">Donner mon avis 💬</button>
       </p>
     </section>
   </main>
@@ -209,5 +299,6 @@
   <script src="js/game.js"></script>
   <script src="js/cafe.js"></script>
   <script src="js/falling.js"></script>
+  <script src="js/feedback.js"></script>
 </body>
 </html>

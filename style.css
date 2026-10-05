@@ -142,6 +142,24 @@ h2 { font-size: 1.2rem; margin: 0.3em 0; }
 
 .section-heading { margin-top: 1.2em; }
 
+/* ---------- Feedback form ---------- */
+.feedback-form { display: flex; flex-direction: column; gap: 10px; max-width: 640px; }
+.feedback-form fieldset { border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; margin: 0; }
+.feedback-form legend { font-weight: bold; padding: 0 4px; }
+.feedback-form > label { font-weight: bold; }
+.rating { display: flex; flex-wrap: wrap; gap: 14px; }
+.rating label { font-size: 1.1rem; cursor: pointer; }
+.feedback-form select, .feedback-form textarea, #feedback-copy-text {
+  font: inherit;
+  padding: 0.4em 0.6em;
+  color: var(--text);
+  background: var(--panel);
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  max-width: 100%;
+}
+#feedback-copy-text { width: 100%; }
+
 /* ---------- Mini-game: Le Café ---------- */
 .customer-card { display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; }
 .customer-face { font-size: 4rem; line-height: 1.1; }
