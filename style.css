@@ -74,7 +74,37 @@ a { color: var(--accent-2); }
 }
 
 /* ---------- Title screen ---------- */
-.title-emoji { font-size: 3rem; letter-spacing: 0.2em; }
+.title-hero { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.chef-title { width: 130px; flex: none; }
+.title-bubble { max-width: 320px; }
+
+/* ---------- The chef (chef.js) ---------- */
+.chef { display: block; width: 100%; height: auto; overflow: visible; }
+.chef .chef-body { animation: chef-bob 2.4s ease-in-out infinite; }
+.chef .chef-eyes { transform-box: fill-box; transform-origin: center; animation: chef-blink 4s infinite; }
+.chef .chef-beard { transform-box: fill-box; transform-origin: top center; animation: chef-beard 2.4s ease-in-out infinite; }
+.chef.cheer .chef-body { animation: chef-cheer 0.6s ease-in-out 3; }
+@keyframes chef-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+@keyframes chef-blink { 0%, 92%, 100% { transform: scaleY(1); } 95% { transform: scaleY(0.1); } }
+@keyframes chef-beard { 0%, 100% { transform: rotate(0); } 50% { transform: rotate(1.5deg); } }
+@keyframes chef-cheer { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+
+/* Speech bubble */
+.speech {
+  margin: 0;
+  padding: 10px 14px;
+  font-weight: bold;
+  background: var(--row-alt);
+  border: 2px solid var(--border);
+  border-radius: 12px;
+}
+
+/* The chef reacting to the stars (recipe and level results) */
+.result-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; }
+.result-main { min-width: 0; }
+.chef-reaction { display: flex; align-items: flex-end; gap: 8px; max-width: 360px; }
+.chef-reaction .speech { flex: 1; min-width: 0; }
+.chef-small { width: 110px; flex: none; }
 .how-to { border-top: 1px solid var(--border); padding-top: 8px; margin-top: 8px; }
 .how-to ol { padding-left: 1.4em; margin: 0.4em 0; }
 .how-to li { margin: 0.25em 0; }
@@ -142,6 +172,89 @@ h2 { font-size: 1.2rem; margin: 0.3em 0; }
 
 .section-heading { margin-top: 1.2em; }
 
+/* ---------- The chef's shop ---------- */
+.shop-top { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.chef-shop { width: 150px; flex: none; }
+.shop-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
+.shop-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 10px;
+  text-align: center;
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  background: var(--panel);
+}
+.shop-card.wearing { border-color: var(--good); }
+.shop-card .button { font-size: 0.9rem; padding: 0.45em 0.8em; margin-top: auto; }
+.shop-card .button:disabled { opacity: 0.45; cursor: default; }
+.shop-preview { width: 80px; }
+.start-over { margin-top: 18px; border-top: 1px solid var(--border); padding-top: 10px; }
+.button.danger { background: var(--accent); }
+.confirm-box { border: 2px solid var(--accent); border-radius: 12px; padding: 8px 14px; }
+
+/* ---------- Mini-game: the chef's maze ---------- */
+.maze-wrap { width: 100%; max-width: 600px; }
+.maze-board {
+  position: relative;
+  background: var(--panel);
+  border-radius: 8px;
+  touch-action: none;
+}
+.maze-wall {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--tile);
+  height: var(--tile);
+  background: var(--accent-2);
+  border-radius: 4px;
+  box-shadow: inset 0 0 0 2px rgba(0, 0, 0, 0.12);
+}
+.maze-sprite {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--tile);
+  height: var(--tile);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(var(--tile) * 0.72);
+  line-height: 1;
+  transition: transform 0.17s linear;
+}
+.maze-sprite.no-slide { transition: none; }
+.maze-mouse { transition-duration: 0.34s; z-index: 2; }
+.maze-food { transition: none; }
+.maze-chef { z-index: 3; }
+.maze-chef-inner { width: 100%; }
+.maze-chef.facing-left .maze-chef-inner { transform: scaleX(-1); }
+.maze-chef.blink { animation: maze-blink 0.25s steps(2) 6; }
+@keyframes maze-blink { 50% { opacity: 0.2; } }
+.dpad {
+  display: grid;
+  grid-template-columns: repeat(3, 54px);
+  grid-template-rows: repeat(2, 48px);
+  gap: 6px;
+  margin: 8px 0;
+}
+.dpad-button {
+  font-size: 1.3rem;
+  color: var(--text);
+  background: var(--row-alt);
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+.dpad-up { grid-column: 2; grid-row: 1; }
+.dpad-left { grid-column: 1; grid-row: 2; }
+.dpad-down { grid-column: 2; grid-row: 2; }
+.dpad-right { grid-column: 3; grid-row: 2; }
+
 /* ---------- Disclaimer (bottom of the title screen) ---------- */
 .disclaimer {
   margin-top: 16px;
@@ -174,16 +287,7 @@ h2 { font-size: 1.2rem; margin: 0.3em 0; }
 /* ---------- Mini-game: Le Café ---------- */
 .customer-card { display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; }
 .customer-face { font-size: 4rem; line-height: 1.1; }
-.speech {
-  position: relative;
-  margin: 0;
-  padding: 10px 14px;
-  font-size: 1.15rem;
-  font-weight: bold;
-  background: var(--row-alt);
-  border: 2px solid var(--border);
-  border-radius: 12px;
-}
+#cafe-order { font-size: 1.15rem; } /* the shared .speech bubble style is defined with the chef */
 .patience { width: 100%; height: 14px; background: var(--row-alt); border: 1px solid var(--border); border-radius: 7px; overflow: hidden; }
 .patience-fill { height: 100%; width: 100%; background: var(--good); transition: width 0.1s linear; }
 .patience-fill.mid { background: var(--warn); }

@@ -8,8 +8,10 @@
 //   type    Level 3: see the picture (or English word), type the French word
 // Level 4 (the menu) mixes them: each course says which mode it uses.
 //
-// The two mini-games (Le Café, falling food) live in cafe.js and falling.js.
-// They unlock after Level 1 and use the helpers in this file.
+// The mini-games (Le Café, falling food, the maze) live in cafe.js, falling.js
+// and maze.js. They unlock after Level 1 and use the helpers in this file.
+// Collected stars and the chef's clothes are saved by progress.js; the chef
+// is drawn by chef.js and dressed in the shop (shop.js).
 //
 // Uses VOCAB/withArticle/getWord (vocab.js), LEVELS/SHELF_SIZE/pickRecipes (recipes.js),
 // targetTime/starsFor/starText (scoring.js), checkTyped/genderArticle (check.js)
@@ -31,7 +33,6 @@ const state = {
   timerId: null,        // the ticking clock, so we can stop it
   results: [],          // one entry per finished recipe: { recipe, seconds, mistakes, stars }
   missed: [],           // ids of words the player got wrong in this level
-  bestStars: {},        // best total stars per level id (only for this visit)
   bestModes: {},        // best score per mini-game id (only for this visit)
   modeReplay: null,     // function that restarts the mini-game just played
 };
@@ -53,6 +54,14 @@ const MINI_GAMES = [
     goal: "Attrape la nourriture qui tombe ! (Catch the falling food that matches the word.)",
     unit: " mots",
     start: () => startFalling(),
+  },
+  {
+    id: "maze",
+    name: "Le Labyrinthe du Chef",
+    emoji: "🧑‍🍳",
+    goal: "Guide le chef dans le labyrinthe et ramasse le bon aliment ! (Steer the chef to the food named at the top.)",
+    unit: " mots",
+    start: () => startMaze(),
   },
 ];
 
@@ -132,9 +141,13 @@ function clueFor(word) {
 
 // ---------- Level select ----------
 
-// A level is open if the level before it was finished.
+// A level is open if the level before it was finished (saved in progress.js).
 function isUnlocked(index) {
-  return index === 0 || state.bestStars[LEVELS[index - 1].id] !== undefined;
+  return index === 0 || isFinished(LEVELS[index - 1]);
+}
+
+function isFinished(level) {
+  return progress.completed[level.id] !== undefined;
 }
 
 function showLevels() {
@@ -148,8 +161,8 @@ function showLevels() {
 
     let status;
     if (!isUnlocked(index)) status = "🔒 Finis le niveau d'avant (finish the level before)";
-    else if (state.bestStars[level.id] !== undefined)
-      status = "Meilleur score : " + state.bestStars[level.id] + " / 9 ★";
+    else if (isFinished(level))
+      status = "✅ Terminé : " + progress.completed[level.id] + " ★ gagnées (finished; no new stars)";
     else status = level.courses ? "3 plats (3 courses)" : "3 recettes au hasard (3 random recipes)";
 
     button.innerHTML =
@@ -163,7 +176,7 @@ function showLevels() {
   });
 
   // The mini-games: locked until Level 1 is finished.
-  const gamesOpen = state.bestStars[LEVELS[0].id] !== undefined;
+  const gamesOpen = isFinished(LEVELS[0]);
   const gameList = document.getElementById("game-list");
   gameList.innerHTML = "";
   for (const game of MINI_GAMES) {
@@ -185,6 +198,7 @@ function showLevels() {
     gameList.appendChild(button);
   }
 
+  renderChefs();
   showScreen("levels-screen");
 }
 
@@ -443,6 +457,7 @@ function finishRecipe() {
   document.getElementById("done-title").textContent =
     "Bravo ! " + capitalize(state.recipe.name) + " : c'est prêt ! " + state.recipe.emoji;
   document.getElementById("done-stars").textContent = starText(stars);
+  showChefReaction("done", stars);
   document.getElementById("done-details").textContent =
     "Temps : " + seconds + " s (objectif : " + targetTime(count, mode) + " s) · " +
     (state.mistakes === 0 ? "aucune erreur !" : "erreurs : " + state.mistakes);
@@ -471,14 +486,21 @@ function showReport() {
   const total = state.results.reduce((sum, r) => sum + r.stars, 0);
   const max = state.results.length * 3;
 
-  // Remember the best score (not for practice rounds).
-  if (!state.level.practice) {
-    const best = state.bestStars[state.level.id];
-    if (best === undefined || total > best) state.bestStars[state.level.id] = total;
+  // Stars go into the collection only the FIRST time a level is finished (not practice).
+  const earnedNote = document.getElementById("report-earned");
+  if (state.level.practice) {
+    earnedNote.textContent = "";
+  } else {
+    const added = earnLevelStars(progress, state.level.id, total);
+    saveProgress();
+    earnedNote.textContent = added > 0
+      ? "⭐ +" + added + " étoiles dans ta collection ! Tu en as " + progress.stars + ". (Spend them in the shop!)"
+      : "Niveau déjà terminé : pas de nouvelles étoiles. (Already finished: no new stars unless you start over.)";
   }
 
   document.getElementById("report-title").textContent = "Bilan : " + state.level.name;
   document.getElementById("report-total").textContent = total + " / " + max + " ★";
+  showChefReaction("report", moodForTotal(total, max));
 
   // One row per recipe.
   const recipeRows = document.getElementById("report-recipes");

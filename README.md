@@ -13,8 +13,13 @@ Each level picks 3 of its 5 recipes at random (Level 4 picks one of two options 
 **Jeux (mini-games)**, unlocked after Level 1:
 - **Le Café**: customers order in French ("Pour moi, la pomme et le lait…"); serve them before their patience runs out.
 - **La Pluie de Nourriture**: click the falling food that matches the French word before it reaches the bottom.
+- **Le Labyrinthe du Chef**: a Pac-Man-style maze. Steer the chef to the food named at the top of the screen, and avoid the mice.
 
-> **Status:** Milestone 5. Play-test version with a feedback form ("Donner mon avis").
+**Chef Barbe**, the mascot, greets you on the main menu and reacts to your stars after every recipe and level.
+
+**Stars and the shop:** the first time you finish a level, its stars (up to 9) go into your collection. Replaying a finished level earns no new stars unless you start over ("Recommencer à zéro" erases levels, stars and clothes). Spend stars in *La Boutique du Chef* on 14 clothes and accessories; the chef wears them on the main menu and in the maze. Progress is saved in your browser.
+
+> **Status:** Milestone 5. Play-test version with a feedback form, a mascot, a star shop, and three mini-games.
 
 ## How to play
 No install needed. Download the folder and double-click **`index.html`**. It runs in any modern browser.
@@ -47,6 +52,10 @@ Open **`vocab-check.html`** to see every word in a table. Rows marked with an or
 | `js/scoring.js` | Star rules (time + mistakes) |
 | `js/check.js` | Checks typed answers (accents, apostrophes, articles) and le/la/les choices |
 | `js/sound.js` | Sound effects (made by the browser, no files) and the mute button |
+| `js/progress.js` | Saved progress: collected stars, finished levels, the chef's clothes |
+| `js/chef.js` | The mascot: clothes list, the SVG drawing, and the chef's messages |
+| `js/shop.js` | The chef's shop, the "start over" button, and drawing the chef on each screen |
+| `js/maze.js` | Mini-game: Le Labyrinthe du Chef (Pac-Man style) |
 | `js/game.js` | Game logic: levels, shelf, clicks, feedback, timer, report, mini-game menu |
 | `js/cafe.js` | Mini-game: Le Café |
 | `js/falling.js` | Mini-game: La Pluie de Nourriture (falling food) |
@@ -55,6 +64,9 @@ Open **`vocab-check.html`** to see every word in a table. Rows marked with an or
 | `tests/recipes.test.js` | Checks every recipe is playable |
 | `tests/scoring.test.js` | Checks the star rules |
 | `tests/check.test.js` | Checks the answer checker |
+| `tests/progress.test.js` | Checks the star collection and shop rules |
+| `tests/chef.test.js` | Checks the clothes list and the chef's messages |
+| `tests/maze.test.js` | Checks the maze can be fully explored and food is always reachable |
 | `PROCESS_LOG.md` | How AI was used in this project (4D framework log) |
 | `CODE_GUIDE.md` | Plain-English walkthrough of the code, for the showcase |
 

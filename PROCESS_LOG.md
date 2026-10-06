@@ -176,3 +176,17 @@ I asked for a disclaimer at the bottom of the homepage saying that **I, Dillon A
 1. **A mascot:** an animated chef with a large beard, at the top of the main menu, and next to the stars after each recipe with a message that matches how well you did (3 stars: "great work"; 1 star: "try again, you got this!").
 2. **A Pac-Man-style mode** where you play as the chef, move around a maze, and collect the food named at the top of the screen.
 3. **Collectible stars:** stars you earn add up, but a level only gives stars the first time you finish it, unless you completely start over. Stars buy clothes for the chef, shown on the main menu and in the maze game.
+
+### Design decisions the AI made (for me to review)
+- **Mascot name:** "Chef Barbe" (*barbe* = beard). He's drawn in SVG with a bobbing, blinking, beard-wiggling animation, and he jumps when you get 3 stars.
+- **Stars per level:** a level is 3 recipes, so the first finish adds up to 9 stars (36 total for 4 levels). Mini-games don't give stars.
+- **"Start over" erases clothes too**, so nobody can reset, earn the stars again, and keep their clothes. It has its own confirmation box.
+- **Saving:** stars and clothes are saved in the player's browser, so they're still there next time (until they start over).
+- **Shop:** 14 items in 4 slots (hats, neck, aprons, extras), costing 3–14 stars. Everything together costs 86 stars, more than the 36 you can earn, so players have to choose.
+- **Maze rules:** collect 8 named foods to win, with 3 hearts. A wrong food or a mouse costs a heart. The right food is always reachable without touching a wrong one (this was a real bug found in testing and fixed).
+- **Chef messages** for 3 stars avoid saying "parfait", because a level can earn the happiest reaction without being perfect (found in testing).
+
+### Play-test notes (fill in after the next play-test)
+- Do players like the chef and the shop?
+- Is the maze too easy or too hard? (Mice speed, 8 foods to win)
+- Are the shop prices fair?

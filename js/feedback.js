@@ -57,7 +57,7 @@ function readFeedbackForm() {
     confusing: (data.get("confusing") || "").trim().slice(0, 1000),
     ideas: (data.get("ideas") || "").trim().slice(0, 1000),
     // What they played, so the answers can be compared with how far they got.
-    levelsFinished: Object.keys(state.bestStars),
+    levelsFinished: Object.keys(progress.completed),
     gamesPlayed: Object.keys(state.bestModes),
     sentAt: new Date().toISOString(),
   };

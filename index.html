@@ -10,11 +10,17 @@
   <main>
     <!-- Screen 1: title -->
     <section id="title-screen" class="panel">
-      <div class="title-emoji">🥖🧀🍓</div>
+      <div class="title-hero">
+        <div class="chef-slot chef-title"></div>
+        <div class="title-bubble speech">Bonjour ! Je suis Chef Barbe. On cuisine ? (Hi! I'm Chef Barbe. Let's cook!)</div>
+      </div>
       <h1>La Cuisine</h1>
       <p class="subtitle">Un jeu pour apprendre le vocabulaire de la nourriture.<br>
         A cooking game for learning French food vocabulary.</p>
-      <p><button id="play-button" class="button">Jouer ▶</button></p>
+      <p class="button-row">
+        <button id="play-button" class="button">Jouer ▶</button>
+        <button type="button" class="button secondary open-shop-button">La Boutique du Chef · ⭐ <span class="star-count">0</span></button>
+      </p>
 
       <div class="how-to">
         <h2>Comment jouer <span class="muted">(how to play)</span></h2>
@@ -24,7 +30,8 @@
           <li><strong>Le Déjeuner :</strong> see the picture, type the French word.</li>
           <li><strong>Le Dîner :</strong> cook a whole menu: l'entrée, le plat principal, le dessert.</li>
         </ol>
-        <p><strong>Jeux :</strong> finish Level 1 to open two mini-games: <em>Le Café</em> (serve customers who order in French) and <em>La Pluie de Nourriture</em> (catch the falling food).</p>
+        <p><strong>Jeux :</strong> finish Level 1 to open three mini-games: <em>Le Café</em> (serve customers who order in French), <em>La Pluie de Nourriture</em> (catch the falling food) and <em>Le Labyrinthe du Chef</em> (steer the chef to the right food).</p>
+        <p><strong>⭐ Étoiles :</strong> the first time you finish a level, its stars go into your collection. Spend them in <em>La Boutique du Chef</em> to dress up the chef!</p>
         <p class="muted">Finish a level to open the next one. Be fast and careful to earn ★★★!</p>
       </div>
 
@@ -51,6 +58,9 @@
     <section id="levels-screen" hidden>
       <h1>Choisis un niveau</h1>
       <p class="subtitle">Choose a level. Finish a level to open the next one.</p>
+      <p class="button-row">
+        <button type="button" class="button secondary open-shop-button">La Boutique du Chef · ⭐ <span class="star-count">0</span></button>
+      </p>
       <div id="level-list" class="level-list"></div>
       <h2 class="section-heading">Jeux <span class="muted">(mini-games)</span></h2>
       <div id="game-list" class="level-list"></div>
@@ -158,6 +168,57 @@
       <p><button id="fall-quit-button" class="button secondary">Quitter</button></p>
     </section>
 
+    <!-- Mini-game: the chef's maze -->
+    <section id="maze-screen" hidden>
+      <div class="kitchen-top">
+        <p class="level-tag">🧑‍🍳 Le Labyrinthe du Chef</p>
+        <p class="timer"><span id="maze-status"></span>
+          <button type="button" class="sound-button" aria-label="Couper le son (mute)">🔊</button></p>
+      </div>
+      <p class="prompt">Ramasse : <span id="maze-target" class="fall-target"></span></p>
+      <div class="maze-wrap">
+        <div id="maze-board" class="maze-board"></div>
+      </div>
+      <p id="maze-feedback" class="feedback" aria-live="polite"></p>
+      <div class="dpad" aria-label="Flèches (arrows)">
+        <button type="button" class="dpad-button dpad-up" data-dir="up" aria-label="haut (up)">▲</button>
+        <button type="button" class="dpad-button dpad-left" data-dir="left" aria-label="gauche (left)">◀</button>
+        <button type="button" class="dpad-button dpad-right" data-dir="right" aria-label="droite (right)">▶</button>
+        <button type="button" class="dpad-button dpad-down" data-dir="down" aria-label="bas (down)">▼</button>
+      </div>
+      <p class="muted">Flèches du clavier ou W A S D. Évite les souris 🐭 ! (Arrow keys or WASD. Avoid the mice!)</p>
+      <p><button id="maze-quit-button" class="button secondary">Quitter</button></p>
+    </section>
+
+    <!-- The chef's shop -->
+    <section id="shop-screen" class="panel" hidden>
+      <h1>La Boutique du Chef</h1>
+      <div class="shop-top">
+        <div class="chef-slot chef-shop"></div>
+        <div>
+          <p class="stars-big">⭐ <span class="star-count">0</span></p>
+          <p class="muted">Gagne des étoiles en finissant des niveaux (une seule fois par niveau).<br>
+            Earn stars by finishing levels (once per level), then dress up the chef!</p>
+          <p id="shop-message" class="good-text" aria-live="polite"></p>
+        </div>
+      </div>
+      <div id="shop-items"></div>
+      <div class="start-over">
+        <p class="button-row">
+          <button type="button" id="shop-levels-button" class="button">Jouer ▶</button>
+          <button type="button" id="shop-back-button" class="button secondary">← Retour</button>
+          <button type="button" id="start-over-button" class="button danger">Recommencer à zéro (start over)</button>
+        </p>
+        <div id="start-over-confirm" class="confirm-box" hidden>
+          <p><strong>Tout effacer ?</strong> Your finished levels, stars and clothes will all be erased. Then you can earn the stars again.</p>
+          <p class="button-row">
+            <button type="button" id="start-over-yes" class="button danger">Oui, tout effacer (yes, erase)</button>
+            <button type="button" id="start-over-cancel" class="button secondary">Non (cancel)</button>
+          </p>
+        </div>
+      </div>
+    </section>
+
     <!-- Mini-game results -->
     <section id="mode-result-screen" class="panel" hidden>
       <h1 id="mode-title"></h1>
@@ -263,15 +324,32 @@
     <!-- Screen 4: recipe finished -->
     <section id="done-screen" class="panel" hidden>
       <h1 id="done-title"></h1>
-      <p id="done-stars" class="stars-big"></p>
-      <p id="done-details"></p>
+      <div class="result-row">
+        <div class="result-main">
+          <p id="done-stars" class="stars-big"></p>
+          <p id="done-details"></p>
+        </div>
+        <div class="chef-reaction">
+          <p id="done-chef-says" class="speech" aria-live="polite"></p>
+          <div id="done-chef" class="chef-small"></div>
+        </div>
+      </div>
       <p><button id="next-button" class="button">Recette suivante →</button></p>
     </section>
 
     <!-- Screen 5: end-of-level report -->
     <section id="report-screen" class="panel" hidden>
       <h1 id="report-title"></h1>
-      <p class="stars-big" id="report-total"></p>
+      <div class="result-row">
+        <div class="result-main">
+          <p class="stars-big" id="report-total"></p>
+          <p id="report-earned" class="good-text"></p>
+        </div>
+        <div class="chef-reaction">
+          <p id="report-chef-says" class="speech" aria-live="polite"></p>
+          <div id="report-chef" class="chef-small"></div>
+        </div>
+      </div>
 
       <div class="table-wrap">
         <table>
@@ -304,9 +382,13 @@
   <script src="js/scoring.js"></script>
   <script src="js/check.js"></script>
   <script src="js/sound.js"></script>
+  <script src="js/progress.js"></script>
+  <script src="js/chef.js"></script>
   <script src="js/game.js"></script>
   <script src="js/cafe.js"></script>
   <script src="js/falling.js"></script>
+  <script src="js/maze.js"></script>
+  <script src="js/shop.js"></script>
   <script src="js/feedback.js"></script>
 </body>
 </html>

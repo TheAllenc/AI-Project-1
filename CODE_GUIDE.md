@@ -98,12 +98,37 @@ sound.js ─┘     └── showScreen, shuffle, pictureFoods, addRow…
 
 ---
 
+### `js/progress.js`: collected stars and clothes
+- `progress` holds `completed` (levels finished and the stars they gave), `stars` (to spend), `owned` (clothes bought) and `wearing` (one item per slot).
+- `earnLevelStars(p, levelId, stars)` adds stars **only the first time** a level is finished, and returns 0 after that. This is the rule that stops players from farming stars by replaying.
+- `buyItem` and `toggleWear` are the shop rules. `startOver()` erases everything, clothes included.
+- It's saved with `localStorage` (in the player's browser) inside `try/catch`, so the game still works if the browser blocks saving.
+
+### `js/chef.js`: the mascot
+- `drawChef(wearing)` builds the chef as SVG text, in layers: body → apron → face → beard → neck item → hat → accessory. Each clothing item in `CLOTHES_SVG` is one small piece of SVG, so dressing him up just swaps pieces in.
+- The animation (bobbing, blinking, beard wiggle, a jump for 3 stars) is CSS in `style.css`.
+- `chefSays(stars)` picks a message that matches 1, 2 or 3 stars. `moodForTotal` turns a level total (e.g. 7/9) into a 1–3 mood.
+
+### `js/shop.js`: the shop
+- `renderChefs()` redraws every chef on the page (anything with class `chef-slot`) in his current clothes.
+- `showChefReaction()` puts the chef and his message next to the stars.
+- The "start over" button shows its own confirmation box, because browser pop-up confirmations are blocked on the published page.
+
+### `js/maze.js`: Le Labyrinthe du Chef
+- `MAZE` is the map as text: `#` is a wall and `.` is a path.
+- Pac-Man movement: the arrow keys set `chef.next`; every 170 ms `chefStep()` turns if it can, then moves one square. The chef keeps going until a wall.
+- Mice move every 340 ms. `mouseDirection()` never turns straight back, and half the time it heads toward the chef.
+- `pickFoodSquares()` uses a breadth-first search (`canReach`) to make sure the right food can always be reached **without walking over another food**, so the game is always fair.
+- The board is HTML squares (not a canvas), so the chef wears the same SVG clothes as everywhere else.
+
 ## Tests (`tests/`)
 
-Run `node --test`. There are 34 automatic checks, including:
+Run `node --test`. There are 52 automatic checks, including:
 - **Vocab:** no duplicate ids; articles match genders; no two words share an emoji.
 - **Recipes:** every ingredient exists; picture levels only use words with emoji; English clues never equal the French answer; each game picks 3 different recipes.
 - **Scoring and checking:** star rules and accent/article rules give the expected answers.
+- **Progress:** a level's stars count only once; you can't buy what you can't afford.
+- **Maze:** every path square is reachable, and in 2,000 random layouts the right food is always reachable without touching another one.
 
 **Why tests matter for the 4D framework (Diligence):** they catch mistakes automatically every time something changes. A real example: a test blocks any picture-level recipe that uses a word with no emoji.
 
@@ -130,4 +155,7 @@ It counts as a mistake, but the game tells you what you clicked ("Ça, c'est le 
 Three friends said it was boring and needed more to do, and one suggested new game modes. I added two mini-games (Le Café and falling food) and more recipes, chosen at random so every game is different.
 
 **"Where is progress saved?"**
-Best scores last only while the page is open (a design choice to keep it simple). Feedback answers are saved online.
+Collected stars, finished levels and the chef's clothes are saved in the player's own browser (`localStorage`). Feedback answers are saved online, and only I can read them.
+
+**"Can't players just replay a level to get more stars?"**
+No. `earnLevelStars` only gives a level's stars the first time. The only way to earn them again is "start over", which also erases the clothes you bought.
