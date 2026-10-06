@@ -310,6 +310,8 @@ function endMaze(won) {
     scoreText: maze.score + " / " + MAZE_GOAL + (maze.score === 1 ? " aliment ramassé" : " aliments ramassés") + " (foods collected)",
     lines: [won ? "Tu as tout ramassé ! (You collected them all!)" : "Plus de cœurs. Essaie encore ! (Out of hearts. Try again!)"],
     missed: maze.missed,
+    completed: won,
+    goal: "ramasse les " + MAZE_GOAL + " aliments (collect all " + MAZE_GOAL + " foods)",
     replay: startMaze,
   });
 }

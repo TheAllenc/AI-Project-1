@@ -7,11 +7,13 @@
 //   Wrong food clicked      → lose a heart
 //   Right food falls past   → lose a heart
 // 3 hearts. The game gets faster as your score goes up.
+// Catching FALL_GOAL foods completes the game (1 star, the first time).
 // Uses helpers from game.js: showScreen, shuffle, pictureFoods,
 // showModeResult, playSound, withArticle.
 // ============================================================
 
 const FALL_LIVES = 3;
+const FALL_GOAL = 10;             // foods to catch to complete the game
 const FALL_START_SPEED = 55;      // pixels per second at the start
 const FALL_SPEED_STEP = 7;        // faster after each catch...
 const FALL_MAX_SPEED = 190;       // ...up to this speed
@@ -157,6 +159,8 @@ function endFalling() {
     scoreText: fall.score + (fall.score === 1 ? " mot attrapé" : " mots attrapés") + " (words caught)",
     lines: [],
     missed: fall.missed,
+    completed: fall.score >= FALL_GOAL,
+    goal: "attrape " + FALL_GOAL + " aliments (catch " + FALL_GOAL + " foods)",
     replay: startFalling,
   });
 }

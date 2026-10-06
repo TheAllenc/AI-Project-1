@@ -5,12 +5,14 @@
 // A round is 8 customers. If 3 customers leave angry, the round ends early.
 // Orders get bigger as the round goes on (1 item, then 2, then 3).
 // Fast service earns a bigger tip (pourboire) in euros.
+// Serving at least CAFE_GOAL customers completes the game (1 star, the first time).
 // Uses helpers from game.js: showScreen, shuffle, pictureFoods, pickDistractors,
 // showModeResult, playSound, withArticle.
 // ============================================================
 
 const CAFE_CUSTOMERS = 8;           // customers per round
 const CAFE_LIVES = 3;               // angry customers allowed
+const CAFE_GOAL = 5;                // customers to serve to complete the game
 const CAFE_SECONDS_BASE = 8;        // patience: base seconds...
 const CAFE_SECONDS_PER_ITEM = 5;    // ...plus this many per item ordered
 const CAFE_WRONG_PENALTY = 3;       // seconds of patience lost for a wrong item
@@ -173,6 +175,8 @@ function endCafe() {
       "Clients partis (left angry) : " + cafe.lost,
     ],
     missed: cafe.missed,
+    completed: cafe.served >= CAFE_GOAL,
+    goal: "sers au moins " + CAFE_GOAL + " clients (serve at least " + CAFE_GOAL + " customers)",
     replay: startCafe,
   });
 }

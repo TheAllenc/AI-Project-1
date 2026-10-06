@@ -16,6 +16,10 @@
 //               (words with null only appear in typing rounds, with the
 //               English word as the clue instead of a picture)
 //   categories  which section(s) of the vocabulary list the word is in
+//   clue        (optional) the English hint shown in typing rounds when the
+//               plain English would confuse players or give the answer away
+//               (false friends like "prune", look-alikes like "dessert",
+//               or two words with the same English, like the two "toast"s)
 //   verify      (optional) a note about something a human must double-check
 // ============================================================
 
@@ -26,16 +30,16 @@ const VOCAB = [
   { id: "dejeuner", fr: "déjeuner", article: "le", gender: "m", plural: false, en: "lunch", emoji: null, categories: ["meals"] },
   { id: "diner", fr: "dîner", article: "le", gender: "m", plural: false, en: "dinner", emoji: null, categories: ["meals"] },
   { id: "gouter", fr: "goûter", article: "le", gender: "m", plural: false, en: "after-school snack", emoji: null, categories: ["meals"] },
-  { id: "hors-doeuvre", fr: "hors d’œuvre", article: "le", gender: "m", plural: false, en: "appetizer, starter", emoji: null, categories: ["meals"] },
-  { id: "entree", fr: "entrée", article: "l'", gender: "f", plural: false, en: "starter", emoji: null, categories: ["meals"] },
+  { id: "hors-doeuvre", fr: "hors d’œuvre", article: "le", gender: "m", plural: false, en: "appetizer, starter", emoji: null, categories: ["meals"], clue: "small bites served before a meal (appetizer)" },
+  { id: "entree", fr: "entrée", article: "l'", gender: "f", plural: false, en: "starter", emoji: null, categories: ["meals"], clue: "the first course of a meal (starter)" },
   { id: "soupe", fr: "soupe", article: "la", gender: "f", plural: false, en: "soup", emoji: "🍲", categories: ["meals"] },
-  { id: "potage", fr: "potage", article: "le", gender: "m", plural: false, en: "soup", emoji: null, categories: ["meals"] },
+  { id: "potage", fr: "potage", article: "le", gender: "m", plural: false, en: "soup", emoji: null, categories: ["meals"], clue: "a smooth, blended vegetable soup" },
   { id: "plat-principal", fr: "plat principal", article: "le", gender: "m", plural: false, en: "main course", emoji: null, categories: ["meals"] },
   { id: "salade", fr: "salade", article: "la", gender: "f", plural: false, en: "salad", emoji: "🥗", categories: ["meals"] },
-  { id: "dessert", fr: "dessert", article: "le", gender: "m", plural: false, en: "dessert", emoji: null, categories: ["meals"] },
+  { id: "dessert", fr: "dessert", article: "le", gender: "m", plural: false, en: "dessert", emoji: null, categories: ["meals"], clue: "the sweet course at the end of a meal" },
   { id: "cuisine", fr: "cuisine", article: "la", gender: "f", plural: false, en: "kitchen, cooking", emoji: null, categories: ["meals"] },
   { id: "salle-a-manger", fr: "salle à manger", article: "la", gender: "f", plural: false, en: "dining room", emoji: null, categories: ["meals"] },
-  { id: "restaurant", fr: "restaurant", article: "le", gender: "m", plural: false, en: "restaurant", emoji: null, categories: ["meals"] },
+  { id: "restaurant", fr: "restaurant", article: "le", gender: "m", plural: false, en: "restaurant", emoji: null, categories: ["meals"], clue: "a place where you pay to eat a meal" },
 
   // ---------- Verbs ----------
   // Verbs have no article or gender.
@@ -66,10 +70,10 @@ const VOCAB = [
   { id: "peche", fr: "pêche", article: "la", gender: "f", plural: false, en: "peach", emoji: "🍑", categories: ["fruits"] },
   { id: "poire", fr: "poire", article: "la", gender: "f", plural: false, en: "pear", emoji: "🍐", categories: ["fruits"] },
   { id: "pomme", fr: "pomme", article: "la", gender: "f", plural: false, en: "apple", emoji: "🍎", categories: ["fruits"] },
-  { id: "prune", fr: "prune", article: "la", gender: "f", plural: false, en: "plum", emoji: null, categories: ["fruits"] },
-  { id: "pruneau", fr: "pruneau", article: "le", gender: "m", plural: false, en: "prune", emoji: null, categories: ["fruits"] },
+  { id: "prune", fr: "prune", article: "la", gender: "f", plural: false, en: "plum", emoji: null, categories: ["fruits"], clue: "plum (careful: not a dried one!)" },
+  { id: "pruneau", fr: "pruneau", article: "le", gender: "m", plural: false, en: "prune", emoji: null, categories: ["fruits"], clue: "a dried plum" },
   { id: "raisin", fr: "raisin", article: "le", gender: "m", plural: false, en: "grape", emoji: "🍇", categories: ["fruits"] },
-  { id: "raisin-sec", fr: "raisin sec", article: "le", gender: "m", plural: false, en: "raisin", emoji: null, categories: ["fruits"] },
+  { id: "raisin-sec", fr: "raisin sec", article: "le", gender: "m", plural: false, en: "raisin", emoji: null, categories: ["fruits"], clue: "a dried grape" },
 
   // ---------- Les légumes (m) ----------
   { id: "ail", fr: "ail", article: "l'", gender: "m", plural: false, en: "garlic", emoji: "🧄", categories: ["vegetables"] },
@@ -96,8 +100,8 @@ const VOCAB = [
   { id: "poireau", fr: "poireau", article: "le", gender: "m", plural: false, en: "leek", emoji: null, categories: ["vegetables"] },
   { id: "poivron", fr: "poivron", article: "le", gender: "m", plural: false, en: "bell pepper", emoji: "🫑", categories: ["vegetables"] },
   { id: "pomme-de-terre", fr: "pomme de terre", article: "la", gender: "f", plural: false, en: "potato", emoji: "🥔", categories: ["vegetables"] },
-  { id: "potiron", fr: "potiron", article: "le", gender: "m", plural: false, en: "pumpkin (oval, somewhat flat)", emoji: null, categories: ["vegetables"] }, // 🎃 is used for la citrouille
-  { id: "radis", fr: "radis", article: "le", gender: "m", plural: false, en: "radish", emoji: null, categories: ["vegetables"] },
+  { id: "potiron", fr: "potiron", article: "le", gender: "m", plural: false, en: "pumpkin (oval, somewhat flat)", emoji: null, categories: ["vegetables"], clue: "a big, flat, oval pumpkin" }, // 🎃 is used for la citrouille
+  { id: "radis", fr: "radis", article: "le", gender: "m", plural: false, en: "radish", emoji: null, categories: ["vegetables"], clue: "a small, red, crunchy root vegetable" },
   { id: "roquette", fr: "roquette", article: "la", gender: "f", plural: false, en: "arugula", emoji: null, categories: ["vegetables"] },
   { id: "tomate", fr: "tomate", article: "la", gender: "f", plural: false, en: "tomato", emoji: "🍅", categories: ["vegetables"] },
 
@@ -133,9 +137,9 @@ const VOCAB = [
   { id: "biscuit", fr: "biscuit", article: "le", gender: "m", plural: false, en: "cookie", emoji: "🍪", categories: ["dessert"] },
   { id: "bonbons", fr: "bonbons", article: "les", gender: "m", plural: true, en: "candy", emoji: "🍬", categories: ["dessert"] },
   { id: "chocolat", fr: "chocolat", article: "le", gender: "m", plural: false, en: "chocolate", emoji: "🍫", categories: ["dessert"] },
-  { id: "creme-brulee", fr: "crème brûlée", article: "la", gender: "f", plural: false, en: "custard w/ burnt sugar", emoji: null, categories: ["dessert"] },
+  { id: "creme-brulee", fr: "crème brûlée", article: "la", gender: "f", plural: false, en: "custard w/ burnt sugar", emoji: null, categories: ["dessert"], clue: "a custard with a crunchy burnt-sugar top" },
   { id: "creme-caramel", fr: "crème caramel", article: "la", gender: "f", plural: false, en: "flan", emoji: "🍮", categories: ["dessert"] },
-  { id: "fruits", fr: "fruits", article: "les", gender: "m", plural: true, en: "fruit", emoji: null, categories: ["dessert"] },
+  { id: "fruits", fr: "fruits", article: "les", gender: "m", plural: true, en: "fruit", emoji: null, categories: ["dessert"], clue: "fruit, in general (plural)" },
   { id: "gateau", fr: "gâteau", article: "le", gender: "m", plural: false, en: "cake", emoji: "🍰", categories: ["dessert"] },
   { id: "mousse-au-chocolat", fr: "mousse au chocolat", article: "la", gender: "f", plural: false, en: "chocolate mousse", emoji: null, categories: ["dessert"] },
   { id: "tarte", fr: "tarte", article: "la", gender: "f", plural: false, en: "pie", emoji: "🥧", categories: ["dessert"] },
@@ -148,20 +152,20 @@ const VOCAB = [
   { id: "frites", fr: "frites", article: "les", gender: "f", plural: true, en: "fries / chips", emoji: "🍟", categories: ["other"],
     verify: "Class list says 'chips' (British English for fries). Shown as 'fries / chips'." },
   { id: "huile-dolive", fr: "huile d’olive", article: "l'", gender: "f", plural: false, en: "olive oil", emoji: null, categories: ["other"] },
-  { id: "mayonnaise", fr: "mayonnaise", article: "la", gender: "f", plural: false, en: "mayonnaise", emoji: null, categories: ["other"] },
+  { id: "mayonnaise", fr: "mayonnaise", article: "la", gender: "f", plural: false, en: "mayonnaise", emoji: null, categories: ["other"], clue: "a creamy white spread made from egg yolk and oil" },
   { id: "miel", fr: "miel", article: "le", gender: "m", plural: false, en: "honey", emoji: "🍯", categories: ["other"] },
   { id: "moutarde", fr: "moutarde", article: "la", gender: "f", plural: false, en: "mustard", emoji: null, categories: ["other"] },
   { id: "oeuf", fr: "œuf", article: "un", gender: "m", plural: false, en: "egg (des œufs = eggs)", emoji: "🥚", categories: ["other"] },
   { id: "pain", fr: "pain", article: "le", gender: "m", plural: false, en: "bread", emoji: "🥖", categories: ["other"] },
-  { id: "pain-grille", fr: "pain grillé", article: "le", gender: "m", plural: false, en: "toast", emoji: null, categories: ["other"] },
-  { id: "pate-a-tartiner", fr: "pâte à tartiner", article: "la", gender: "f", plural: false, en: "~ toast spread, like Nutella or peanut butter", emoji: null, categories: ["other"] },
+  { id: "pain-grille", fr: "pain grillé", article: "le", gender: "m", plural: false, en: "toast", emoji: null, categories: ["other"], clue: "bread browned in a toaster" },
+  { id: "pate-a-tartiner", fr: "pâte à tartiner", article: "la", gender: "f", plural: false, en: "~ toast spread, like Nutella or peanut butter", emoji: null, categories: ["other"], clue: "a sweet spread, like Nutella" },
   { id: "pates", fr: "pâtes", article: "les", gender: "f", plural: true, en: "pasta", emoji: "🍝", categories: ["other"] },
   { id: "poivre", fr: "poivre", article: "le", gender: "m", plural: false, en: "pepper", emoji: null, categories: ["other"] },
   { id: "riz", fr: "riz", article: "le", gender: "m", plural: false, en: "rice", emoji: "🍚", categories: ["other"] },
-  { id: "sauce", fr: "sauce", article: "la", gender: "f", plural: false, en: "sauce, dressing, gravy", emoji: null, categories: ["other"] },
+  { id: "sauce", fr: "sauce", article: "la", gender: "f", plural: false, en: "sauce, dressing, gravy", emoji: null, categories: ["other"], clue: "a liquid poured on food (dressing, gravy)" },
   { id: "sel", fr: "sel", article: "le", gender: "m", plural: false, en: "salt", emoji: "🧂", categories: ["other"] },
   { id: "sucre", fr: "sucre", article: "le", gender: "m", plural: false, en: "sugar", emoji: null, categories: ["other"] },
-  { id: "tartine", fr: "tartine", article: "la", gender: "f", plural: false, en: "toast", emoji: null, categories: ["other"],
+  { id: "tartine", fr: "tartine", article: "la", gender: "f", plural: false, en: "toast", emoji: null, categories: ["other"], clue: "a slice of bread with butter or jam on it",
     verify: "Class list says 'toast' for both le pain grillé and la tartine. A tartine is usually a slice of bread with a spread — keep as 'toast'?" },
 ];
 

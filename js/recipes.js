@@ -5,7 +5,10 @@
 // Levels 1–3 have a POOL of recipes; each time you play, the game picks
 // 3 of them at random, so every game is a bit different.
 // Level 4 is a menu with 3 courses (from vocab.js: entree, plat-principal,
-// dessert). Each course has 2 options and the game picks one of each.
+// dessert). Each course has several options and the game picks one of each.
+// Level 5 is "Le Restaurant": the meal words, the verbs, and more dishes.
+//
+// EVERY word in vocab.js appears in at least one recipe (a test checks this).
 //
 // Rules the tests check automatically:
 //   - Picture modes (click, gender) need an emoji for every ingredient.
@@ -40,6 +43,7 @@ const LEVELS = [
       { name: "un goûter d'anniversaire", emoji: "🎂", ingredients: ["gateau", "bonbons", "lait"] },
       { name: "un panier de fruits d'été", emoji: "🧺", ingredients: ["pasteque", "peche", "cerise", "melon"] },
       { name: "un plateau de desserts", emoji: "🍰", ingredients: ["tarte", "creme-caramel", "biscuit", "bonbons", "glace"] },
+      { name: "un goûter d'automne", emoji: "🍂", ingredients: ["citrouille", "patate-douce", "pomme", "raisin"] },
     ],
   },
   {
@@ -54,6 +58,10 @@ const LEVELS = [
       { name: "des pâtes à la tomate", emoji: "🍝", ingredients: ["pates", "tomate", "ail", "huile-dolive", "fromage"] },
       { name: "un steak-frites", emoji: "🥩", ingredients: ["bifteck", "frites", "moutarde", "sel", "poivre"] },
       { name: "une ratatouille", emoji: "🍆", ingredients: ["aubergine", "courgette", "poivron", "tomate", "oignon"] },
+      { name: "une salade niçoise", emoji: "🥗", ingredients: ["anchois", "tomate", "oeuf", "laitue", "huile-dolive"] },
+      { name: "une salade du jardin", emoji: "🌱", ingredients: ["roquette", "epinards", "radis", "betterave", "asperges"] },
+      { name: "un gratin de légumes", emoji: "🧀", ingredients: ["chou-fleur", "courge", "potiron", "igname", "petits-pois", "artichaut"] },
+      { name: "un buffet de viandes froides", emoji: "🍖", ingredients: ["rosbif", "porc", "veau", "agneau", "saucisson", "mayonnaise"] },
     ],
   },
   {
@@ -67,20 +75,44 @@ const LEVELS = [
         course: "entree", mode: "gender", options: [
           { name: "une salade composée", emoji: "🥗", ingredients: ["laitue", "tomate", "concombre", "mais", "champignon"] },
           { name: "une soupe à l'oignon", emoji: "🍲", ingredients: ["oignon", "beurre", "pain", "fromage"] },
+          { name: "des escargots au beurre", emoji: "🐌", ingredients: ["escargots", "beurre", "ail", "pain"] },
         ],
       },
       {
         course: "plat-principal", mode: "type", options: [
           { name: "un poulet rôti aux légumes", emoji: "🍗", ingredients: ["poulet", "pomme-de-terre", "haricot", "courgette", "ail"] },
           { name: "un canard à l'orange", emoji: "🦆", ingredients: ["canard", "orange", "sucre", "beurre"] },
+          { name: "un lapin à la moutarde", emoji: "🐇", ingredients: ["lapin", "moutarde", "creme-fraiche", "oignon", "champignon"] },
+          { name: "un poisson au riz", emoji: "🐟", ingredients: ["poisson", "riz", "citron-vert", "sauce", "poivre"] },
+          { name: "une dinde rôtie", emoji: "🦃", ingredients: ["dinde", "patate-douce", "petits-pois", "beurre", "sel"] },
         ],
       },
       {
         course: "dessert", mode: "type", options: [
           { name: "une tarte aux fraises", emoji: "🥧", ingredients: ["farine", "beurre", "sucre", "oeuf", "fraise"] },
           { name: "une mousse au chocolat", emoji: "🍫", ingredients: ["chocolat", "oeuf", "sucre", "creme"] },
+          { name: "une crème brûlée", emoji: "🍮", ingredients: ["creme", "oeuf", "sucre", "vanille"] },
+          { name: "le chariot des desserts", emoji: "🛒", ingredients: ["creme-brulee", "mousse-au-chocolat", "fruits", "gateau", "glace"] },
         ],
       },
+    ],
+  },
+  {
+    id: "restaurant",
+    name: "Le Restaurant",
+    emoji: "🍷",
+    goal: "Les repas, la carte et les verbes ! (Meals, the menu and verbs: typing.)",
+    mode: "type",
+    recipes: [
+      { name: "les repas de la journée", emoji: "🕗", ingredients: ["petit-dejeuner", "dejeuner", "gouter", "diner", "repas"] },
+      { name: "la carte du restaurant", emoji: "📜", ingredients: ["hors-doeuvre", "entree", "plat-principal", "dessert", "soupe", "salade"] },
+      { name: "J'ai faim ! (les verbes)", emoji: "😋", ingredients: ["avoir-faim", "manger", "dejeuner-v", "diner-v", "gouter-v"] },
+      { name: "à la maison et au restaurant", emoji: "🏠", ingredients: ["cuisine", "salle-a-manger", "restaurant", "potage", "sauce"] },
+      { name: "un petit-déjeuner à la française", emoji: "🥐", ingredients: ["tartine", "pain-grille", "confiture", "pate-a-tartiner", "beurre"] },
+      { name: "une compote de fruits", emoji: "🫙", ingredients: ["abricot", "prune", "pruneau", "raisin-sec", "framboise", "mure"] },
+      { name: "une salade de fruits d'hiver", emoji: "🍊", ingredients: ["mandarine", "pamplemousse", "grenade", "figue", "citron-vert"] },
+      { name: "des crêpes au babeurre", emoji: "🥞", ingredients: ["babeurre", "farine", "oeuf", "sucre", "beurre"] },
+      { name: "un bol de yaourt", emoji: "🥛", ingredients: ["yaourt", "fromage-blanc", "miel", "myrtille"] },
     ],
   },
 ];

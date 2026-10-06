@@ -2,7 +2,7 @@
 // Run with:  node --test
 const test = require("node:test");
 const assert = require("node:assert");
-const { getWord } = require("../js/vocab.js");
+const { VOCAB, getWord } = require("../js/vocab.js");
 const { LEVELS, RECIPES_PER_LEVEL, SHELF_SIZE, pickRecipes, allRecipesOf } = require("../js/recipes.js");
 const { SECONDS_PER_INGREDIENT } = require("../js/scoring.js");
 
@@ -71,14 +71,35 @@ test("gender-level ingredients are nouns (they have a gender)", () => {
   }
 });
 
+// The text clue a typing round shows for a word with no emoji.
+const textClue = (word) => word.clue || word.en;
+const plain = (t) => t.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[’']/g, "").toLowerCase();
+
 test("typing clues never give the answer away", () => {
-  // A word with no emoji shows its English meaning as the clue,
-  // so the English must not be the same as the French (e.g. "sauce").
-  const plain = (t) => t.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+  // A word with no emoji shows English as the clue, so it must not contain
+  // the French word (e.g. "dessert" or "sauce" need a description instead).
   for (const { recipe } of allRecipes.filter((r) => r.mode === "type")) {
     for (const id of recipe.ingredients) {
       const word = getWord(id);
-      if (!word.emoji) assert.notStrictEqual(plain(word.en), plain(word.fr), `"${id}" clue is the answer`);
+      if (!word.emoji) assert.ok(!plain(textClue(word)).includes(plain(word.fr)), `"${id}" clue gives the answer away`);
     }
   }
+});
+
+test("no two typed words have the same clue (so each answer is clear)", () => {
+  const seen = {};
+  for (const { recipe } of allRecipes.filter((r) => r.mode === "type")) {
+    for (const id of recipe.ingredients) {
+      const word = getWord(id);
+      const clue = word.emoji || plain(textClue(word));
+      assert.ok(!seen[clue] || seen[clue] === id, `"${id}" and "${seen[clue]}" share the clue "${clue}"`);
+      seen[clue] = id;
+    }
+  }
+});
+
+test("EVERY word on the vocabulary list is used in the game", () => {
+  const used = new Set(allRecipes.flatMap(({ recipe }) => recipe.ingredients));
+  const missing = VOCAB.filter((w) => !used.has(w.id)).map((w) => w.id);
+  assert.deepStrictEqual(missing, [], "these words are not in any recipe: " + missing.join(", "));
 });

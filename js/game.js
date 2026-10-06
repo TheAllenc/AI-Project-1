@@ -134,9 +134,10 @@ function addMissed(word) {
   if (!state.missed.includes(word.id)) state.missed.push(word.id);
 }
 
-// The clue for typing: the picture, or the English word if there's no picture.
+// The clue for typing: the picture, or the English if there's no picture.
+// Some words have a special clue (vocab.js) so the English isn't confusing.
 function clueFor(word) {
-  return word.emoji || "“" + word.en + "”";
+  return word.emoji || "“" + (word.clue || word.en) + "”";
 }
 
 // ---------- Level select ----------
@@ -457,7 +458,7 @@ function finishRecipe() {
   document.getElementById("done-title").textContent =
     "Bravo ! " + capitalize(state.recipe.name) + " : c'est prêt ! " + state.recipe.emoji;
   document.getElementById("done-stars").textContent = starText(stars);
-  showChefReaction("done", stars);
+  showChefReaction("done", moodForTotal(stars, MAX_STARS));
   document.getElementById("done-details").textContent =
     "Temps : " + seconds + " s (objectif : " + targetTime(count, mode) + " s) · " +
     (state.mistakes === 0 ? "aucune erreur !" : "erreurs : " + state.mistakes);
@@ -484,7 +485,7 @@ function nextRecipe() {
 
 function showReport() {
   const total = state.results.reduce((sum, r) => sum + r.stars, 0);
-  const max = state.results.length * 3;
+  const max = state.results.length * MAX_STARS;
 
   // Stars go into the collection only the FIRST time a level is finished (not practice).
   const earnedNote = document.getElementById("report-earned");
@@ -526,8 +527,20 @@ function showReport() {
 
 // ---------- Mini-game results (shared by Le Café and falling food) ----------
 
-// result = { id, title, score, scoreText, lines, missed, replay }
+// result = { id, title, score, scoreText, lines, missed, completed, goal, replay }
+// Completing a mini-game gives 1 star, only the first time (like levels).
 function showModeResult(result) {
+  const starLine = document.getElementById("mode-star");
+  if (result.completed) {
+    const added = earnLevelStars(progress, "game-" + result.id, 1);
+    saveProgress();
+    starLine.textContent = added
+      ? "⭐ +1 étoile pour ta collection ! (+1 star!)"
+      : "Jeu déjà réussi : pas de nouvelle étoile. (Already completed: no new star.)";
+  } else {
+    starLine.textContent = "⭐ Pour gagner une étoile : " + result.goal + ".";
+  }
+
   const best = state.bestModes[result.id];
   const isRecord = best === undefined || result.score > best;
   if (isRecord) state.bestModes[result.id] = result.score;

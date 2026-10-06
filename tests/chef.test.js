@@ -33,8 +33,10 @@ test("the chef's message matches the stars", () => {
   assert.match(chefSays(1), /Essaie encore|Courage/);
 });
 
-test("a level total becomes a 1-3 mood", () => {
-  assert.strictEqual(moodForTotal(9, 9), 3);
-  assert.strictEqual(moodForTotal(6, 9), 2);
-  assert.strictEqual(moodForTotal(3, 9), 1);
+test("stars become a 1-3 mood for the chef", () => {
+  assert.strictEqual(moodForTotal(5, 5), 3); // one recipe: 5 stars = great work
+  assert.strictEqual(moodForTotal(4, 5), 2);
+  assert.strictEqual(moodForTotal(3, 5), 2);
+  assert.strictEqual(moodForTotal(1, 5), 1); // 1 star = try again
+  assert.strictEqual(moodForTotal(14, 15), 3); // a whole level
 });
