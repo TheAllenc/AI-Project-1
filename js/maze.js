@@ -6,34 +6,43 @@
 // with the arrow keys / WASD or the on-screen arrows:
 //   right food    → +1 point, new foods appear
 //   wrong food    → lose a heart (and you see what it was)
+//   a trap 🔥     → lose a heart (hot stoves on the floor)
 //   a mouse 🐭    → lose a heart and go back to the start
-// Collect MAZE_GOAL foods to win. 3 hearts.
+// The mice CHASE the chef: they follow the shortest path to him (with a
+// little randomness, so you can escape). Collect MAZE_GOAL foods to win. 5 hearts.
 // Uses helpers from game.js: showScreen, shuffle, pictureFoods,
 // showModeResult, withArticle; playSound (sound.js); drawChef (chef.js).
 // ============================================================
 
-// # = wall, . = path. Every path square connects (the tests check this).
+// # = wall, . = path, x = trap (a hot stove 🔥: stepping on it costs a heart).
+// Every path square connects without crossing a trap (the tests check this).
 const MAZE = [
-  "###############",
-  "#.....#.......#",
-  "#.###.#.#####.#",
-  "#.#.........#.#",
-  "#.#.##.#.##.#.#",
-  "#......#......#",
-  "#.##.#####.##.#",
-  "#.............#",
-  "#.###.#.#.###.#",
-  "#.....#.#.....#",
-  "###############",
+  "###################",
+  "#........#...x....#",
+  "#.##.###.#.###.##.#",
+  "#....x............#",
+  "#.##.#.#####.#.##.#",
+  "#....#...#...#....#",
+  "####.###.#.###.####",
+  "#....#.......#....#",
+  "#.##.#.##x##.#.##.#",
+  "#..#.......x...#..#",
+  "##.#.#.#####.#.#.##",
+  "#....#...#...#....#",
+  "#.######.#.######.#",
+  "#........x........#",
+  "###################",
 ];
 
 const MAZE_GOAL = 8;          // foods to collect to win
-const MAZE_LIVES = 3;
+const MAZE_LIVES = 5;
 const FOODS_ON_BOARD = 5;     // the target + 4 others
 const CHEF_STEP_MS = 170;     // the chef moves one square this often
-const MOUSE_STEP_MS = 340;    // mice are half as fast
+const MOUSE_STEP_MS = 300;    // mice are a bit slower than the chef
+const MOUSE_CHASE = 0.75;     // how often a mouse takes the step toward the chef
+const SAFE_MS = 1500;         // after losing a heart, nothing can hurt you for this long
 const CHEF_START = { x: 1, y: 1 };
-const MOUSE_STARTS = [{ x: 13, y: 9 }, { x: 13, y: 1 }];
+const MOUSE_STARTS = [{ x: 17, y: 13 }, { x: 17, y: 1 }, { x: 1, y: 13 }];
 
 const DIRECTIONS = {
   up: { x: 0, y: -1 },
@@ -45,16 +54,50 @@ const OPPOSITE = { up: "down", down: "up", left: "right", right: "left" };
 
 // ---------- Pure helpers (also used by the tests) ----------
 
+function cellAt(x, y) {
+  return y >= 0 && y < MAZE.length && x >= 0 && x < MAZE[y].length ? MAZE[y][x] : "#";
+}
+
+// The chef can walk anywhere that isn't a wall (even onto a trap — ouch).
 function isOpen(x, y) {
-  return y >= 0 && y < MAZE.length && x >= 0 && x < MAZE[y].length && MAZE[y][x] === ".";
+  return cellAt(x, y) !== "#";
 }
 
-// Directions you can move in from a square.
-function openDirections(x, y) {
-  return Object.keys(DIRECTIONS).filter((d) => isOpen(x + DIRECTIONS[d].x, y + DIRECTIONS[d].y));
+function isTrap(x, y) {
+  return cellAt(x, y) === "x";
 }
 
-// Can you walk from "from" to "to" without stepping on any square in "blocked"?
+// "Safe" = a path square with no trap. Mice and food only use safe squares.
+function isSafe(x, y) {
+  return cellAt(x, y) === ".";
+}
+
+// Directions you can move in from a square (safeOnly: avoid traps too).
+function openDirections(x, y, safeOnly = false) {
+  const ok = safeOnly ? isSafe : isOpen;
+  return Object.keys(DIRECTIONS).filter((d) => ok(x + DIRECTIONS[d].x, y + DIRECTIONS[d].y));
+}
+
+// How many steps every safe square is from a starting square (breadth-first search).
+function distancesFrom(start) {
+  const key = (x, y) => x + "," + y;
+  const dist = { [key(start.x, start.y)]: 0 };
+  const queue = [start];
+  while (queue.length > 0) {
+    const { x, y } = queue.shift();
+    for (const d of openDirections(x, y, true)) {
+      const nx = x + DIRECTIONS[d].x;
+      const ny = y + DIRECTIONS[d].y;
+      if (dist[key(nx, ny)] === undefined) {
+        dist[key(nx, ny)] = dist[key(x, y)] + 1;
+        queue.push({ x: nx, y: ny });
+      }
+    }
+  }
+  return dist;
+}
+
+// Can you walk from "from" to "to" without stepping on a trap or any square in "blocked"?
 function canReach(from, to, blocked) {
   const key = (x, y) => x + "," + y;
   const stop = new Set(blocked.map((b) => key(b.x, b.y)));
@@ -63,7 +106,7 @@ function canReach(from, to, blocked) {
   while (queue.length > 0) {
     const { x, y } = queue.shift();
     if (x === to.x && y === to.y) return true;
-    for (const d of openDirections(x, y)) {
+    for (const d of openDirections(x, y, true)) {
       const next = { x: x + DIRECTIONS[d].x, y: y + DIRECTIONS[d].y };
       if (!seen.has(key(next.x, next.y)) && !stop.has(key(next.x, next.y))) {
         seen.add(key(next.x, next.y));
@@ -74,11 +117,11 @@ function canReach(from, to, blocked) {
   return false;
 }
 
-// Picks squares for the foods. The first one (the target) must be reachable
-// without walking over any of the other foods, so the game is always fair.
+// Picks squares for the foods (never on a trap). The first one (the target)
+// must be reachable without walking over a trap or another food, so the game is always fair.
 function pickFoodSquares(chef, avoid, count, random = Math.random) {
   for (let attempt = 0; attempt < 100; attempt++) {
-    const free = shuffleWith(allOpenSquares(), random).filter((sq) =>
+    const free = shuffleWith(safeSquares(), random).filter((sq) =>
       Math.abs(sq.x - chef.x) + Math.abs(sq.y - chef.y) >= 4 &&
       !avoid.some((a) => a.x === sq.x && a.y === sq.y)
     );
@@ -98,21 +141,25 @@ function shuffleWith(list, random) {
   return copy;
 }
 
-function allOpenSquares() {
+function safeSquares() {
   const squares = [];
   MAZE.forEach((row, y) => [...row].forEach((cell, x) => { if (cell === ".") squares.push({ x, y }); }));
   return squares;
 }
 
-// How a mouse chooses where to go: never straight back (unless stuck);
-// half the time it heads toward the chef, otherwise it wanders.
-function mouseDirection(mouse, chef, random = Math.random) {
-  let options = openDirections(mouse.x, mouse.y).filter((d) => d !== OPPOSITE[mouse.dir]);
-  if (options.length === 0) options = openDirections(mouse.x, mouse.y);
-  if (random() < 0.5) {
-    const distance = (d) =>
-      Math.abs(mouse.x + DIRECTIONS[d].x - chef.x) + Math.abs(mouse.y + DIRECTIONS[d].y - chef.y);
-    return options.reduce((best, d) => (distance(d) < distance(best) ? d : best));
+// How a mouse chooses where to go. It never steps on a trap and never turns
+// straight back (unless it's stuck). Most of the time (MOUSE_CHASE) it takes
+// the step that is closest to the chef along the maze's paths; otherwise it wanders.
+// chefDistances = distancesFrom(chef), worked out once per step for all mice.
+function mouseDirection(mouse, chefDistances, random = Math.random) {
+  let options = openDirections(mouse.x, mouse.y, true).filter((d) => d !== OPPOSITE[mouse.dir]);
+  if (options.length === 0) options = openDirections(mouse.x, mouse.y, true);
+  if (random() < MOUSE_CHASE) {
+    const steps = (d) => {
+      const n = chefDistances[(mouse.x + DIRECTIONS[d].x) + "," + (mouse.y + DIRECTIONS[d].y)];
+      return n === undefined ? Infinity : n;
+    };
+    return options.reduce((best, d) => (steps(d) < steps(best) ? d : best));
   }
   return options[Math.floor(random() * options.length)];
 }
@@ -128,7 +175,7 @@ const maze = {
   score: 0,
   lives: MAZE_LIVES,
   missed: [],
-  safeUntil: 0,       // after losing a heart, mice can't hurt you for a moment
+  safeUntil: 0,       // after losing a heart, mice and traps can't hurt you for a moment
   chefTimer: null,
   mouseTimer: null,
   tile: 32,           // size of one square in pixels (set to fit the screen)
@@ -159,7 +206,7 @@ function stopMaze() {
 // Draws the walls and creates the chef and mice.
 function buildBoard() {
   const board = document.getElementById("maze-board");
-  const width = Math.min(board.parentElement.clientWidth, 600);
+  const width = Math.min(board.parentElement.clientWidth, 720);
   maze.tile = Math.floor(width / MAZE[0].length);
   board.style.setProperty("--tile", maze.tile + "px");
   board.style.width = maze.tile * MAZE[0].length + "px";
@@ -167,11 +214,12 @@ function buildBoard() {
   board.innerHTML = "";
 
   MAZE.forEach((row, y) => [...row].forEach((cell, x) => {
-    if (cell !== "#") return;
-    const wall = document.createElement("div");
-    wall.className = "maze-wall";
-    place(wall, x, y);
-    board.appendChild(wall);
+    if (cell === ".") return;
+    const square = document.createElement("div");
+    square.className = cell === "#" ? "maze-wall" : "maze-trap";
+    if (cell === "x") square.textContent = "🔥";
+    place(square, x, y);
+    board.appendChild(square);
   }));
 
   const chef = document.createElement("div");
@@ -247,13 +295,15 @@ function chefStep() {
 
   const food = maze.foods.find((f) => f.x === chef.x && f.y === chef.y);
   if (food) eatFood(food);
+  if (maze.running && isTrap(chef.x, chef.y)) stepOnTrap();
   if (maze.running) checkMice();
 }
 
 function miceStep() {
   if (!maze.running) return;
+  const chefDistances = distancesFrom(maze.chef);
   for (const mouse of maze.mice) {
-    mouse.dir = mouseDirection(mouse, maze.chef);
+    mouse.dir = mouseDirection(mouse, chefDistances);
     mouse.x += DIRECTIONS[mouse.dir].x;
     mouse.y += DIRECTIONS[mouse.dir].y;
     place(mouse.el, mouse.x, mouse.y);
@@ -287,10 +337,21 @@ function checkMice() {
   loseHeart("Aïe ! Une souris ! (A mouse got you!)");
   if (!maze.running) return;
   resetPositions();
-  maze.safeUntil = Date.now() + 1500;
+  makeSafe();
+}
+
+function stepOnTrap() {
+  if (Date.now() < maze.safeUntil) return;
+  loseHeart("Ouille ! C'est chaud ! (A hot stove! Watch out for 🔥)");
+  if (maze.running) makeSafe();
+}
+
+// A short moment where nothing can hurt the chef (he blinks).
+function makeSafe() {
+  maze.safeUntil = Date.now() + SAFE_MS;
   const chefEl = document.getElementById("maze-chef");
   chefEl.classList.add("blink");
-  setTimeout(() => chefEl.classList.remove("blink"), 1500);
+  setTimeout(() => chefEl.classList.remove("blink"), SAFE_MS);
 }
 
 function loseHeart(message) {
@@ -354,5 +415,8 @@ if (typeof document !== "undefined") {
 }
 
 if (typeof module !== "undefined") {
-  module.exports = { MAZE, MOUSE_STARTS, CHEF_START, isOpen, openDirections, allOpenSquares, mouseDirection, canReach, pickFoodSquares };
+  module.exports = {
+    MAZE, MAZE_LIVES, MOUSE_STARTS, CHEF_START,
+    isOpen, isTrap, isSafe, openDirections, distancesFrom, safeSquares, mouseDirection, canReach, pickFoodSquares,
+  };
 }
