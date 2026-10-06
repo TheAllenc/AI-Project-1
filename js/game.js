@@ -43,6 +43,7 @@ const MINI_GAMES = [
     id: "cafe",
     name: "Le Café",
     emoji: "☕",
+    color: "#c98b4f",
     goal: "Les clients commandent en français. Sers-les vite ! (Serve customers before they leave.)",
     unit: " €",
     start: () => startCafe(),
@@ -51,6 +52,7 @@ const MINI_GAMES = [
     id: "falling",
     name: "La Pluie de Nourriture",
     emoji: "🌧️",
+    color: "#5ab8ff",
     goal: "Attrape la nourriture qui tombe ! (Catch the falling food that matches the word.)",
     unit: " mots",
     start: () => startFalling(),
@@ -59,6 +61,7 @@ const MINI_GAMES = [
     id: "maze",
     name: "Le Labyrinthe du Chef",
     emoji: "🧑‍🍳",
+    color: "#46c35a",
     goal: "Guide le chef dans le labyrinthe et ramasse le bon aliment ! (Steer the chef to the food named at the top.)",
     unit: " mots",
     start: () => startMaze(),
@@ -111,7 +114,39 @@ function prompt(message) {
 function say(message, type) {
   const box = document.getElementById("feedback");
   box.textContent = message;
+  box.className = "feedback";
+  void box.offsetWidth; // restart the pop animation, even for the same kind of message
   box.className = "feedback " + type;
+}
+
+// Draws stars as separate pieces so they can pop in one after another.
+function renderStars(element, stars) {
+  element.innerHTML = "";
+  for (let i = 0; i < MAX_STARS; i++) {
+    const star = document.createElement("span");
+    star.className = i < stars ? "star on" : "star";
+    star.textContent = "★";
+    star.style.animationDelay = i * 0.12 + "s";
+    element.appendChild(star);
+  }
+  element.setAttribute("aria-label", stars + " étoiles sur " + MAX_STARS);
+}
+
+// Confetti! Stars and food rain down the screen for a moment.
+function celebrate() {
+  if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const symbols = ["⭐", "✨", "🎉", "🍓", "🧀", "🥖", "🍰", "⭐"];
+  for (let i = 0; i < 30; i++) {
+    const piece = document.createElement("span");
+    piece.className = "confetti";
+    piece.textContent = symbols[i % symbols.length];
+    piece.style.left = Math.random() * 100 + "vw";
+    piece.style.animationDelay = Math.random() * 0.5 + "s";
+    piece.style.setProperty("--spin", Math.round(Math.random() * 720 - 360) + "deg");
+    piece.style.setProperty("--drift", Math.round(Math.random() * 160 - 80) + "px");
+    document.body.appendChild(piece);
+    setTimeout(() => piece.remove(), 3000);
+  }
 }
 
 function capitalize(text) {
@@ -167,7 +202,8 @@ function showLevels() {
     else status = level.courses ? "3 plats (3 courses)" : "3 recettes au hasard (3 random recipes)";
 
     button.innerHTML =
-      '<span class="level-emoji"></span><span class="level-text"><strong></strong><small class="goal"></small><small class="status"></small></span>';
+      '<span class="level-badge"><span class="level-emoji"></span></span><span class="level-text"><strong></strong><small class="goal"></small><small class="status"></small></span>';
+    button.style.setProperty("--c", level.color); // the level's own color
     button.querySelector(".level-emoji").textContent = level.emoji;
     button.querySelector("strong").textContent = "Niveau " + (index + 1) + " · " + level.name;
     button.querySelector(".goal").textContent = level.goal;
@@ -190,7 +226,8 @@ function showLevels() {
     else status = "Nouveau ! (New!)";
 
     button.innerHTML =
-      '<span class="level-emoji"></span><span class="level-text"><strong></strong><small class="goal"></small><small class="status"></small></span>';
+      '<span class="level-badge"><span class="level-emoji"></span></span><span class="level-text"><strong></strong><small class="goal"></small><small class="status"></small></span>';
+    button.style.setProperty("--c", game.color);
     button.querySelector(".level-emoji").textContent = game.emoji;
     button.querySelector("strong").textContent = game.name;
     button.querySelector(".goal").textContent = game.goal;
@@ -246,14 +283,21 @@ function startRecipe() {
   startTimer();
 }
 
+// The clock, plus the order ticket's timer bar that drains like in a busy kitchen.
 function startTimer() {
   clearInterval(state.timerId);
   state.startTime = Date.now();
   const clock = document.getElementById("timer");
-  clock.textContent = "0";
-  state.timerId = setInterval(() => {
+  const bar = document.getElementById("order-timer-fill");
+  const target = targetTime(state.recipe.ingredients.length, state.mode);
+  const tick = () => {
     clock.textContent = elapsedSeconds();
-  }, 250);
+    const left = Math.max(0, 1 - (Date.now() - state.startTime) / 1000 / target);
+    bar.style.width = left * 100 + "%";
+    bar.className = "order-timer-fill" + (left < 0.25 ? " low" : left < 0.55 ? " mid" : "");
+  };
+  tick();
+  state.timerId = setInterval(tick, 250);
 }
 
 // Tells the player what to do for the next ingredient.
@@ -457,8 +501,9 @@ function finishRecipe() {
 
   document.getElementById("done-title").textContent =
     "Bravo ! " + capitalize(state.recipe.name) + " : c'est prêt ! " + state.recipe.emoji;
-  document.getElementById("done-stars").textContent = starText(stars);
+  renderStars(document.getElementById("done-stars"), stars);
   showChefReaction("done", moodForTotal(stars, MAX_STARS));
+  if (stars === MAX_STARS) celebrate();
   document.getElementById("done-details").textContent =
     "Temps : " + seconds + " s (objectif : " + targetTime(count, mode) + " s) · " +
     (state.mistakes === 0 ? "aucune erreur !" : "erreurs : " + state.mistakes);
@@ -502,6 +547,7 @@ function showReport() {
   document.getElementById("report-title").textContent = "Bilan : " + state.level.name;
   document.getElementById("report-total").textContent = total + " / " + max + " ★";
   showChefReaction("report", moodForTotal(total, max));
+  if (moodForTotal(total, max) === 3) celebrate();
 
   // One row per recipe.
   const recipeRows = document.getElementById("report-recipes");
@@ -537,6 +583,7 @@ function showModeResult(result) {
     starLine.textContent = added
       ? "⭐ +1 étoile pour ta collection ! (+1 star!)"
       : "Jeu déjà réussi : pas de nouvelle étoile. (Already completed: no new star.)";
+    if (added) celebrate();
   } else {
     starLine.textContent = "⭐ Pour gagner une étoile : " + result.goal + ".";
   }

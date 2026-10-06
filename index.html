@@ -4,45 +4,46 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>La Cuisine</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@600;700;800;900&display=swap">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <main>
     <!-- Screen 1: title -->
-    <section id="title-screen" class="panel">
+    <section id="title-screen" class="panel title-card">
       <div class="title-hero">
         <div class="chef-slot chef-title"></div>
         <div class="title-bubble speech">Bonjour ! Je suis Chef Barbe. On cuisine ? (Hi! I'm Chef Barbe. Let's cook!)</div>
       </div>
-      <h1>La Cuisine</h1>
-      <p class="subtitle">Un jeu pour apprendre le vocabulaire de la nourriture.<br>
-        A cooking game for learning French food vocabulary.</p>
-      <p class="button-row">
-        <button id="play-button" class="button">Jouer ▶</button>
-        <button type="button" class="button secondary open-shop-button">La Boutique du Chef · ⭐ <span class="star-count">0</span></button>
+      <h1 class="logo" aria-label="La Cuisine"><span>L</span><span>a</span>&nbsp;<span>C</span><span>u</span><span>i</span><span>s</span><span>i</span><span>n</span><span>e</span></h1>
+      <p class="ribbon">Le jeu du vocabulaire de la nourriture · A French food vocabulary game</p>
+
+      <p class="button-row title-buttons">
+        <button id="play-button" class="button big play">Jouer ▶</button>
       </p>
-
-      <div class="how-to">
-        <h2>Comment jouer <span class="muted">(how to play)</span></h2>
-        <ol>
-          <li><strong>Le Petit-Déjeuner :</strong> read the French word, click the picture.</li>
-          <li><strong>Le Goûter :</strong> click the picture, then choose <em>le, la</em> or <em>les</em>.</li>
-          <li><strong>Le Déjeuner :</strong> see the picture, type the French word.</li>
-          <li><strong>Le Dîner :</strong> cook a whole menu: l'entrée, le plat principal, le dessert.</li>
-        </ol>
-        <p><strong>Jeux :</strong> finish Level 1 to open three mini-games: <em>Le Café</em> (serve customers who order in French), <em>La Pluie de Nourriture</em> (catch the falling food) and <em>Le Labyrinthe du Chef</em> (steer the chef to the right food).</p>
-        <p><strong>⭐ Étoiles :</strong> the first time you finish a level, its stars go into your collection. Spend them in <em>La Boutique du Chef</em> to dress up the chef!</p>
-        <p class="muted">Finish a level to open the next one. Be fast and careful to earn ★★★!</p>
-      </div>
-
-      <p class="button-row">
-        <button type="button" class="button secondary open-feedback-button">Donner mon avis 💬</button>
+      <p class="button-row title-small-buttons">
+        <button type="button" class="button yellow open-shop-button">👕 La Boutique · ⭐ <span class="star-count">0</span></button>
+        <button type="button" class="button secondary open-vocab-button">📖 Tout le vocabulaire</button>
+        <button type="button" class="button grape open-feedback-button">💬 Donner mon avis</button>
         <button type="button" id="see-feedback-button" class="button secondary" hidden>Voir les avis (owner)</button>
       </p>
 
+      <h2 class="section-heading">Comment jouer <span class="muted">(how to play)</span></h2>
+      <div class="how-to">
+        <div class="how-card" style="--c: #ffc93c"><span class="how-emoji">🥐</span><strong>1 · Le Petit-Déjeuner</strong><p>Read the French word, click the picture.</p></div>
+        <div class="how-card" style="--c: #ff7eb6"><span class="how-emoji">🍓</span><strong>2 · Le Goûter</strong><p>Click the picture, then choose <em>le, la</em> or <em>les</em>.</p></div>
+        <div class="how-card" style="--c: #1fb5a8"><span class="how-emoji">🍝</span><strong>3 · Le Déjeuner</strong><p>See the picture, type the French word.</p></div>
+        <div class="how-card" style="--c: #8e5cf7"><span class="how-emoji">🍽️</span><strong>4 · Le Dîner</strong><p>Cook a whole menu: l'entrée, le plat principal, le dessert.</p></div>
+        <div class="how-card" style="--c: #ff5a3c"><span class="how-emoji">🍷</span><strong>5 · Le Restaurant</strong><p>Meals, the menu and verbs: type them all!</p></div>
+        <div class="how-card" style="--c: #46c35a"><span class="how-emoji">🎮</span><strong>Les jeux</strong><p>Finish Level 1 to open <em>Le Café</em>, <em>La Pluie de Nourriture</em> and <em>Le Labyrinthe du Chef</em>.</p></div>
+        <div class="how-card" style="--c: #ffc93c"><span class="how-emoji">⭐</span><strong>Les étoiles</strong><p>Up to 5 stars per recipe, the first time you finish a level. Completing a mini-game gives 1 star. Spend them to dress up the chef!</p></div>
+      </div>
+
       <p class="title-links">
-        <a href="vocab-check.html">Vérifier le vocabulaire</a>
         <button type="button" class="sound-button" aria-label="Couper le son (mute)">🔊</button>
+        <a href="vocab-check.html">Vérification du vocabulaire (pour le prof)</a>
       </p>
 
       <footer class="disclaimer">
@@ -55,16 +56,36 @@
     </section>
 
     <!-- Screen 2: level select -->
-    <section id="levels-screen" hidden>
-      <h1>Choisis un niveau</h1>
+    <section id="levels-screen" class="panel" hidden>
+      <div class="screen-head">
+        <h1>Choisis un niveau</h1>
+        <button type="button" class="button yellow open-shop-button">👕 La Boutique · ⭐ <span class="star-count">0</span></button>
+      </div>
       <p class="subtitle">Choose a level. Finish a level to open the next one.</p>
-      <p class="button-row">
-        <button type="button" class="button secondary open-shop-button">La Boutique du Chef · ⭐ <span class="star-count">0</span></button>
-      </p>
       <div id="level-list" class="level-list"></div>
-      <h2 class="section-heading">Jeux <span class="muted">(mini-games)</span></h2>
+      <h2 class="section-heading">🎮 Les jeux <span class="muted">(mini-games: 1 ⭐ each, the first time you complete one)</span></h2>
       <div id="game-list" class="level-list"></div>
-      <p><button id="back-title-button" class="button secondary">← Retour</button></p>
+      <p class="button-row" style="margin-top: 18px">
+        <button id="back-title-button" class="button secondary">← Retour</button>
+        <button type="button" class="button grape open-vocab-button">📖 Tout le vocabulaire</button>
+      </p>
+    </section>
+
+    <!-- All the vocabulary -->
+    <section id="vocab-screen" class="panel" hidden>
+      <div class="screen-head">
+        <h1>Tout le vocabulaire</h1>
+        <p class="star-pill"><span id="word-count">0</span>&nbsp;mots</p>
+      </div>
+      <p class="subtitle">Every word in the game, from Lawless French. Tap 🔊 to hear it.</p>
+      <div class="word-tools">
+        <label for="word-search" class="visually-hidden">Chercher un mot</label>
+        <input id="word-search" class="word-search" type="search" placeholder="🔍 Chercher (search in French or English)…" autocomplete="off">
+      </div>
+      <div id="word-chips" class="chip-row" aria-label="Catégories"></div>
+      <div id="word-grid" class="word-grid"></div>
+      <p id="word-empty" class="muted" hidden>Aucun mot trouvé. (No words found.)</p>
+      <p><button type="button" id="vocab-back-button" class="button secondary">← Retour</button></p>
     </section>
 
     <!-- Screen 3: the kitchen (where you play) -->
@@ -76,7 +97,10 @@
       </div>
       <div class="kitchen">
         <div class="panel recipe-card">
-          <h2 id="recipe-name"></h2>
+          <div class="ticket-top">
+            <h2 id="recipe-name"></h2>
+            <div class="order-timer" aria-hidden="true"><div id="order-timer-fill" class="order-timer-fill"></div></div>
+          </div>
           <p class="muted">Ingrédients :</p>
           <ul id="recipe-list"></ul>
         </div>
@@ -162,7 +186,7 @@
         <p class="timer"><span id="fall-status"></span>
           <button type="button" class="sound-button" aria-label="Couper le son (mute)">🔊</button></p>
       </div>
-      <p class="prompt">Attrape : <span id="fall-target" class="fall-target"></span></p>
+      <p class="prompt banner">Attrape : <span id="fall-target" class="fall-target"></span></p>
       <div id="fall-area" class="fall-area"></div>
       <p id="fall-feedback" class="feedback" aria-live="polite"></p>
       <p><button id="fall-quit-button" class="button secondary">Quitter</button></p>
@@ -175,7 +199,7 @@
         <p class="timer"><span id="maze-status"></span>
           <button type="button" class="sound-button" aria-label="Couper le son (mute)">🔊</button></p>
       </div>
-      <p class="prompt">Ramasse : <span id="maze-target" class="fall-target"></span></p>
+      <p class="prompt banner">Ramasse : <span id="maze-target" class="fall-target"></span></p>
       <div class="maze-wrap">
         <div id="maze-board" class="maze-board"></div>
       </div>
@@ -186,7 +210,7 @@
         <button type="button" class="dpad-button dpad-right" data-dir="right" aria-label="droite (right)">▶</button>
         <button type="button" class="dpad-button dpad-down" data-dir="down" aria-label="bas (down)">▼</button>
       </div>
-      <p class="muted">Flèches du clavier ou W A S D. Évite les souris 🐭 ! (Arrow keys or WASD. Avoid the mice!)</p>
+      <p class="muted">Flèches du clavier ou W A S D. Évite les souris 🐭 et les fourneaux 🔥 ! (Arrow keys or WASD. Avoid the mice and the hot stoves!)</p>
       <p><button id="maze-quit-button" class="button secondary">Quitter</button></p>
     </section>
 
@@ -276,7 +300,10 @@
           <option>Le Déjeuner</option>
           <option>Le Dîner</option>
           <option>Le Café</option>
+          <option>Le Restaurant</option>
           <option>La Pluie de Nourriture</option>
+          <option>Le Labyrinthe du Chef</option>
+          <option>La Boutique du Chef</option>
         </select>
         <label for="feedback-level">4. Ton niveau de français ? (Your French class)</label>
         <select id="feedback-level" name="frenchLevel">
@@ -391,5 +418,6 @@
   <script src="js/maze.js"></script>
   <script src="js/shop.js"></script>
   <script src="js/feedback.js"></script>
+  <script src="js/wordlist.js"></script>
 </body>
 </html>

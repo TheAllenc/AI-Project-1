@@ -190,3 +190,36 @@ I asked for a disclaimer at the bottom of the homepage saying that **I, Dillon A
 - Do players like the chef and the shop?
 - Is the maze too easy or too hard? (Mice speed, 8 foods to win)
 - Are the shop prices fair?
+
+---
+
+## Session 8: More challenge, all the words, and a new look
+
+### Describe: my requests
+1. Maze: mice that **chase** you, a **bigger map**, **traps** that cost a heart, and **5 hearts** instead of 3.
+2. **5 stars** per level instead of 3.
+3. **Use all the vocabulary** I gave, leaving nothing out.
+4. Make the homepage, UI and game look **a lot better**: less blocky and single-colored, more vibrant and animated, like *Overcooked*.
+5. A homepage button that shows **all the vocabulary**.
+6. **Cheaper clothes** and more **unique** ones (e.g. a cheese hat, a jelly beard).
+7. **Mini-games give 1 star** when completed.
+
+### Design decisions the AI made (for me to review)
+- **5 stars per recipe:** −1 per mistake (max −3), −1 for being slow, minimum 1. A level is 3 recipes, so it's worth up to 15 stars.
+- **Mini-game stars:** 1 star the **first** time you complete each one (to match my "no farming" rule): serve 5 of 8 café customers, catch 10 falling foods, or win the maze.
+- **All 124 words used:** new recipes (salade niçoise, gratin de légumes, buffet de viandes froides, compote de fruits…), more Dîner options (escargots, lapin à la moutarde, dinde rôtie, crème brûlée…), and a new **Level 5, "Le Restaurant"**, for meal words, menu words and verbs. A test fails if any word is ever left out.
+- **Typing clues:** 17 words got a special English clue because the plain English would confuse or give the answer away. Examples: *le pruneau* = "a dried plum" (not "prune", which looks like *la prune* = plum); *le radis* = "a small, red, crunchy root vegetable" ("radish" contains the answer). **These clues are new text I should check.**
+- **Maze:** 19 × 15 map, 5 hot-stove traps, 3 mice that follow the shortest path to the chef 75% of the time.
+- **Clothes:** 21 items at 1–6 stars, including a beard slot. Because the star rules and clothes changed, saved progress starts fresh once.
+- **New look:** chunky outlined cards, bold colors, a tiled kitchen floor, buttons that press down, an order ticket with a draining timer bar, plates on a wooden counter, a cooking pot, confetti for 5-star results, and the "Lilita One" and "Nunito" fonts. Animations switch off for players who ask for less motion.
+- **Pronunciation:** the vocabulary page has 🔊 buttons that use the browser's French voice. Voices differ between computers.
+
+### Problems found in testing (and fixed)
+- The maze traps all appeared in one corner: their glow animation used the same CSS property that places them on the map.
+- Word cards broke words in the middle ("petit-déjeune / r").
+- "radish" gave away *radis* (caught by the new clue test).
+
+### Play-test notes (fill in after the next play-test)
+- Is the maze too hard now (3 chasing mice + traps)?
+- Do players notice and like the new look?
+- Check the new recipe names and the 17 typing clues.

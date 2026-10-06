@@ -40,7 +40,9 @@ sound.js ─┘     └── showScreen, shuffle, pictureFoods, addRow…
   - `gender`: click the picture, then pick le/la/les (Level 2)
   - `type`: type the French word (Level 3)
   - `menu`: three courses, each with its own mode (Level 4)
-- Levels 1–3 have **5 recipes**, and `pickRecipes(level)` picks **3 at random** each game. Level 4 has 2 options per course and picks one of each, which makes 8 possible menus.
+- Every level has a pool of recipes, and `pickRecipes(level)` picks **3 at random** each game. Level 4 picks one option per course (3 entrées, 5 main courses, 4 desserts).
+- Level 5, *Le Restaurant*, holds the meal words, menu words and verbs, so **every word in `vocab.js` is used somewhere**. A test fails if any word is left out.
+- Some words have a `clue` in `vocab.js`: the English hint used in typing rounds when the plain English would confuse players (false friends like *prune*) or give the answer away (*dessert*).
 - **Why random?** Play-testers said the game was boring and short on content, so each replay is now different.
 
 ---
@@ -48,7 +50,7 @@ sound.js ─┘     └── showScreen, shuffle, pictureFoods, addRow…
 ## Rule files (the easiest to explain and test)
 
 ### `js/scoring.js`: stars
-- Start with 3 stars. Lose 1 for any mistake, 1 more for 3+ mistakes, and 1 for being slower than the target time. The minimum is 1.
+- Start with 5 stars (`MAX_STARS`). Lose 1 per mistake (at most 3) and 1 for being slower than the target time. The minimum is 1.
 - The target time is seconds per ingredient: 6 (click), 8 (gender), 12 (type). Typing takes longer, so it gets more time.
 
 ### `js/check.js`: is the answer right?
@@ -104,8 +106,12 @@ sound.js ─┘     └── showScreen, shuffle, pictureFoods, addRow…
 - `buyItem` and `toggleWear` are the shop rules. `startOver()` erases everything, clothes included.
 - It's saved with `localStorage` (in the player's browser) inside `try/catch`, so the game still works if the browser blocks saving.
 
+### `js/wordlist.js`: all the vocabulary
+- `showWordList()` draws a card for every word in `VOCAB`. The category chips and the search box filter them (`matchesSearch` ignores accents and capitals).
+- `speakFrench(text)` uses the browser's built-in French voice (`speechSynthesis`) for the 🔊 buttons.
+
 ### `js/chef.js`: the mascot
-- `drawChef(wearing)` builds the chef as SVG text, in layers: body → apron → face → beard → neck item → hat → accessory. Each clothing item in `CLOTHES_SVG` is one small piece of SVG, so dressing him up just swaps pieces in.
+- `drawChef(wearing)` builds the chef as SVG text, in layers: body → apron → face → beard → neck item → hat → accessory. Each clothing item in `CLOTHES_SVG` is one small piece of SVG, so dressing him up just swaps pieces in. A beard item (jelly, chocolate, spaghetti, cotton candy) replaces his brown beard.
 - The animation (bobbing, blinking, beard wiggle, a jump for 3 stars) is CSS in `style.css`.
 - `chefSays(stars)` picks a message that matches 1, 2 or 3 stars. `moodForTotal` turns a level total (e.g. 7/9) into a 1–3 mood.
 
@@ -115,20 +121,21 @@ sound.js ─┘     └── showScreen, shuffle, pictureFoods, addRow…
 - The "start over" button shows its own confirmation box, because browser pop-up confirmations are blocked on the published page.
 
 ### `js/maze.js`: Le Labyrinthe du Chef
-- `MAZE` is the map as text: `#` is a wall and `.` is a path.
+- `MAZE` is the map as text: `#` is a wall, `.` is a path, and `x` is a trap (a hot stove; stepping on it costs a heart).
 - Pac-Man movement: the arrow keys set `chef.next`; every 170 ms `chefStep()` turns if it can, then moves one square. The chef keeps going until a wall.
-- Mice move every 340 ms. `mouseDirection()` never turns straight back, and half the time it heads toward the chef.
+- Mice move every 300 ms and **chase** the chef. `distancesFrom(chef)` does a breadth-first search to find how many steps every square is from the chef; `mouseDirection()` then takes the step with the smallest number (75% of the time; otherwise it wanders, so you can escape). Mice never step on traps or turn straight back.
 - `pickFoodSquares()` uses a breadth-first search (`canReach`) to make sure the right food can always be reached **without walking over another food**, so the game is always fair.
 - The board is HTML squares (not a canvas), so the chef wears the same SVG clothes as everywhere else.
 
 ## Tests (`tests/`)
 
-Run `node --test`. There are 52 automatic checks, including:
+Run `node --test`. There are 58 automatic checks, including:
 - **Vocab:** no duplicate ids; articles match genders; no two words share an emoji.
 - **Recipes:** every ingredient exists; picture levels only use words with emoji; English clues never equal the French answer; each game picks 3 different recipes.
 - **Scoring and checking:** star rules and accent/article rules give the expected answers.
 - **Progress:** a level's stars count only once; you can't buy what you can't afford.
-- **Maze:** every path square is reachable, and in 2,000 random layouts the right food is always reachable without touching another one.
+- **Maze:** traps never cut the map apart; mice avoid traps; a chasing mouse reaches a still chef by the shortest path; in 2,000 random layouts the right food is always reachable without touching a trap or another food.
+- **Vocabulary:** every word on the list appears in a recipe, and no typing clue gives away its answer.
 
 **Why tests matter for the 4D framework (Diligence):** they catch mistakes automatically every time something changes. A real example: a test blocks any picture-level recipe that uses a word with no emoji.
 

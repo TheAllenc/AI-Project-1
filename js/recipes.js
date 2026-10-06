@@ -21,6 +21,7 @@ const LEVELS = [
     id: "petit-dejeuner",
     name: "Le Petit-Déjeuner",
     emoji: "🥐",
+    color: "#ffc93c", // the level's color on the level select screen
     goal: "Lis le mot, clique sur l'image. (Read the word, click the picture.)",
     mode: "click",
     recipes: [
@@ -35,6 +36,7 @@ const LEVELS = [
     id: "gouter",
     name: "Le Goûter",
     emoji: "🍓",
+    color: "#ff7eb6",
     goal: "Le, la ou les ? (Pick the right article.)",
     mode: "gender", // click the picture, then pick le / la / les
     recipes: [
@@ -50,6 +52,7 @@ const LEVELS = [
     id: "dejeuner",
     name: "Le Déjeuner",
     emoji: "🍝",
+    color: "#1fb5a8",
     goal: "Écris le mot en français. (Type the French word.)",
     mode: "type", // see the picture (or English word), type the French word
     recipes: [
@@ -68,6 +71,7 @@ const LEVELS = [
     id: "diner",
     name: "Le Dîner",
     emoji: "🍽️",
+    color: "#8e5cf7",
     goal: "L'entrée, le plat principal, le dessert ! (A full menu: articles + typing.)",
     mode: "menu",
     courses: [
@@ -101,6 +105,7 @@ const LEVELS = [
     id: "restaurant",
     name: "Le Restaurant",
     emoji: "🍷",
+    color: "#ff5a3c",
     goal: "Les repas, la carte et les verbes ! (Meals, the menu and verbs: typing.)",
     mode: "type",
     recipes: [

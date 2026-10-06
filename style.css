@@ -1,417 +1,165 @@
 /* ============================================================
-   style.css — colors and layout for the whole game.
-   Colors are defined once as variables here, then reused.
+   style.css — the look of the whole game.
+
+   Style: a bright, chunky cartoon kitchen (inspired by "Overcooked"):
+   thick dark outlines, bold colors, a tiled kitchen floor, buttons that
+   press down, and lots of bouncy animation.
+   All colors are defined once here as variables, then reused.
+   Animations switch off for players whose computer asks for less motion.
    ============================================================ */
 
+/* Layout: one centered column; each screen is a chunky card on a tiled kitchen floor. */
 :root {
-  --bg: #fdf6ec;          /* warm kitchen cream */
-  --panel: #ffffff;
-  --text: #2b2420;
-  --muted: #7a6e66;
-  --accent: #c8553d;      /* tomato red */
-  --accent-2: #2a6f97;    /* French blue */
-  --good: #2e8b57;
-  --warn: #c98a00;
-  --border: #e8dccb;
-  --row-alt: #faf2e6;
-}
+  /* The kitchen palette */
+  --ink: #2a1a12;          /* thick cartoon outlines and text */
+  --paper: #fff8ec;        /* cards */
+  --paper-2: #ffecd2;      /* light fills */
+  --tomato: #ff5a3c;       /* main buttons, titles */
+  --tomato-dark: #d93d22;
+  --mustard: #ffc93c;      /* stars, highlights */
+  --teal: #1fb5a8;         /* second buttons */
+  --grape: #8e5cf7;
+  --leaf: #3fbf55;         /* right answers */
+  --sky: #5ab8ff;
+  --pink: #ff7eb6;
+  --wood: #c98b4f;         /* counters */
+  --wood-dark: #a86b33;
+  --steel: #c9d2da;        /* pots and pans */
+  --floor-a: #f6dcae;      /* floor tiles */
+  --floor-b: #eecb8c;
+  --muted: #7a5b48;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #1e1a17;
-    --panel: #2a2420;
-    --text: #f3ebe2;
-    --muted: #b3a79c;
-    --accent: #e0745c;
-    --accent-2: #6fb3dc;
-    --good: #5cc28b;
-    --warn: #e5b23a;
-    --border: #3d352f;
-    --row-alt: #26201c;
-  }
+  /* Fonts: a chunky title font and a round, friendly body font */
+  --font-display: "Lilita One", "Arial Rounded MT Bold", "Trebuchet MS", system-ui, sans-serif;
+  --font-body: "Nunito", "Segoe UI", system-ui, -apple-system, sans-serif;
+
+  /* Old names, still used by vocab-check.html */
+  --bg: var(--floor-a);
+  --panel: var(--paper);
+  --text: var(--ink);
+  --accent: var(--tomato);
+  --accent-2: var(--teal);
+  --good: var(--leaf);
+  --warn: #c98a00;
+  --border: #e3c9a3;
+  --row-alt: var(--paper-2);
+
+  --outline: 3px solid var(--ink);
+  --pop-shadow: 0 5px 0 var(--ink);
+  color-scheme: light;
 }
 
 * { box-sizing: border-box; }
 [hidden] { display: none !important; } /* hidden always wins over display rules */
 
+html { min-height: 100%; }
 body {
   margin: 0;
-  padding: 16px;
-  background: var(--bg);
-  color: var(--text);
-  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+  padding-block: 18px 40px;
+  padding-inline: 16px;
+  min-height: 100%;
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 1.02rem;
   line-height: 1.5;
+  /* A checkered kitchen floor with a soft light from above */
+  background-color: var(--floor-a);
+  background-image:
+    radial-gradient(ellipse at 50% -10%, rgba(255, 255, 255, 0.55), transparent 60%),
+    repeating-conic-gradient(var(--floor-a) 0 25%, var(--floor-b) 0 50%);
+  background-size: auto, 64px 64px;
+  background-attachment: fixed;
 }
 
-main {
-  max-width: 900px;
-  margin: 0 auto;
+main { max-width: 960px; margin: 0 auto; }
+
+h1, h2, .display {
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  text-wrap: balance;
 }
-
-h1 { color: var(--accent); margin-bottom: 0.25em; }
-a { color: var(--accent-2); }
-.subtitle { color: var(--muted); margin-top: 0; }
-
-.button {
-  display: inline-block;
-  padding: 0.6em 1.2em;
-  border: none;
-  border-radius: 8px;
-  background: var(--accent);
-  color: #fff;
-  font-size: 1rem;
-  text-decoration: none;
-  cursor: pointer;
+h1 {
+  margin: 0 0 0.3em;
+  font-size: clamp(1.8rem, 4.5vw, 2.6rem);
+  line-height: 1.1;
+  color: var(--tomato);
+  text-shadow: 0 3px 0 var(--ink);
 }
-.button.secondary { background: var(--accent-2); }
+h2 { font-size: 1.35rem; margin: 0.3em 0; line-height: 1.2; }
+a { color: var(--teal); font-weight: 700; }
+.subtitle { color: var(--muted); margin-top: 0; font-weight: 600; }
+.muted { color: var(--muted); font-weight: 600; }
+.good-text { color: var(--leaf); font-weight: 800; }
+p { margin: 0.5em 0; }
 
+/* ---------- Cards ---------- */
 .panel {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 16px 20px;
-  margin: 16px 0;
+  position: relative;
+  background: var(--paper);
+  border: 4px solid var(--ink);
+  border-radius: 24px;
+  padding: 20px 24px;
+  margin: 14px 0 22px;
+  box-shadow: 0 8px 0 var(--ink), 0 18px 34px rgba(80, 40, 10, 0.22);
 }
-
-/* ---------- Title screen ---------- */
-.title-hero { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-.chef-title { width: 130px; flex: none; }
-.title-bubble { max-width: 320px; }
-
-/* ---------- The chef (chef.js) ---------- */
-.chef { display: block; width: 100%; height: auto; overflow: visible; }
-.chef .chef-body { animation: chef-bob 2.4s ease-in-out infinite; }
-.chef .chef-eyes { transform-box: fill-box; transform-origin: center; animation: chef-blink 4s infinite; }
-.chef .chef-beard { transform-box: fill-box; transform-origin: top center; animation: chef-beard 2.4s ease-in-out infinite; }
-.chef.cheer .chef-body { animation: chef-cheer 0.6s ease-in-out 3; }
-@keyframes chef-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
-@keyframes chef-blink { 0%, 92%, 100% { transform: scaleY(1); } 95% { transform: scaleY(0.1); } }
-@keyframes chef-beard { 0%, 100% { transform: rotate(0); } 50% { transform: rotate(1.5deg); } }
-@keyframes chef-cheer { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
-
-/* Speech bubble */
-.speech {
-  margin: 0;
-  padding: 10px 14px;
-  font-weight: bold;
-  background: var(--row-alt);
-  border: 2px solid var(--border);
-  border-radius: 12px;
-}
-
-/* The chef reacting to the stars (recipe and level results) */
-.result-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; }
-.result-main { min-width: 0; }
-.chef-reaction { display: flex; align-items: flex-end; gap: 8px; max-width: 360px; }
-.chef-reaction .speech { flex: 1; min-width: 0; }
-.chef-small { width: 110px; flex: none; }
-.how-to { border-top: 1px solid var(--border); padding-top: 8px; margin-top: 8px; }
-.how-to ol { padding-left: 1.4em; margin: 0.4em 0; }
-.how-to li { margin: 0.25em 0; }
-.title-links { display: flex; align-items: center; gap: 12px; }
-
-.sound-button {
-  padding: 0.1em 0.35em;
-  font-size: 1.1rem;
-  background: none;
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-/* ---------- Animations (turned off if the player prefers less motion) ---------- */
-.bowl-item { display: inline-block; animation: drop-in 0.35s ease-out; }
-@keyframes drop-in {
-  from { transform: translateY(-24px) scale(0.6); opacity: 0; }
+main > section { animation: screen-in 0.35s cubic-bezier(0.2, 1.4, 0.4, 1); }
+@keyframes screen-in {
+  from { transform: translateY(14px) scale(0.98); opacity: 0; }
   to { transform: none; opacity: 1; }
 }
-.stars-big { animation: pop 0.5s ease-out; }
-@keyframes pop {
-  0% { transform: scale(0.5); opacity: 0; }
-  70% { transform: scale(1.15); opacity: 1; }
-  100% { transform: scale(1); }
-}
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { animation: none !important; transition: none !important; }
-}
 
-.muted { color: var(--muted); font-weight: normal; }
-h2 { font-size: 1.2rem; margin: 0.3em 0; }
-
-.button:focus-visible, .food:focus-visible, .level-card:focus-visible {
-  outline: 3px solid var(--accent-2);
-  outline-offset: 2px;
-}
-.button-row { display: flex; flex-wrap: wrap; gap: 8px; }
-.good-text { color: var(--good); font-weight: bold; }
-.stars-big { font-size: 2.2rem; color: var(--warn); margin: 0.2em 0; letter-spacing: 0.1em; }
-
-/* ---------- Level select ---------- */
-.level-list { display: grid; gap: 12px; }
-.level-card {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  width: 100%;
-  padding: 14px 18px;
-  text-align: left;
-  font: inherit;
-  color: var(--text);
-  background: var(--panel);
-  border: 2px solid var(--border);
-  border-radius: 12px;
-  cursor: pointer;
-}
-.level-card:hover:not(:disabled) { border-color: var(--accent-2); }
-.level-card:disabled { opacity: 0.55; cursor: default; }
-.level-emoji { font-size: 2.4rem; }
-.level-text { display: flex; flex-direction: column; min-width: 0; }
-.level-text strong { font-size: 1.15rem; }
-.level-text .goal { color: var(--muted); }
-.level-text .status { color: var(--accent-2); font-weight: bold; }
-
-.section-heading { margin-top: 1.2em; }
-
-/* ---------- The chef's shop ---------- */
-.shop-top { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
-.chef-shop { width: 150px; flex: none; }
-.shop-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
-.shop-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  padding: 10px;
-  text-align: center;
-  border: 2px solid var(--border);
-  border-radius: 12px;
-  background: var(--panel);
-}
-.shop-card.wearing { border-color: var(--good); }
-.shop-card .button { font-size: 0.9rem; padding: 0.45em 0.8em; margin-top: auto; }
-.shop-card .button:disabled { opacity: 0.45; cursor: default; }
-.shop-preview { width: 80px; }
-.start-over { margin-top: 18px; border-top: 1px solid var(--border); padding-top: 10px; }
-.button.danger { background: var(--accent); }
-.confirm-box { border: 2px solid var(--accent); border-radius: 12px; padding: 8px 14px; }
-
-/* ---------- Mini-game: the chef's maze ---------- */
-.maze-wrap { width: 100%; max-width: 600px; }
-.maze-board {
-  position: relative;
-  background: var(--panel);
-  border-radius: 8px;
-  touch-action: none;
-}
-.maze-wall {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: var(--tile);
-  height: var(--tile);
-  background: var(--accent-2);
-  border-radius: 4px;
-  box-shadow: inset 0 0 0 2px rgba(0, 0, 0, 0.12);
-}
-.maze-sprite {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: var(--tile);
-  height: var(--tile);
-  display: flex;
+/* ---------- Chunky buttons that press down ---------- */
+.button {
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: calc(var(--tile) * 0.72);
-  line-height: 1;
-  transition: transform 0.17s linear;
-}
-.maze-sprite.no-slide { transition: none; }
-.maze-mouse { transition-duration: 0.34s; z-index: 2; }
-.maze-food { transition: none; }
-.maze-chef { z-index: 3; }
-.maze-chef-inner { width: 100%; }
-.maze-chef.facing-left .maze-chef-inner { transform: scaleX(-1); }
-.maze-chef.blink { animation: maze-blink 0.25s steps(2) 6; }
-@keyframes maze-blink { 50% { opacity: 0.2; } }
-.dpad {
-  display: grid;
-  grid-template-columns: repeat(3, 54px);
-  grid-template-rows: repeat(2, 48px);
-  gap: 6px;
-  margin: 8px 0;
-}
-.dpad-button {
-  font-size: 1.3rem;
-  color: var(--text);
-  background: var(--row-alt);
-  border: 2px solid var(--border);
-  border-radius: 10px;
-  cursor: pointer;
-  touch-action: manipulation;
-}
-.dpad-up { grid-column: 2; grid-row: 1; }
-.dpad-left { grid-column: 1; grid-row: 2; }
-.dpad-down { grid-column: 2; grid-row: 2; }
-.dpad-right { grid-column: 3; grid-row: 2; }
-
-/* ---------- Disclaimer (bottom of the title screen) ---------- */
-.disclaimer {
-  margin-top: 16px;
-  padding-top: 10px;
-  border-top: 1px solid var(--border);
-  font-size: 0.85rem;
-  color: var(--muted);
-}
-.disclaimer p { margin: 0.35em 0; }
-.disclaimer a { overflow-wrap: anywhere; }
-
-/* ---------- Feedback form ---------- */
-.feedback-form { display: flex; flex-direction: column; gap: 10px; max-width: 640px; }
-.feedback-form fieldset { border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; margin: 0; }
-.feedback-form legend { font-weight: bold; padding: 0 4px; }
-.feedback-form > label { font-weight: bold; }
-.rating { display: flex; flex-wrap: wrap; gap: 14px; }
-.rating label { font-size: 1.1rem; cursor: pointer; }
-.feedback-form select, .feedback-form textarea, #feedback-copy-text {
-  font: inherit;
-  padding: 0.4em 0.6em;
-  color: var(--text);
-  background: var(--panel);
-  border: 2px solid var(--border);
-  border-radius: 8px;
-  max-width: 100%;
-}
-#feedback-copy-text { width: 100%; }
-
-/* ---------- Mini-game: Le Café ---------- */
-.customer-card { display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; }
-.customer-face { font-size: 4rem; line-height: 1.1; }
-#cafe-order { font-size: 1.15rem; } /* the shared .speech bubble style is defined with the chef */
-.patience { width: 100%; height: 14px; background: var(--row-alt); border: 1px solid var(--border); border-radius: 7px; overflow: hidden; }
-.patience-fill { height: 100%; width: 100%; background: var(--good); transition: width 0.1s linear; }
-.patience-fill.mid { background: var(--warn); }
-.patience-fill.low { background: var(--accent); }
-
-/* ---------- Mini-game: falling food ---------- */
-.fall-target { color: var(--accent); }
-.fall-area {
-  position: relative;
-  height: min(60vh, 440px);
-  overflow: hidden;
-  background: var(--panel);
-  border: 2px solid var(--border);
-  border-radius: 12px;
-  touch-action: manipulation;
-}
-.falling-food {
-  position: absolute;
-  width: 56px;
-  height: 56px;
-  padding: 0;
-  font-size: 2.6rem;
-  line-height: 1;
-  background: none;
-  border: none;
-  cursor: pointer;
-}
-.falling-food:hover { transform: scale(1.12); }
-
-/* ---------- Kitchen screen ---------- */
-.kitchen-top {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 8px;
-  margin-bottom: 8px;
-}
-.level-tag { color: var(--accent-2); font-weight: bold; margin: 0; }
-.timer { margin: 0; font-size: 1.1rem; font-variant-numeric: tabular-nums; }
-
-.kitchen {
-  display: grid;
-  grid-template-columns: 1fr 2fr;
-  gap: 16px;
-}
-.kitchen .panel { margin: 0; }
-@media (max-width: 640px) {
-  .kitchen { grid-template-columns: 1fr; }
-}
-
-.recipe-card ul { list-style: none; padding: 0; margin: 0; }
-.recipe-card li { font-size: 1.25rem; padding: 4px 0; }
-.recipe-card li::before { content: "☐ "; color: var(--muted); }
-.recipe-card li.done { color: var(--good); text-decoration: line-through; }
-.recipe-card li.done::before { content: "☑ "; color: var(--good); }
-.recipe-card li.current { font-weight: bold; color: var(--accent-2); }
-.recipe-card li.current::before { content: "➜ "; color: var(--accent-2); }
-
-.shelf {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
-}
-.food {
-  font-size: 2.5rem;
-  padding: 10px 0;
-  background: var(--row-alt);
-  border: 2px solid var(--border);
-  border-radius: 12px;
-  cursor: pointer;
-  transition: transform 0.1s;
-}
-.food:hover:not(:disabled) { transform: scale(1.08); border-color: var(--accent-2); }
-.food.used { opacity: 0.25; cursor: default; }
-.food.shake { animation: shake 0.4s; border-color: var(--accent); }
-@keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-6px); }
-  75% { transform: translateX(6px); }
-}
-
-.play-area { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
-.play-area h2, .play-area p { margin: 0; }
-
-.prompt { font-size: 1.25rem; font-weight: bold; color: var(--accent-2); min-height: 1.5em; }
-
-.feedback { min-height: 1.5em; font-size: 1.1rem; font-weight: bold; }
-.feedback.good { color: var(--good); }
-.feedback.warn { color: var(--warn); }
-.feedback.bad { color: var(--accent); }
-
-/* Level 2: le / la / les */
-.article-area { display: flex; gap: 10px; }
-.article-button { font-size: 1.3rem; min-width: 4.5rem; background: var(--accent-2); }
-.article-button:disabled { opacity: 0.35; cursor: default; }
-
-/* Level 3: typing */
-.clue { font-size: 4rem; text-align: center; line-height: 1.2; overflow-wrap: anywhere; }
-.clue-text { font-size: 2rem; padding: 0.5em 0; }
-.type-form { display: flex; gap: 8px; }
-.type-form input {
-  flex: 1;
-  min-width: 0;
-  font-size: 1.2rem;
-  padding: 0.5em 0.7em;
-  border: 2px solid var(--border);
-  border-radius: 8px;
-  background: var(--panel);
-  color: var(--text);
-}
-.type-form input:focus { outline: none; border-color: var(--accent-2); }
-.accent-row { display: flex; flex-wrap: wrap; gap: 6px; }
-.accent-button {
-  min-width: 2.4rem;
-  padding: 0.3em 0.5em;
+  gap: 0.35em;
+  padding: 0.62em 1.25em;
+  border: var(--outline);
+  border-radius: 14px;
+  background: var(--tomato);
+  color: #fff;
+  font-family: var(--font-display);
   font-size: 1.1rem;
-  background: var(--row-alt);
-  color: var(--text);
-  border: 1px solid var(--border);
-  border-radius: 6px;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.25);
+  box-shadow: var(--pop-shadow);
   cursor: pointer;
+  transition: transform 0.12s, box-shadow 0.12s, filter 0.12s;
 }
-.accent-button:hover { border-color: var(--accent-2); }
+.button:hover:not(:disabled) { transform: translateY(-2px) rotate(-1deg); box-shadow: 0 7px 0 var(--ink); filter: brightness(1.06); }
+.button:active:not(:disabled) { transform: translateY(4px); box-shadow: 0 1px 0 var(--ink); }
+.button:disabled { opacity: 0.5; cursor: default; filter: grayscale(0.4); }
+.button.secondary { background: var(--teal); }
+.button.yellow { background: var(--mustard); color: var(--ink); text-shadow: none; }
+.button.grape { background: var(--grape); }
+.button.danger { background: var(--tomato-dark); }
+.button.big { font-size: 1.6rem; padding: 0.55em 1.6em; border-radius: 18px; }
+
+.button:focus-visible, .food:focus-visible, .level-card:focus-visible, .chip:focus-visible,
+.accent-button:focus-visible, .dpad-button:focus-visible, .sound-button:focus-visible, .link-button:focus-visible {
+  outline: 4px solid var(--sky);
+  outline-offset: 3px;
+}
+.button-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+
+.sound-button {
+  display: inline-grid;
+  place-items: center;
+  width: 2.3rem;
+  height: 2.3rem;
+  font-size: 1.15rem;
+  background: var(--paper);
+  border: var(--outline);
+  border-radius: 50%;
+  box-shadow: 0 3px 0 var(--ink);
+  cursor: pointer;
+  vertical-align: middle;
+}
+.sound-button:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--ink); }
+
 .link-button {
   padding: 0;
   border: none;
@@ -419,6 +167,7 @@ h2 { font-size: 1.2rem; margin: 0.3em 0; }
   color: var(--muted);
   text-decoration: underline;
   font: inherit;
+  font-weight: 700;
   cursor: pointer;
 }
 .visually-hidden {
@@ -430,33 +179,826 @@ h2 { font-size: 1.2rem; margin: 0.3em 0; }
   white-space: nowrap;
 }
 
+/* ---------- Title screen ---------- */
+.title-card { text-align: center; overflow: hidden; }
+.title-card::before { /* a striped awning across the top, like a café */
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 18px;
+  background: repeating-linear-gradient(90deg, var(--tomato) 0 34px, #fff 34px 68px);
+  border-bottom: 4px solid var(--ink);
+}
+.title-hero {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px 18px;
+  flex-wrap: wrap;
+  margin-top: 18px;
+}
+.chef-title { width: 170px; flex: none; animation: chef-hello 3.2s ease-in-out infinite; transform-origin: bottom center; }
+@keyframes chef-hello { 0%, 100% { transform: rotate(-2deg); } 50% { transform: rotate(2deg) translateY(-4px); } }
+.title-bubble { max-width: 300px; text-align: left; }
+
+.logo {
+  margin: 4px 0 0;
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 11vw, 5.6rem);
+  line-height: 1;
+  color: var(--mustard);
+  -webkit-text-stroke: 3px var(--ink);
+  paint-order: stroke fill;
+  text-shadow: 0 6px 0 var(--ink), 0 12px 0 var(--tomato), 0 14px 0 var(--ink);
+  transform: rotate(-3deg);
+}
+.logo span { display: inline-block; animation: letter-bounce 2.8s ease-in-out infinite; }
+.logo span:nth-child(2n) { animation-delay: 0.15s; }
+.logo span:nth-child(3n) { animation-delay: 0.3s; }
+@keyframes letter-bounce { 0%, 80%, 100% { transform: translateY(0); } 88% { transform: translateY(-8px); } }
+
+.ribbon {
+  display: inline-block;
+  margin: 18px auto 6px;
+  padding: 6px 18px;
+  background: var(--teal);
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  border: var(--outline);
+  border-radius: 10px;
+  box-shadow: var(--pop-shadow);
+  transform: rotate(1.5deg);
+}
+.title-buttons { justify-content: center; margin: 20px 0 8px; }
+.button.big.play { animation: play-pulse 1.8s ease-in-out infinite; }
+@keyframes play-pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.06); } }
+.title-small-buttons { justify-content: center; }
+
+.how-to {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 12px;
+  margin: 22px 0 6px;
+  text-align: left;
+}
+.how-card {
+  padding: 10px 12px;
+  background: #fff;
+  border: var(--outline);
+  border-radius: 16px;
+  box-shadow: 0 4px 0 var(--ink);
+  border-top: 10px solid var(--c, var(--mustard));
+}
+.how-card strong { font-family: var(--font-display); font-weight: 400; font-size: 1.1rem; display: block; }
+.how-card p { margin: 0.2em 0 0; font-size: 0.95rem; }
+.how-emoji { font-size: 1.6rem; float: right; }
+
+.title-links { display: flex; justify-content: center; align-items: center; gap: 12px; flex-wrap: wrap; }
+
+/* ---------- Disclaimer (bottom of the title screen) ---------- */
+.disclaimer {
+  margin-top: 20px;
+  padding: 12px 14px;
+  font-size: 0.86rem;
+  text-align: left;
+  color: var(--muted);
+  background: var(--paper-2);
+  border: 2px dashed var(--wood);
+  border-radius: 14px;
+}
+.disclaimer p { margin: 0.35em 0; }
+.disclaimer strong { color: var(--ink); }
+.disclaimer a { overflow-wrap: anywhere; }
+
+/* ---------- The chef (chef.js) ---------- */
+.chef { display: block; width: 100%; height: auto; overflow: visible; }
+.chef .chef-body { animation: chef-bob 2.4s ease-in-out infinite; }
+.chef .chef-eyes { transform-box: fill-box; transform-origin: center; animation: chef-blink 4s infinite; }
+.chef .chef-beard { transform-box: fill-box; transform-origin: top center; animation: chef-beard 2.4s ease-in-out infinite; }
+.chef .chef-jelly { transform-box: fill-box; transform-origin: top center; animation: chef-jelly 1.1s ease-in-out infinite; }
+.chef.cheer .chef-body { animation: chef-cheer 0.6s ease-in-out 3; }
+@keyframes chef-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+@keyframes chef-blink { 0%, 92%, 100% { transform: scaleY(1); } 95% { transform: scaleY(0.1); } }
+@keyframes chef-beard { 0%, 100% { transform: rotate(0); } 50% { transform: rotate(1.5deg); } }
+@keyframes chef-jelly { 0%, 100% { transform: scale(1, 1); } 30% { transform: scale(1.06, 0.94); } 60% { transform: scale(0.96, 1.05); } }
+@keyframes chef-cheer { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-14px) rotate(-3deg); } }
+
+/* Speech bubble with a little tail */
+.speech {
+  position: relative;
+  margin: 0;
+  padding: 10px 14px;
+  font-weight: 800;
+  background: #fff;
+  border: var(--outline);
+  border-radius: 16px;
+  box-shadow: 0 4px 0 var(--ink);
+}
+.title-bubble::after, .chef-reaction .speech::after {
+  content: "";
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  background: #fff;
+  border-right: var(--outline);
+  border-bottom: var(--outline);
+}
+.title-bubble::after { left: -10px; top: 50%; transform: translateY(-50%) rotate(135deg); }
+.chef-reaction .speech::after { right: -10px; bottom: 18px; transform: rotate(-45deg); }
+
+/* ---------- Stars ---------- */
+.stars-big {
+  margin: 0.2em 0;
+  font-family: var(--font-display);
+  font-size: 2.4rem;
+  color: var(--mustard);
+  -webkit-text-stroke: 2px var(--ink);
+  paint-order: stroke fill;
+  letter-spacing: 0.06em;
+  animation: pop 0.5s ease-out;
+}
+.star { display: inline-block; color: #eadbc4; animation: star-pop 0.45s cubic-bezier(0.2, 1.6, 0.4, 1) both; }
+.star.on { color: var(--mustard); }
+@keyframes star-pop { from { transform: scale(0) rotate(-90deg); } to { transform: none; } }
+@keyframes pop {
+  0% { transform: scale(0.5); opacity: 0; }
+  70% { transform: scale(1.15); opacity: 1; }
+  100% { transform: scale(1); }
+}
+.star-note { font-weight: 800; }
+.star-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 10px;
+  font-family: var(--font-display);
+  background: var(--mustard);
+  border: var(--outline);
+  border-radius: 999px;
+}
+
+/* Confetti (game.js: celebrate) */
+.confetti {
+  position: fixed;
+  top: -40px;
+  z-index: 50;
+  font-size: 1.6rem;
+  pointer-events: none;
+  animation: confetti-fall 2.2s ease-in forwards;
+}
+@keyframes confetti-fall {
+  to { transform: translate(var(--drift, 0), 110vh) rotate(var(--spin, 360deg)); }
+}
+
+/* ---------- Results (recipe finished, level report) ---------- */
+.result-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; }
+.result-main { min-width: 0; }
+.chef-reaction { display: flex; align-items: flex-end; gap: 14px; max-width: 380px; }
+.chef-reaction .speech { flex: 1; min-width: 0; }
+.chef-small { width: 120px; flex: none; }
+
+/* ---------- Level select ---------- */
+.screen-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; }
+.level-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); gap: 16px; }
+.level-card {
+  --c: var(--mustard);
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 14px 16px;
+  text-align: left;
+  font: inherit;
+  color: var(--ink);
+  background: linear-gradient(180deg, #fff 0%, var(--paper) 100%);
+  border: 4px solid var(--ink);
+  border-radius: 20px;
+  box-shadow: 0 6px 0 var(--ink);
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.level-card::before { /* the level's color as a thick band on the left */
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 14px;
+  background: var(--c);
+  border-right: 3px solid var(--ink);
+  border-radius: 16px 0 0 16px;
+}
+.level-card:nth-child(odd) { transform: rotate(-0.6deg); }
+.level-card:nth-child(even) { transform: rotate(0.6deg); }
+.level-card:hover:not(:disabled) { transform: translateY(-4px) rotate(-1deg); box-shadow: 0 10px 0 var(--ink); }
+.level-card:active:not(:disabled) { transform: translateY(3px); box-shadow: 0 2px 0 var(--ink); }
+.level-card:disabled { cursor: default; filter: grayscale(0.85); opacity: 0.7; }
+.level-badge {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  margin-left: 10px;
+  background: var(--c);
+  border: var(--outline);
+  border-radius: 50%;
+  box-shadow: 0 4px 0 var(--ink);
+}
+.level-card:hover:not(:disabled) .level-badge { animation: wiggle 0.5s ease-in-out; }
+@keyframes wiggle { 25% { transform: rotate(-10deg); } 75% { transform: rotate(10deg); } }
+.level-emoji { font-size: 2.1rem; line-height: 1; }
+.level-text { display: flex; flex-direction: column; min-width: 0; }
+.level-text strong { font-family: var(--font-display); font-weight: 400; font-size: 1.25rem; line-height: 1.15; }
+.level-text .goal { color: var(--muted); font-weight: 600; }
+.level-text .status { margin-top: 4px; font-weight: 800; color: var(--ink); }
+.section-heading { margin-top: 1.3em; }
+
+/* ---------- Kitchen screen ---------- */
+.kitchen-top {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.level-tag, .timer {
+  margin: 0;
+  padding: 6px 14px;
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  border: var(--outline);
+  border-radius: 999px;
+  box-shadow: 0 4px 0 var(--ink);
+}
+.level-tag { background: var(--tomato); color: #fff; }
+.timer {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #fff;
+  font-variant-numeric: tabular-nums;
+}
+.kitchen { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: 20px; align-items: start; }
+.kitchen .panel { margin: 0; }
+@media (max-width: 680px) {
+  .kitchen { grid-template-columns: 1fr; }
+}
+
+/* The recipe card is an order ticket, like in a busy restaurant */
+.recipe-card {
+  background: #fff;
+  transform: rotate(-1.5deg);
+  border-radius: 10px 10px 20px 20px;
+  padding-top: 0;
+  overflow: hidden;
+}
+.ticket-top {
+  margin: 0 -24px 12px;
+  padding: 10px 18px 8px;
+  background: var(--mustard);
+  border-bottom: 4px solid var(--ink);
+}
+.ticket-top h2 { margin: 0; font-size: 1.3rem; }
+.order-timer {
+  height: 14px;
+  margin-top: 8px;
+  background: rgba(255, 255, 255, 0.6);
+  border: 3px solid var(--ink);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.order-timer-fill { height: 100%; width: 100%; background: var(--leaf); transition: width 0.25s linear, background 0.3s; }
+.order-timer-fill.mid { background: var(--mustard); }
+.order-timer-fill.low { background: var(--tomato); animation: timer-flash 0.6s steps(2) infinite; }
+@keyframes timer-flash { 50% { opacity: 0.55; } }
+.recipe-card ul { list-style: none; padding: 0; margin: 0; }
+.recipe-card li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 4px;
+  font-size: 1.2rem;
+  font-weight: 800;
+  border-bottom: 2px dashed #e8d6bd;
+}
+.recipe-card li::before {
+  content: "";
+  flex: none;
+  width: 20px;
+  height: 20px;
+  border: var(--outline);
+  border-radius: 6px;
+  background: #fff;
+}
+.recipe-card li.done { color: var(--leaf); text-decoration: line-through; text-decoration-thickness: 3px; }
+.recipe-card li.done::before { content: "✓"; display: grid; place-items: center; color: #fff; font-size: 0.85rem; background: var(--leaf); }
+.recipe-card li.current { color: var(--tomato); animation: nudge 1s ease-in-out infinite; }
+.recipe-card li.current::before { background: var(--mustard); }
+@keyframes nudge { 50% { transform: translateX(5px); } }
+
+.play-area { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.play-area h2, .play-area p { margin: 0; }
+.prompt {
+  font-family: var(--font-display);
+  font-size: 1.45rem;
+  line-height: 1.2;
+  min-height: 1.3em;
+}
+.prompt.banner { /* prompts that sit on the kitchen floor get a white sign */
+  display: inline-block;
+  margin: 0 0 12px;
+  padding: 8px 18px;
+  background: #fff;
+  border: var(--outline);
+  border-radius: 14px;
+  box-shadow: 0 4px 0 var(--ink);
+}
+
+/* The shelf / counter is a wooden plank; each food sits on a plate */
+.shelf {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  padding: 14px;
+  background:
+    repeating-linear-gradient(90deg, transparent 0 46px, rgba(0, 0, 0, 0.06) 46px 48px),
+    linear-gradient(180deg, var(--wood) 0%, var(--wood-dark) 100%);
+  border: 4px solid var(--ink);
+  border-radius: 18px;
+  box-shadow: inset 0 6px 0 rgba(255, 255, 255, 0.25), 0 6px 0 var(--ink);
+}
+.food {
+  aspect-ratio: 1;
+  max-width: 100%;
+  display: grid;
+  place-items: center;
+  font-size: clamp(1.8rem, 6vw, 2.6rem);
+  line-height: 1;
+  background: radial-gradient(circle at 50% 45%, #fff 0 55%, #eef1f4 56% 100%);
+  border: var(--outline);
+  border-radius: 50%;
+  box-shadow: 0 5px 0 var(--ink);
+  cursor: pointer;
+  transition: transform 0.12s;
+}
+.food:hover:not(:disabled) { transform: translateY(-4px) scale(1.08) rotate(-6deg); }
+.food:active:not(:disabled) { transform: translateY(3px); box-shadow: 0 2px 0 var(--ink); }
+.food.used { opacity: 0.25; transform: scale(0.8); cursor: default; }
+.food.shake { animation: shake 0.4s; background: #ffd6cc; }
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-8px) rotate(-6deg); }
+  60% { transform: translateX(8px) rotate(6deg); }
+}
+
+/* Feedback messages are colored pills that pop in */
+.feedback {
+  align-self: flex-start;
+  min-height: 0;
+  margin: 0;
+  font-weight: 800;
+  font-size: 1.08rem;
+  border-radius: 14px;
+}
+.feedback:empty { display: none; }
+.feedback.good, .feedback.warn, .feedback.bad {
+  padding: 8px 14px;
+  border: var(--outline);
+  box-shadow: 0 4px 0 var(--ink);
+  animation: pop 0.35s ease-out;
+}
+.feedback.good { background: var(--leaf); color: #fff; }
+.feedback.warn { background: var(--mustard); color: var(--ink); }
+.feedback.bad { background: var(--tomato); color: #fff; }
+
+/* The bowl is a steel pot */
 .bowl {
-  min-height: 3.5rem;
+  position: relative;
+  min-height: 4.2rem;
   font-size: 2.2rem;
-  padding: 6px 12px;
-  border: 2px dashed var(--border);
-  border-radius: 0 0 40px 40px;
+  padding: 10px 14px;
+  background: linear-gradient(180deg, #eef2f5 0%, var(--steel) 100%);
+  border: 4px solid var(--ink);
+  border-radius: 10px 10px 46px 46px;
+  box-shadow: inset 0 -8px 0 rgba(0, 0, 0, 0.08), 0 6px 0 var(--ink);
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
   gap: 6px;
 }
-.bowl-word { font-size: 1rem; font-weight: bold; color: var(--muted); }
+.bowl::before, .bowl::after { /* pot handles */
+  content: "";
+  position: absolute;
+  top: 12px;
+  width: 16px;
+  height: 22px;
+  background: var(--ink);
+  border-radius: 6px;
+}
+.bowl::before { left: -14px; }
+.bowl::after { right: -14px; }
+.bowl-item { display: inline-block; animation: drop-in 0.45s cubic-bezier(0.2, 1.6, 0.4, 1); }
+@keyframes drop-in {
+  from { transform: translateY(-40px) scale(0.4) rotate(-40deg); opacity: 0; }
+  to { transform: none; opacity: 1; }
+}
+.bowl-word {
+  font-size: 0.95rem;
+  font-weight: 800;
+  padding: 2px 8px;
+  background: #fff;
+  border: 2px solid var(--ink);
+  border-radius: 8px;
+}
 
-/* ---------- Vocab check page ---------- */
-.filters { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
-.filters label { color: var(--muted); }
+/* Level 2: le / la / les */
+.article-area { display: flex; gap: 12px; flex-wrap: wrap; }
+.article-button { font-size: 1.5rem; min-width: 5rem; }
+.article-button:nth-child(1) { background: var(--teal); }
+.article-button:nth-child(2) { background: var(--pink); }
+.article-button:nth-child(3) { background: var(--grape); }
 
+/* Level 3: typing */
+.clue {
+  display: grid;
+  place-items: center;
+  width: 9rem;
+  height: 9rem;
+  margin: 0 auto;
+  font-size: 4.4rem;
+  text-align: center;
+  line-height: 1.1;
+  overflow-wrap: anywhere;
+  background: radial-gradient(circle at 50% 45%, #fff 0 58%, #eef1f4 59% 100%);
+  border: 4px solid var(--ink);
+  border-radius: 50%;
+  box-shadow: 0 6px 0 var(--ink);
+  animation: pop 0.4s ease-out;
+}
+.clue-text {
+  width: auto;
+  height: auto;
+  min-height: 6rem;
+  padding: 14px 18px;
+  background: #fff;
+  font-family: var(--font-display);
+  font-size: clamp(1.3rem, 4vw, 1.9rem);
+  border-radius: 20px;
+}
+.type-form { display: flex; gap: 10px; }
+.type-form input {
+  flex: 1;
+  min-width: 0;
+  font: inherit;
+  font-size: 1.3rem;
+  font-weight: 800;
+  padding: 0.5em 0.8em;
+  color: var(--ink);
+  background: #fff;
+  border: 4px solid var(--ink);
+  border-radius: 14px;
+  box-shadow: inset 0 3px 0 rgba(0, 0, 0, 0.08);
+}
+.type-form input:focus { outline: none; border-color: var(--teal); }
+.accent-row { display: flex; flex-wrap: wrap; gap: 7px; }
+.accent-button {
+  min-width: 2.5rem;
+  padding: 0.25em 0.5em;
+  font-family: var(--font-body);
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--ink);
+  background: #fff;
+  border: 3px solid var(--ink);
+  border-radius: 10px;
+  box-shadow: 0 3px 0 var(--ink);
+  cursor: pointer;
+}
+.accent-button:hover { background: var(--paper-2); }
+.accent-button:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--ink); }
+
+/* ---------- Tables (reports) ---------- */
 .table-wrap { overflow-x: auto; }
-
-table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
-th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--border); vertical-align: top; }
-tbody tr:nth-child(even) { background: var(--row-alt); }
-td.emoji { font-size: 1.5rem; text-align: center; width: 3.5rem; }
+table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 0.98rem; }
+th { font-family: var(--font-display); font-weight: 400; background: var(--mustard); }
+th, td { text-align: left; padding: 8px 10px; border-bottom: 2px solid #ecd9bd; vertical-align: middle; }
+th:first-child { border-radius: 10px 0 0 10px; }
+th:last-child { border-radius: 0 10px 10px 0; }
+tbody tr:nth-child(even) { background: var(--paper-2); }
+td.emoji { font-size: 1.6rem; text-align: center; width: 3.5rem; }
 td.none { color: var(--muted); font-size: 0.8rem; }
 
+/* ---------- Mini-game: Le Café ---------- */
+.customer-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  text-align: center;
+  background: linear-gradient(180deg, #e8f6ff 0%, #fff 70%);
+}
+.customer-face { font-size: 4.6rem; line-height: 1.1; animation: customer-bob 1.4s ease-in-out infinite; }
+@keyframes customer-bob { 50% { transform: translateY(-5px) rotate(2deg); } }
+#cafe-order { font-size: 1.15rem; }
+.patience { width: 100%; height: 18px; background: #fff; border: 3px solid var(--ink); border-radius: 999px; overflow: hidden; }
+.patience-fill { height: 100%; width: 100%; background: var(--leaf); transition: width 0.1s linear; }
+.patience-fill.mid { background: var(--mustard); }
+.patience-fill.low { background: var(--tomato); }
+
+/* ---------- Mini-game: falling food ---------- */
+.fall-target { color: var(--tomato); }
+.fall-area {
+  position: relative;
+  height: min(60vh, 460px);
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 15% 20%, rgba(255, 255, 255, 0.9) 0 26px, transparent 27px),
+    radial-gradient(circle at 21% 18%, rgba(255, 255, 255, 0.9) 0 20px, transparent 21px),
+    radial-gradient(circle at 78% 30%, rgba(255, 255, 255, 0.85) 0 24px, transparent 25px),
+    linear-gradient(180deg, #8fd3ff 0%, #d9f1ff 100%);
+  border: 4px solid var(--ink);
+  border-radius: 20px;
+  box-shadow: 0 6px 0 var(--ink);
+  touch-action: manipulation;
+}
+.falling-food {
+  position: absolute;
+  width: 58px;
+  height: 58px;
+  padding: 0;
+  font-size: 2.7rem;
+  line-height: 1;
+  background: none;
+  border: none;
+  cursor: pointer;
+  filter: drop-shadow(0 3px 0 rgba(42, 26, 18, 0.45));
+}
+.falling-food:hover { transform: scale(1.15); }
+
+/* ---------- Mini-game: the chef's maze ---------- */
+.maze-wrap { width: 100%; max-width: 720px; }
+.maze-board {
+  position: relative;
+  background-color: #fbe9c9;
+  background-image: repeating-conic-gradient(#fbe9c9 0 25%, #f3d9ab 0 50%);
+  background-size: calc(var(--tile, 32px) * 2) calc(var(--tile, 32px) * 2);
+  border: 4px solid var(--ink);
+  border-radius: 12px;
+  box-shadow: 0 6px 0 var(--ink);
+  touch-action: none;
+  box-sizing: content-box;
+}
+.maze-wall {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--tile);
+  height: var(--tile);
+  background: linear-gradient(180deg, #34c7ba 0 35%, var(--teal) 35% 100%);
+  border: 2px solid var(--ink);
+  border-radius: 6px;
+}
+.maze-trap {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--tile);
+  height: var(--tile);
+  display: grid;
+  place-items: center;
+  font-size: calc(var(--tile) * 0.62);
+  background: radial-gradient(circle, #5a5a66 0 45%, #33333b 46% 100%);
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  /* Only glow here: "transform" is used to place the trap on its square. */
+  animation: trap-glow 0.9s ease-in-out infinite;
+}
+@keyframes trap-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 90, 60, 0); filter: brightness(0.95); }
+  50% { box-shadow: 0 0 14px 5px rgba(255, 120, 40, 0.8); filter: brightness(1.2); }
+}
+.maze-sprite {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--tile);
+  height: var(--tile);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(var(--tile) * 0.74);
+  line-height: 1;
+  transition: transform 0.17s linear;
+}
+.maze-sprite.no-slide { transition: none; }
+.maze-mouse { transition-duration: 0.3s; z-index: 2; filter: drop-shadow(0 2px 0 rgba(42, 26, 18, 0.5)); }
+.maze-food { transition: none; animation: food-float 1.4s ease-in-out infinite; z-index: 1; }
+@keyframes food-float { 50% { margin-top: -4px; } }
+.maze-chef { z-index: 3; }
+.maze-chef-inner { width: 112%; filter: drop-shadow(0 2px 0 rgba(42, 26, 18, 0.5)); }
+.maze-chef.facing-left .maze-chef-inner { transform: scaleX(-1); }
+.maze-chef.blink { animation: maze-blink 0.25s steps(2) 6; }
+@keyframes maze-blink { 50% { opacity: 0.2; } }
+.dpad {
+  display: grid;
+  grid-template-columns: repeat(3, 58px);
+  grid-template-rows: repeat(2, 52px);
+  gap: 8px;
+  margin: 10px 0;
+}
+.dpad-button {
+  font-size: 1.4rem;
+  color: #fff;
+  background: var(--teal);
+  border: var(--outline);
+  border-radius: 14px;
+  box-shadow: 0 4px 0 var(--ink);
+  cursor: pointer;
+  touch-action: manipulation;
+}
+.dpad-button:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--ink); }
+.dpad-up { grid-column: 2; grid-row: 1; }
+.dpad-left { grid-column: 1; grid-row: 2; }
+.dpad-down { grid-column: 2; grid-row: 2; }
+.dpad-right { grid-column: 3; grid-row: 2; }
+
+/* ---------- The chef's shop ---------- */
+.shop-top { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+.chef-shop {
+  width: 170px;
+  flex: none;
+  padding: 8px;
+  background: radial-gradient(circle at 50% 60%, #fff 0 55%, var(--paper-2) 56% 100%);
+  border: 4px solid var(--ink);
+  border-radius: 50%;
+  box-shadow: 0 6px 0 var(--ink);
+}
+.slot-heading {
+  display: inline-block;
+  margin: 18px 0 10px;
+  padding: 4px 14px;
+  color: #fff;
+  background: var(--grape);
+  border: var(--outline);
+  border-radius: 999px;
+  box-shadow: 0 3px 0 var(--ink);
+  font-size: 1.15rem;
+}
+.shop-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 14px; }
+.shop-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 12px 10px;
+  text-align: center;
+  background: #fff;
+  border: var(--outline);
+  border-radius: 18px;
+  box-shadow: 0 5px 0 var(--ink);
+  transition: transform 0.15s;
+}
+.shop-card:hover { transform: translateY(-3px) rotate(-1deg); }
+.shop-card strong { font-family: var(--font-display); font-weight: 400; font-size: 1.05rem; line-height: 1.15; }
+.shop-card small { line-height: 1.25; }
+.shop-card.wearing { background: #eafbe9; border-color: var(--leaf); }
+.shop-card.wearing::after {
+  content: "Porté !";
+  position: absolute;
+  top: -10px;
+  right: -8px;
+  padding: 2px 8px;
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  color: #fff;
+  background: var(--leaf);
+  border: 2px solid var(--ink);
+  border-radius: 8px;
+  transform: rotate(8deg);
+}
+.shop-card .button { font-size: 0.95rem; padding: 0.45em 0.8em; margin-top: auto; }
+.shop-preview { width: 92px; }
+.start-over { margin-top: 22px; border-top: 3px dashed #e3c9a3; padding-top: 14px; }
+.confirm-box { background: #fff1ee; border: 3px solid var(--tomato); border-radius: 14px; padding: 8px 14px; }
+
+/* ---------- The word list (all the vocabulary) ---------- */
+.word-tools { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 14px; }
+.word-search {
+  flex: 1 1 220px;
+  min-width: 0;
+  font: inherit;
+  font-weight: 700;
+  padding: 0.55em 0.9em;
+  background: #fff;
+  border: var(--outline);
+  border-radius: 999px;
+}
+.chip-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+.chip {
+  padding: 5px 12px;
+  font-family: var(--font-display);
+  font-size: 0.98rem;
+  color: var(--ink);
+  background: #fff;
+  border: var(--outline);
+  border-radius: 999px;
+  box-shadow: 0 3px 0 var(--ink);
+  cursor: pointer;
+}
+.chip.active { background: var(--mustard); }
+.word-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 250px), 1fr)); gap: 12px; }
+.word-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: #fff;
+  border: var(--outline);
+  border-radius: 16px;
+  box-shadow: 0 4px 0 var(--ink);
+  min-width: 0;
+}
+.word-pic {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  font-size: 1.8rem;
+  background: var(--paper-2);
+  border: 3px solid var(--ink);
+  border-radius: 50%;
+}
+.word-pic.letter { font-family: var(--font-display); font-size: 1.5rem; color: #fff; background: var(--c, var(--teal)); }
+.word-text { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+.word-fr { font-weight: 900; font-size: 1.05rem; overflow-wrap: break-word; hyphens: manual; }
+.word-en { color: var(--muted); font-weight: 600; font-size: 0.9rem; overflow-wrap: break-word; }
+.gender-pill {
+  align-self: flex-start;
+  margin-top: 3px;
+  padding: 0 7px;
+  font-size: 0.75rem;
+  font-weight: 900;
+  color: #fff;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+}
+.gender-pill.m { background: var(--teal); }
+.gender-pill.f { background: var(--pink); }
+.gender-pill.pl { background: var(--grape); }
+.gender-pill.verb { background: var(--wood); }
+.say-button {
+  flex: none;
+  width: 2.2rem;
+  height: 2.2rem;
+  font-size: 1rem;
+  background: var(--paper-2);
+  border: 3px solid var(--ink);
+  border-radius: 50%;
+  cursor: pointer;
+}
+.say-button:hover { background: var(--mustard); }
+
+/* ---------- Feedback form ---------- */
+.feedback-form { display: flex; flex-direction: column; gap: 12px; max-width: 640px; }
+.feedback-form fieldset { border: 3px solid var(--ink); border-radius: 14px; padding: 8px 14px; margin: 0; background: #fff; }
+.feedback-form legend { font-weight: 900; padding: 0 6px; }
+.feedback-form > label { font-weight: 900; }
+.rating { display: flex; flex-wrap: wrap; gap: 14px; }
+.rating label { font-size: 1.15rem; font-weight: 800; cursor: pointer; }
+.feedback-form select, .feedback-form textarea, #feedback-copy-text {
+  font: inherit;
+  padding: 0.45em 0.7em;
+  color: var(--ink);
+  background: #fff;
+  border: 3px solid var(--ink);
+  border-radius: 12px;
+  max-width: 100%;
+}
+#feedback-copy-text { width: 100%; }
+
+/* ---------- Vocab check page (vocab-check.html) ---------- */
+.filters { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.filters label { color: var(--muted); font-weight: 700; }
 tr.needs-check td:first-child { border-left: 4px solid var(--warn); }
 .verify-note { color: var(--warn); font-size: 0.85rem; }
-
 .stats { color: var(--muted); }
+
+/* ---------- Phones ---------- */
+@media (max-width: 520px) {
+  body { padding-inline: 12px; }
+  .panel { padding: 16px 16px; border-radius: 20px; }
+  .ticket-top { margin: 0 -16px 12px; }
+  .shelf { gap: 8px; padding: 10px; }
+  .chef-title { width: 130px; }
+  .title-bubble::after { display: none; }
+}
+
+/* ---------- Less motion for players who ask for it ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}

@@ -40,6 +40,7 @@ function drawShop() {
 
   for (const slot of Object.keys(SLOT_NAMES)) {
     const heading = document.createElement("h2");
+    heading.className = "slot-heading";
     heading.textContent = SLOT_NAMES[slot];
     list.appendChild(heading);
 
@@ -91,6 +92,7 @@ function shopAction(item) {
     const result = buyItem(progress, item);
     if (result === "ok") {
       playSound("done");
+      celebrate();
       message.textContent = "Merci ! Tu as acheté " + item.name + ". (Bought!)";
     } else {
       message.textContent = "Pas assez d'étoiles ! Finis un niveau pour en gagner. (Not enough stars.)";

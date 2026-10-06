@@ -5,34 +5,38 @@ Players read French recipe cards and gather the right ingredients. The levels ge
 
 1. **Le Petit-Déjeuner**: click the picture that matches the French word (recognition)
 2. **Le Goûter**: also pick the right article: *le / la / les* (gender)
-3. **Le Déjeuner**: see the picture and type the French word (recall)
-4. **Le Dîner**: build a full menu (*entrée → plat principal → dessert*) against the clock
+3. **Le Déjeuner**: see the picture (or an English clue) and type the French word (recall)
+4. **Le Dîner**: build a full menu (*l'entrée → le plat principal → le dessert*)
+5. **Le Restaurant**: the meal words, the menu words and the verbs, plus more dishes (typing)
 
-Each level picks 3 of its 5 recipes at random (Level 4 picks one of two options per course), so every game is different.
+Each level picks 3 recipes at random from its pool, so every game is different. **Every one of the 124 words on the vocabulary list is used** (a test checks this), and **📖 Tout le vocabulaire** on the homepage shows them all, with search, categories and 🔊 pronunciation.
 
 **Jeux (mini-games)**, unlocked after Level 1:
 - **Le Café**: customers order in French ("Pour moi, la pomme et le lait…"); serve them before their patience runs out.
-- **La Pluie de Nourriture**: click the falling food that matches the French word before it reaches the bottom.
-- **Le Labyrinthe du Chef**: a Pac-Man-style maze. Steer the chef to the food named at the top of the screen, and avoid the mice.
+- **La Pluie de Nourriture**: click the falling food that matches the French word.
+- **Le Labyrinthe du Chef**: a Pac-Man-style maze. Steer the chef to the food named at the top. Mice chase you, hot stoves 🔥 are traps, and you have 5 hearts.
 
-**Chef Barbe**, the mascot, greets you on the main menu and reacts to your stars after every recipe and level.
+**Chef Barbe**, the animated mascot, greets you on the homepage and reacts to your stars.
 
-**Stars and the shop:** the first time you finish a level, its stars (up to 9) go into your collection. Replaying a finished level earns no new stars unless you start over ("Recommencer à zéro" erases levels, stars and clothes). Spend stars in *La Boutique du Chef* on 14 clothes and accessories; the chef wears them on the main menu and in the maze. Progress is saved in your browser.
+**Stars and the shop:** each recipe earns 1–5 stars. The first time you finish a level, its stars (up to 15) go into your collection; the first time you complete a mini-game you get 1 star. Replaying earns nothing new unless you start over ("Recommencer à zéro" erases levels, stars and clothes). Spend stars (1–6 each) in *La Boutique du Chef* on 21 food-themed clothes, like a cheese hat or a jelly beard. Progress is saved in your browser.
 
-> **Status:** Milestone 5. Play-test version with a feedback form, a mascot, a star shop, and three mini-games.
+**Look:** a bright, chunky cartoon kitchen inspired by *Overcooked*, with lots of animation (it switches off for players who turn on "reduce motion").
+
+> **Status:** Milestone 5. Play-test version.
 
 ## How to play
 No install needed. Download the folder and double-click **`index.html`**. It runs in any modern browser.
 
 ## Scoring
-Each recipe starts at ★★★. You lose 1 star for any mistake, 1 more for 3 or more mistakes, and 1 if you're slower than the target time: 6 seconds per ingredient for clicking (Level 1), 8 for choosing le/la/les (Level 2 and the entrée), and 12 for typing (Level 3, the plat principal and the dessert). You always get at least ★ for finishing.
+Each recipe starts at ★★★★★. You lose 1 star per mistake (at most 3) and 1 if you're slower than the target time: 6 seconds per ingredient for clicking, 8 for choosing le/la/les, and 12 for typing. You always get at least ★ for finishing.
 
-## Typing rules (Level 3 and the Level 4 plat principal and dessert)
+## Typing rules
 - Capital letters, extra spaces, and ’ vs ' don't matter. "oe" counts as "œ".
 - The article is optional: "pomme" and "la pomme" both work.
 - A missing accent counts, but the game shows the correct spelling ("Presque ! …").
 - The wrong article counts too, but the game shows the right one.
 - After 3 wrong tries, or "Je ne sais pas", the game shows the answer and adds the word to your review list.
+- Words with no picture show an English clue. A few words have a special clue (in `vocab.js`) when the plain English would be confusing: false friends like *prune* (= plum), look-alikes like *dessert*, or two words with the same English, like *la tartine* and *le pain grillé*.
 
 ## Feedback form
 In the online version, "Donner mon avis" saves each player's answers privately (only the game's owner can read them, using "Voir les avis"). In the downloaded file, or for viewers who can't save, the form shows the answers as text to copy and send.
@@ -44,9 +48,9 @@ Open **`vocab-check.html`** to see every word in a table. Rows marked with an or
 ## Project files
 | File | What it does |
 |---|---|
-| `index.html` | The game page: title, level select, kitchen, "recipe finished", and report screens |
+| `index.html` | The game page: every screen (title, levels, kitchen, results, shop, mini-games, word list, feedback) |
 | `vocab-check.html` | Table of all vocab, for checking accuracy |
-| `style.css` | Colors and layout |
+| `style.css` | The cartoon-kitchen look: colors, fonts, layout and animations |
 | `js/vocab.js` | The word list (from Lawless French, supplied by Dillon Allen) |
 | `js/recipes.js` | The levels and their recipes |
 | `js/scoring.js` | Star rules (time + mistakes) |
@@ -60,13 +64,14 @@ Open **`vocab-check.html`** to see every word in a table. Rows marked with an or
 | `js/cafe.js` | Mini-game: Le Café |
 | `js/falling.js` | Mini-game: La Pluie de Nourriture (falling food) |
 | `js/feedback.js` | Play-test feedback form |
+| `js/wordlist.js` | "Tout le vocabulaire": every word, with search, categories and pronunciation |
 | `tests/vocab.test.js` | Automatic checks for mistakes in the word list |
 | `tests/recipes.test.js` | Checks every recipe is playable |
 | `tests/scoring.test.js` | Checks the star rules |
 | `tests/check.test.js` | Checks the answer checker |
 | `tests/progress.test.js` | Checks the star collection and shop rules |
 | `tests/chef.test.js` | Checks the clothes list and the chef's messages |
-| `tests/maze.test.js` | Checks the maze can be fully explored and food is always reachable |
+| `tests/maze.test.js` | Checks the maze: traps don't cut it off, mice chase, food is always reachable |
 | `PROCESS_LOG.md` | How AI was used in this project (4D framework log) |
 | `CODE_GUIDE.md` | Plain-English walkthrough of the code, for the showcase |
 
