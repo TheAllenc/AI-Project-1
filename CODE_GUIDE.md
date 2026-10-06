@@ -27,7 +27,7 @@ sound.js ─┘     └── showScreen, shuffle, pictureFoods, addRow…
 ## Data files
 
 ### `js/vocab.js`: the word list
-- `VOCAB` is a list of 124 words from the French class list. Each word is an object:
+- `VOCAB` is a list of 124 words from the Lawless French food vocabulary list (https://www.lawlessfrench.com/vocabulary/food/), which I supplied. Each word is an object:
   `{ id, fr, article, gender, plural, en, emoji, categories }`
 - `gender` is stored separately from `article` because *l'* and *les* hide the gender (*l'orange* is feminine).
 - `emoji` is `null` when no clear picture exists. Those words only appear in typing rounds, with the English word as the clue.
@@ -112,13 +112,13 @@ Run `node --test`. There are 34 automatic checks, including:
 ## Questions you might be asked (with answers)
 
 **"Did you write the code?"**
-The AI (Claude) wrote the code to my design, one milestone at a time. I chose the audience, the game type, the progression, the scoring features, the vocab source (my class list), and the new modes after play-testing. I play-tested each milestone. *(Be specific and honest. Your PROCESS_LOG shows exactly who did what.)*
+The AI (Claude) wrote the code to my design, one milestone at a time. I chose the audience, the game type, the progression, the scoring features, the vocab source (Lawless French), and the new modes after play-testing. I play-tested each milestone. *(Be specific and honest. Your PROCESS_LOG shows exactly who did what.)*
 
 **"How does it know if a typed answer is right?"**
 `checkTyped` in `check.js` cleans up the answer (capitals, spaces, apostrophes, "oe" for "œ"), removes an optional article, and compares. If only accents differ, it counts but shows the correct spelling.
 
 **"How do you know the French is correct?"**
-All words come from my French class list. The AI flagged things it wasn't sure about (genders of *l'* words, missing footnotes, the meaning of *déjeuner*), and I answered them. *(If you check more with your teacher, say so here.)*
+All words come from the Lawless French food vocabulary list, which I supplied. The AI flagged things it wasn't sure about (genders of *l'* words, missing footnotes, the meaning of *déjeuner*), and I answered them. *(If you check more with your teacher, say so here.)*
 
 **"Why one ingredient at a time?"**
 So the game knows which word you were looking for when you clicked the wrong picture, and can put it on your review list.

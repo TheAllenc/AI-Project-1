@@ -142,6 +142,17 @@ h2 { font-size: 1.2rem; margin: 0.3em 0; }
 
 .section-heading { margin-top: 1.2em; }
 
+/* ---------- Disclaimer (bottom of the title screen) ---------- */
+.disclaimer {
+  margin-top: 16px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+.disclaimer p { margin: 0.35em 0; }
+.disclaimer a { overflow-wrap: anywhere; }
+
 /* ---------- Feedback form ---------- */
 .feedback-form { display: flex; flex-direction: column; gap: 10px; max-width: 640px; }
 .feedback-form fieldset { border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; margin: 0; }

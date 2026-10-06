@@ -42,7 +42,7 @@ Open **`vocab-check.html`** to see every word in a table. Rows marked with an or
 | `index.html` | The game page: title, level select, kitchen, "recipe finished", and report screens |
 | `vocab-check.html` | Table of all vocab, for checking accuracy |
 | `style.css` | Colors and layout |
-| `js/vocab.js` | The word list (from our French class list) |
+| `js/vocab.js` | The word list (from Lawless French, supplied by Dillon Allen) |
 | `js/recipes.js` | The levels and their recipes |
 | `js/scoring.js` | Star rules (time + mistakes) |
 | `js/check.js` | Checks typed answers (accents, apostrophes, articles) and le/la/les choices |
@@ -61,5 +61,5 @@ Open **`vocab-check.html`** to see every word in a table. Rows marked with an or
 Run the checks with `node --test` (requires Node.js).
 
 ## Credits
-- Vocabulary: our French class food vocabulary list.
-- Built with help from Claude (an AI assistant), which wrote the code to the student's design. All French was checked by the student against the class list. See `PROCESS_LOG.md` for details.
+- **Responsibility:** Dillon Allen is responsible for everything this game has to offer. Dillon Allen created it with the help of Claude, a service of Anthropic, which wrote the code to Dillon's design. See `PROCESS_LOG.md` for who did what.
+- **Vocabulary:** supplied by Dillon Allen, from Lawless French: https://www.lawlessfrench.com/vocabulary/food/

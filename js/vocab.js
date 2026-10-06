@@ -1,20 +1,21 @@
 // ============================================================
 // vocab.js — THE word list for the game.
 //
-// Source: our French class food vocabulary list.
+// Source: Lawless French food vocabulary, supplied by Dillon Allen:
+//   https://www.lawlessfrench.com/vocabulary/food/
 // To add or fix a word, edit this file only.
 //
 // Each word has:
 //   id          unique name used by recipes.js (no accents/spaces)
 //   fr          the French word WITHOUT its article
-//   article     "le", "la", "l'", "les", "un" — as written on the class list
+//   article     "le", "la", "l'", "les", "un" — as written on the vocabulary list
 //   gender      "m" or "f" (needed because "l'" and "les" hide the gender)
 //   plural      true if the word is plural (les ...)
-//   en          English meaning (from the class list)
+//   en          English meaning (from the vocabulary list)
 //   emoji       picture used in the game, or null if no good emoji exists
 //               (words with null only appear in typing rounds, with the
 //               English word as the clue instead of a picture)
-//   categories  which section(s) of the class list the word is in
+//   categories  which section(s) of the vocabulary list the word is in
 //   verify      (optional) a note about something a human must double-check
 // ============================================================
 

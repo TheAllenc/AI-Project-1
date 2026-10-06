@@ -164,3 +164,15 @@ Level 4, *Le Dîner*: build a full menu (*l'entrée → le plat principal → le
 - Average learned (1–5):
 - Most common confusion:
 - What I changed because of it:
+
+---
+
+## Session 7: AI-use disclaimer and making the game more fun
+
+### Diligence: being clear about AI use (my request)
+I asked for a disclaimer at the bottom of the homepage saying that **I, Dillon Allen, am responsible for everything this game has to offer**, that I created it **with the help of Claude, a service of Anthropic**, and that **I supplied the French vocabulary, from Lawless French** (https://www.lawlessfrench.com/vocabulary/food/). The README, `vocab.js` and the code guide now give the same source. (Earlier notes in this log say "class list"; the list I supplied is the Lawless French food vocabulary.)
+
+### Fun: my ideas after play-testing
+1. **A mascot:** an animated chef with a large beard, at the top of the main menu, and next to the stars after each recipe with a message that matches how well you did (3 stars: "great work"; 1 star: "try again, you got this!").
+2. **A Pac-Man-style mode** where you play as the chef, move around a maze, and collect the food named at the top of the screen.
+3. **Collectible stars:** stars you earn add up, but a level only gives stars the first time you finish it, unless you completely start over. Stars buy clothes for the chef, shown on the main menu and in the maze game.
