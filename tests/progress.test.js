@@ -5,8 +5,9 @@ const assert = require("node:assert");
 const { emptyProgress, earnLevelStars, starsEarned, buyItem, toggleWear } = require("../js/progress.js");
 const { CLOTHES } = require("../js/chef.js");
 
-const beret = CLOTHES.find((c) => c.id === "beret");
-const crown = CLOTHES.find((c) => c.id === "crown");
+// A cheap hat and a more expensive hat from the shop.
+const beret = CLOTHES.find((c) => c.id === "cheese-hat");
+const crown = CLOTHES.find((c) => c.id === "cake-hat");
 
 test("stars from a level count only the first time", () => {
   const p = emptyProgress();
@@ -29,16 +30,16 @@ test("buying costs stars, puts the item on, and only works once", () => {
   earnLevelStars(p, "a", 9);
   assert.strictEqual(buyItem(p, beret), "ok");
   assert.strictEqual(p.stars, 9 - beret.price);
-  assert.strictEqual(p.wearing.hat, "beret");
+  assert.strictEqual(p.wearing.hat, "cheese-hat");
   assert.strictEqual(buyItem(p, beret), "owned");
   assert.strictEqual(p.stars, 9 - beret.price);
 });
 
 test("you can't buy what you can't afford", () => {
   const p = emptyProgress();
-  earnLevelStars(p, "a", 3);
+  earnLevelStars(p, "a", 2);
   assert.strictEqual(buyItem(p, crown), "too-expensive");
-  assert.strictEqual(p.stars, 3);
+  assert.strictEqual(p.stars, 2);
   assert.deepStrictEqual(p.owned, []);
 });
 
@@ -56,11 +57,11 @@ test("wearing: one item per slot, and owned items can be taken off", () => {
   earnLevelStars(p, "b", 9);
   buyItem(p, beret);
   buyItem(p, crown);
-  assert.strictEqual(p.wearing.hat, "crown"); // the newest hat replaces the beret
+  assert.strictEqual(p.wearing.hat, "cake-hat"); // the newest hat replaces the old one
   toggleWear(p, crown);
   assert.strictEqual(p.wearing.hat, undefined);
   toggleWear(p, beret);
-  assert.strictEqual(p.wearing.hat, "beret");
+  assert.strictEqual(p.wearing.hat, "cheese-hat");
 });
 
 test("you can't wear an item you don't own", () => {

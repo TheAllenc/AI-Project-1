@@ -3,8 +3,9 @@
 // finished levels, and the chef's clothes.
 //
 // Rules:
-//   - Finishing a level for the FIRST time adds its stars (up to 9)
+//   - Finishing a level for the FIRST time adds its stars (up to 15)
 //     to your collection. Replaying a finished level adds nothing.
+//   - Completing a mini-game for the first time adds 1 star.
 //   - Stars buy clothes in the shop. Each item can be bought once.
 //   - "Recommencer à zéro" (start over) erases everything, clothes included,
 //     so stars can't be farmed by starting over and replaying.
@@ -14,7 +15,9 @@
 // still works; progress just lasts until the page is closed.
 // ============================================================
 
-const PROGRESS_KEY = "la-cuisine-progress-v1";
+// "v2": recipes now give up to 5 stars and the clothes changed, so old
+// saved progress (v1) is not loaded.
+const PROGRESS_KEY = "la-cuisine-progress-v2";
 
 // A brand-new player.
 function emptyProgress() {
@@ -22,7 +25,7 @@ function emptyProgress() {
     completed: {},   // level id -> stars earned the first time it was finished
     stars: 0,        // stars available to spend
     owned: [],       // ids of clothes bought
-    wearing: {},     // slot -> clothing id (e.g. { hat: "beret" })
+    wearing: {},     // slot -> clothing id (e.g. { hat: "cheese-hat" })
   };
 }
 

@@ -14,17 +14,25 @@ test("every clothing item has a unique id, a known slot, a price and a drawing",
   }
 });
 
-test("the shop costs more than a player can earn, so players must choose", () => {
-  const maxStars = 4 * 9; // 4 levels, 9 stars each
-  const total = CLOTHES.reduce((sum, c) => sum + c.price, 0);
-  assert.ok(total > maxStars);
-  assert.ok(CLOTHES.some((c) => c.price <= 3), "something should be cheap enough to buy after one level");
+test("clothes are cheap: 1-6 stars each, and some cost only 1", () => {
+  for (const item of CLOTHES) assert.ok(item.price >= 1 && item.price <= 6, item.id);
+  assert.ok(CLOTHES.some((c) => c.price === 1));
+});
+
+test("there's at least one of each kind, including beards", () => {
+  for (const slot of Object.keys(SLOT_NAMES)) {
+    assert.ok(CLOTHES.filter((c) => c.slot === slot).length >= 3, slot);
+  }
+  assert.ok(SLOT_NAMES.beard);
 });
 
 test("drawChef shows the clothes being worn", () => {
   assert.ok(drawChef({}).includes("<svg"));
-  assert.ok(drawChef({ hat: "crown" }).includes(CLOTHES_SVG.crown));
-  assert.ok(!drawChef({ hat: "crown" }).includes(CLOTHES_SVG.toque)); // the crown replaces the chef's hat
+  assert.ok(drawChef({ hat: "cheese-hat" }).includes(CLOTHES_SVG["cheese-hat"]));
+  assert.ok(!drawChef({ hat: "cheese-hat" }).includes(CLOTHES_SVG.toque)); // the cheese hat replaces the chef's hat
+  assert.ok(drawChef({}).includes("chef-beard"));
+  assert.ok(!drawChef({ beard: "jelly-beard" }).includes("chef-beard")); // the jelly beard replaces his beard
+  assert.ok(!drawChef({ hat: "an-old-removed-hat" }).includes("undefined")); // unknown items are ignored
 });
 
 test("the chef's message matches the stars", () => {
