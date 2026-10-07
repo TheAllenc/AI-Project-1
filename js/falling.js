@@ -59,7 +59,7 @@ function startFalling() {
 // Picks a new word to catch (different from the last one).
 function newTarget() {
   const choices = pictureFoods().filter((w) => !fall.target || w.id !== fall.target.id);
-  fall.target = choices[Math.floor(Math.random() * choices.length)];
+  fall.target = pickWeighted(choices, (w) => wordWeight(progress.memory, w.id), 1)[0]; // weak words more often
   document.getElementById("fall-target").textContent = withArticle(fall.target);
   drawFallStatus();
 }
@@ -128,6 +128,7 @@ function catchFood(item) {
   removeFood(item);
   if (item.word.id === fall.target.id) {
     fall.score++;
+    remember(item.word.id, true);
     playSound("good");
     fallFeedback("Oui ! " + withArticle(item.word) + " ✓", "good");
     newTarget();
@@ -138,6 +139,7 @@ function catchFood(item) {
 
 function loseLife(message) {
   fall.lives--;
+  remember(fall.target.id, false);
   if (!fall.missed.includes(fall.target.id)) fall.missed.push(fall.target.id);
   playSound("bad");
   fallFeedback(message, "bad");

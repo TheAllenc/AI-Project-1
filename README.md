@@ -11,6 +11,13 @@ Players read French recipe cards and gather the right ingredients. The levels ge
 
 Each level picks 3 recipes at random from its pool, so every game is different. **Every one of the 124 words on the vocabulary list is used** (a test checks this), and **📖 Tout le vocabulaire** on the homepage shows them all, with search, categories and 🔊 pronunciation.
 
+**How the game helps words stick** (see `LEARNING_DESIGN.md`):
+- **Spaced repetition:** every word has a memory (Leitner boxes 1–5). Right answers move it up and it comes back later; a mistake sends it back to box 1 and it comes back soon.
+- **Weak words come back more often:** replaying a level favors recipes with words you struggle with; the mini-games pick their targets the same way.
+- **"Question surprise !":** sometimes, on a menu screen, one quick question about a word you've seen (due and weak words first). Right +1 ⭐, wrong or skipped −1 ⭐ (never below 0).
+- **Level quizzes:** after a level, a quiz on every word of that level (all 5 quizzes cover all 124 words). Pass at 80%. First try only: pass +10 ⭐, fail −5 ⭐. Unlimited retries.
+- **Progress you can see:** the vocabulary page shows how well you know each word, with a "🔁 À revoir" filter.
+
 **Jeux (mini-games)**, unlocked after Level 1:
 - **Le Café**: customers order in French ("Pour moi, la pomme et le lait…"); serve them before their patience runs out.
 - **La Pluie de Nourriture**: click the falling food that matches the French word.
@@ -56,6 +63,7 @@ Open **`vocab-check.html`** to see every word in a table. Rows marked with an or
 | `js/scoring.js` | Star rules (time + mistakes) |
 | `js/check.js` | Checks typed answers (accents, apostrophes, articles) and le/la/les choices |
 | `js/sound.js` | Sound effects (made by the browser, no files) and the mute button |
+| `js/memory.js` | Spaced repetition: each word's Leitner box, when it's due, and weighted picking |
 | `js/progress.js` | Saved progress: collected stars, finished levels, the chef's clothes |
 | `js/chef.js` | The mascot: clothes list, the SVG drawing, and the chef's messages |
 | `js/shop.js` | The chef's shop, the "start over" button, and drawing the chef on each screen |
@@ -64,16 +72,20 @@ Open **`vocab-check.html`** to see every word in a table. Rows marked with an or
 | `js/cafe.js` | Mini-game: Le Café |
 | `js/falling.js` | Mini-game: La Pluie de Nourriture (falling food) |
 | `js/feedback.js` | Play-test feedback form |
-| `js/wordlist.js` | "Tout le vocabulaire": every word, with search, categories and pronunciation |
+| `js/wordlist.js` | "Tout le vocabulaire": every word, with search, categories, pronunciation and mastery |
+| `js/quiz.js` | Level quizzes and surprise review questions |
 | `tests/vocab.test.js` | Automatic checks for mistakes in the word list |
 | `tests/recipes.test.js` | Checks every recipe is playable |
 | `tests/scoring.test.js` | Checks the star rules |
 | `tests/check.test.js` | Checks the answer checker |
 | `tests/progress.test.js` | Checks the star collection and shop rules |
 | `tests/chef.test.js` | Checks the clothes list and the chef's messages |
+| `tests/memory.test.js` | Checks the spaced-repetition rules |
+| `tests/quiz.test.js` | Checks quiz questions (every word asked, one right answer, fair wrong options) |
 | `tests/maze.test.js` | Checks the maze: traps don't cut it off, mice chase, food is always reachable |
 | `PROCESS_LOG.md` | How AI was used in this project (4D framework log) |
 | `CODE_GUIDE.md` | Plain-English walkthrough of the code, for the showcase |
+| `LEARNING_DESIGN.md` | The learning science behind the game, and how each idea is used |
 
 Run the checks with `node --test` (requires Node.js).
 

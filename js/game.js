@@ -74,10 +74,21 @@ const MAX_TRIES = 3;
 // ---------- Small helpers ----------
 
 // Shows one screen (a <section>) and hides all the others.
+// Arriving at a menu screen sometimes brings a surprise review question (quiz.js).
+let currentScreen = "title-screen";
 function showScreen(id) {
   for (const screen of document.querySelectorAll("main > section")) {
     screen.hidden = screen.id !== id;
   }
+  const from = currentScreen;
+  currentScreen = id;
+  maybeSurprise(from, id);
+}
+
+// Saves one answer to the word's memory (memory.js: spaced repetition).
+function remember(wordId, correct) {
+  recordAnswer(progress.memory, wordId, correct);
+  saveProgress();
 }
 
 // Returns a shuffled copy of a list (Fisher–Yates shuffle).
@@ -236,6 +247,32 @@ function showLevels() {
     gameList.appendChild(button);
   }
 
+  // The level quizzes (quiz.js): each opens when its level is finished.
+  const quizList = document.getElementById("quiz-list");
+  quizList.innerHTML = "";
+  LEVELS.forEach((level, index) => {
+    const words = levelWords(level);
+    const mastered = words.filter((id) => masteryOf(wordRecord(progress.memory, id)) === "maîtrisé").length;
+    const result = progress.quizzes[level.id];
+    const button = document.createElement("button");
+    button.className = "level-card quiz-card";
+    button.disabled = !isFinished(level);
+    let status;
+    if (!isFinished(level)) status = "🔒 Finis le niveau " + (index + 1) + " d'abord";
+    else if (!result) status = "1er essai : +10 ⭐ si tu réussis (80%), −5 ⭐ sinon";
+    else status = "1er essai : " + result.firstScore + "/" + result.total + (result.passedFirst ? " ✓" : " ✗") +
+      " · meilleur : " + result.best + "/" + result.total;
+
+    button.innerHTML =
+      '<span class="level-badge"><span class="level-emoji">📝</span></span><span class="level-text"><strong></strong><small class="goal"></small><small class="status"></small></span>';
+    button.style.setProperty("--c", level.color);
+    button.querySelector("strong").textContent = "Quiz · " + level.name;
+    button.querySelector(".goal").textContent = words.length + " mots · " + mastered + " maîtrisés (mastered)";
+    button.querySelector(".status").textContent = status;
+    button.addEventListener("click", () => startQuiz(level));
+    quizList.appendChild(button);
+  });
+
   renderChefs();
   showScreen("levels-screen");
 }
@@ -244,7 +281,9 @@ function showLevels() {
 
 function startLevel(level) {
   state.level = level;
-  state.recipes = pickRecipes(level); // a new random set every time
+  // A new set every time, picked by spaced repetition: recipes with words the
+  // player struggles with (or hasn't seen) are more likely than mastered ones.
+  state.recipes = level.practice ? level.recipes : pickRecipes(level, (id) => wordWeight(progress.memory, id));
   state.recipeIndex = 0;
   state.results = [];
   state.missed = [];
@@ -258,6 +297,7 @@ function startRecipe() {
   state.mode = mode;
   state.found = [];
   state.mistakes = 0;
+  state.wrongWords = new Set(); // words missed at least once in this recipe
   state.tries = 0;
   state.pendingButton = null;
 
@@ -361,6 +401,8 @@ function drawShelf() {
 // quiet = true skips the "good" sound (used when the game revealed the answer).
 function collect(word, quiet = false) {
   if (!quiet) playSound("good");
+  // The word counts as "known" only if it was right with no mistake on it.
+  if (!state.wrongWords.has(word.id)) remember(word.id, true);
   state.found.push(word.id);
   const item = document.createElement("span");
   item.className = word.emoji ? "bowl-item" : "bowl-item bowl-word";
@@ -382,6 +424,10 @@ function mistake(word) {
   playSound("bad");
   state.mistakes++;
   addMissed(word);
+  if (!state.wrongWords.has(word.id)) {
+    state.wrongWords.add(word.id);
+    remember(word.id, false); // back to box 1: this word will come back soon
+  }
 }
 
 // ---------- Modes 1 & 2: clicking a picture on the shelf ----------
@@ -567,6 +613,7 @@ function showReport() {
   document.getElementById("missed-section").hidden = state.missed.length === 0;
   document.getElementById("no-missed").hidden = state.missed.length > 0;
   document.getElementById("practice-button").hidden = state.missed.length === 0;
+  document.getElementById("report-quiz-button").hidden = Boolean(state.level.practice);
 
   showScreen("report-screen");
 }

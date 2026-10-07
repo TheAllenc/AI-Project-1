@@ -3,7 +3,7 @@
 const test = require("node:test");
 const assert = require("node:assert");
 const { VOCAB, getWord } = require("../js/vocab.js");
-const { LEVELS, RECIPES_PER_LEVEL, SHELF_SIZE, pickRecipes, allRecipesOf } = require("../js/recipes.js");
+const { LEVELS, RECIPES_PER_LEVEL, SHELF_SIZE, pickRecipes, allRecipesOf, levelWords } = require("../js/recipes.js");
 const { SECONDS_PER_INGREDIENT } = require("../js/scoring.js");
 
 // Every recipe with the mode it is actually played in (Level 4 courses have their own).
@@ -102,4 +102,29 @@ test("EVERY word on the vocabulary list is used in the game", () => {
   const used = new Set(allRecipes.flatMap(({ recipe }) => recipe.ingredients));
   const missing = VOCAB.filter((w) => !used.has(w.id)).map((w) => w.id);
   assert.deepStrictEqual(missing, [], "these words are not in any recipe: " + missing.join(", "));
+});
+
+test("replaying favors recipes with words the player struggles with", () => {
+  const level = LEVELS[0];
+  const target = level.recipes[0]; // pretend the player struggles with this recipe's words
+  const weight = (id) => (target.ingredients.includes(id) ? 6 : 0.5); // struggling vs mastered
+  let picked = 0;
+  for (let i = 0; i < 1000; i++) if (pickRecipes(level, weight).some((r) => r.name === target.name)) picked++;
+  // With equal weights it would be picked about 3/5 = 60% of the time.
+  assert.ok(picked > 900, "struggling recipe picked " + picked + " / 1000 times");
+});
+
+test("mastered recipes still come back sometimes", () => {
+  const level = LEVELS[0];
+  const easy = level.recipes[1];
+  const weight = (id) => (easy.ingredients.includes(id) ? 0.5 : 3);
+  let picked = 0;
+  for (let i = 0; i < 1000; i++) if (pickRecipes(level, weight).some((r) => r.name === easy.name)) picked++;
+  assert.ok(picked > 0 && picked < 600, "mastered recipe picked " + picked + " / 1000 times");
+});
+
+test("the 5 level quizzes together cover EVERY word on the list", () => {
+  const covered = new Set(LEVELS.flatMap(levelWords));
+  const missing = VOCAB.filter((w) => !covered.has(w.id)).map((w) => w.id);
+  assert.deepStrictEqual(missing, []);
 });

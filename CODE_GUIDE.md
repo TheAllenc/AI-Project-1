@@ -127,15 +127,31 @@ sound.js ─┘     └── showScreen, shuffle, pictureFoods, addRow…
 - `pickFoodSquares()` uses a breadth-first search (`canReach`) to make sure the right food can always be reached **without walking over another food**, so the game is always fair.
 - The board is HTML squares (not a canvas), so the chef wears the same SVG clothes as everywhere else.
 
+### `js/memory.js`: spaced repetition (the "brain" of the game)
+- Each word has a record: its **box** (0 = new, 1 = struggling … 5 = mastered), how often it was seen, right, and wrong, and when it was last seen.
+- `recordAnswer()` moves a word up a box when it's right, or back to box 1 when it's wrong.
+- `isDue()`: has the word's waiting time passed (2 min for box 1 … 3 days for box 5)?
+- `wordWeight()`: how likely the word is to be picked. Struggling and due words weigh the most.
+- `pickWeighted()`: picks items at random, but heavy items more often. It's used to choose recipes (`pickRecipes`), café orders, falling-food targets and maze targets.
+- `game.js` calls `remember(wordId, correct)` after every answer in the game.
+
+### `js/quiz.js`: quizzes and surprise questions
+- `buildQuestion(word, kind)` makes a 4-option question, either French → English or picture/English → French. Wrong options come from the same category and never mean the same thing as the answer.
+- `buildLevelQuiz(level)` asks about **every** word in all of the level's recipes (`levelWords`).
+- `recordQuiz()` (progress.js) gives +10 ⭐ for passing (80%) or −5 ⭐ for failing, **only on the first try**. Leaving a first try early counts as finishing it.
+- `maybeSurprise()` runs every time `showScreen()` changes screen. On menu screens only, with a 35% chance and a 45-second cooldown, it asks about a word picked by `chooseReviewWord()` (due and weak words first). Right +1 ⭐, wrong or skipped −1 ⭐; `changeStars()` never goes below 0.
+
 ## Tests (`tests/`)
 
-Run `node --test`. There are 58 automatic checks, including:
+Run `node --test`. There are 78 automatic checks, including:
 - **Vocab:** no duplicate ids; articles match genders; no two words share an emoji.
 - **Recipes:** every ingredient exists; picture levels only use words with emoji; English clues never equal the French answer; each game picks 3 different recipes.
 - **Scoring and checking:** star rules and accent/article rules give the expected answers.
 - **Progress:** a level's stars count only once; you can't buy what you can't afford.
 - **Maze:** traps never cut the map apart; mice avoid traps; a chasing mouse reaches a still chef by the shortest path; in 2,000 random layouts the right food is always reachable without touching a trap or another food.
 - **Vocabulary:** every word on the list appears in a recipe, and no typing clue gives away its answer.
+- **Memory:** right answers move words up, mistakes send them to box 1, waiting times grow, and struggling words are picked far more often than mastered ones.
+- **Quizzes:** every level quiz asks every word once; every question has exactly one right answer; first-try-only stars; stars never below 0.
 
 **Why tests matter for the 4D framework (Diligence):** they catch mistakes automatically every time something changes. A real example: a test blocks any picture-level recipe that uses a word with no emoji.
 
@@ -163,6 +179,9 @@ Three friends said it was boring and needed more to do, and one suggested new ga
 
 **"Where is progress saved?"**
 Collected stars, finished levels and the chef's clothes are saved in the player's own browser (`localStorage`). Feedback answers are saved online, and only I can read them.
+
+**"Do words come back? How does the game help people remember?"**
+Yes. Every word has a Leitner box (spaced repetition). Mistakes send a word back to box 1, so it comes back soon in recipes, mini-games and surprise questions; words you know come back less and less often. Each level ends with a quiz on all its words. See `LEARNING_DESIGN.md`.
 
 **"Can't players just replay a level to get more stars?"**
 No. `earnLevelStars` only gives a level's stars the first time. The only way to earn them again is "start over", which also erases the clothes you bought.

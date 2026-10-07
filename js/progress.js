@@ -6,6 +6,9 @@
 //   - Finishing a level for the FIRST time adds its stars (up to 15)
 //     to your collection. Replaying a finished level adds nothing.
 //   - Completing a mini-game for the first time adds 1 star.
+//   - A surprise review question: right = +1 star, wrong or skipped = -1 star.
+//   - A level quiz, FIRST try only: pass = +10 stars, fail = -5 stars.
+//   - Stars never go below 0.
 //   - Stars buy clothes in the shop. Each item can be bought once.
 //   - "Recommencer à zéro" (start over) erases everything, clothes included,
 //     so stars can't be farmed by starting over and replaying.
@@ -26,8 +29,15 @@ function emptyProgress() {
     stars: 0,        // stars available to spend
     owned: [],       // ids of clothes bought
     wearing: {},     // slot -> clothing id (e.g. { hat: "cheese-hat" })
+    memory: {},      // word id -> how well the player knows it (memory.js)
+    quizzes: {},     // level id -> { firstScore, total, passedFirst, best, attempts }
   };
 }
+
+const QUIZ_PASS = 0.8;         // 80% right to pass a quiz
+const QUIZ_PASS_STARS = 10;    // first try, passed
+const QUIZ_FAIL_STARS = -5;    // first try, failed
+const REVIEW_STARS = 1;        // surprise question: +1 right, -1 wrong or skipped
 
 // ---------- Pure rules (no saving here, so the tests can check them) ----------
 
@@ -37,6 +47,31 @@ function earnLevelStars(p, levelId, stars) {
   p.completed[levelId] = stars;
   p.stars += stars;
   return stars;
+}
+
+// Adds (or takes away) stars. Stars never go below 0. Returns the real change.
+function changeStars(p, amount) {
+  const before = p.stars;
+  p.stars = Math.max(0, p.stars + amount);
+  return p.stars - before;
+}
+
+// Records a quiz attempt. Stars only change on the FIRST attempt.
+// Returns { passed, first, starChange }.
+function recordQuiz(p, levelId, score, total) {
+  const passed = total > 0 && score / total >= QUIZ_PASS;
+  const previous = p.quizzes[levelId];
+  const first = previous === undefined;
+  let starChange = 0;
+  if (first) {
+    starChange = changeStars(p, passed ? QUIZ_PASS_STARS : QUIZ_FAIL_STARS);
+    p.quizzes[levelId] = { firstScore: score, total, passedFirst: passed, best: score, attempts: 1 };
+  } else {
+    previous.attempts++;
+    previous.best = Math.max(previous.best, score);
+    previous.total = total;
+  }
+  return { passed, first, starChange };
 }
 
 // Total stars ever earned (spent ones included).
@@ -68,7 +103,7 @@ let progress = loadProgress();
 function loadProgress() {
   try {
     const saved = JSON.parse(localStorage.getItem(PROGRESS_KEY));
-    if (saved && typeof saved.stars === "number") return { ...emptyProgress(), ...saved };
+    if (saved && typeof saved.stars === "number") return { ...emptyProgress(), ...saved }; // older saves get the new parts empty
   } catch (error) {
     // Nothing saved yet, or saving is blocked: start fresh.
   }
@@ -89,5 +124,8 @@ function startOver() {
 }
 
 if (typeof module !== "undefined") {
-  module.exports = { emptyProgress, earnLevelStars, starsEarned, buyItem, toggleWear };
+  module.exports = {
+    QUIZ_PASS, QUIZ_PASS_STARS, QUIZ_FAIL_STARS, REVIEW_STARS,
+    emptyProgress, earnLevelStars, starsEarned, buyItem, toggleWear, changeStars, recordQuiz,
+  };
 }

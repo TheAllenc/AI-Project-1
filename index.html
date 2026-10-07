@@ -65,9 +65,57 @@
       <div id="level-list" class="level-list"></div>
       <h2 class="section-heading">🎮 Les jeux <span class="muted">(mini-games: 1 ⭐ each, the first time you complete one)</span></h2>
       <div id="game-list" class="level-list"></div>
+      <h2 class="section-heading">📝 Les quiz <span class="muted">(every word of the level · first try: pass +10 ⭐, fail −5 ⭐)</span></h2>
+      <div id="quiz-list" class="level-list"></div>
       <p class="button-row" style="margin-top: 18px">
         <button id="back-title-button" class="button secondary">← Retour</button>
         <button type="button" class="button grape open-vocab-button">📖 Tout le vocabulaire</button>
+      </p>
+    </section>
+
+    <!-- Level quiz (quiz.js) -->
+    <section id="quiz-screen" class="panel" hidden>
+      <div class="screen-head">
+        <h1 id="quiz-title">Quiz</h1>
+        <p id="quiz-count" class="star-pill">1 / 1</p>
+      </div>
+      <div class="quiz-bar" aria-hidden="true"><div id="quiz-bar-fill" class="quiz-bar-fill"></div></div>
+      <p id="quiz-note" class="muted"></p>
+      <div id="quiz-question" class="quiz-question"></div>
+      <p id="quiz-feedback" class="feedback" aria-live="polite"></p>
+      <p class="button-row">
+        <button type="button" id="quiz-next" class="button" hidden>Question suivante →</button>
+        <button type="button" id="quiz-quit" class="button secondary">Quitter</button>
+      </p>
+      <div id="quiz-quit-confirm" class="confirm-box" hidden>
+        <p><strong>Quitter le quiz ?</strong> This is your first try, so leaving now counts as finishing it with your current score (you'd lose 5 ⭐ if that's under 80%).</p>
+        <p class="button-row">
+          <button type="button" id="quiz-quit-yes" class="button danger">Oui, terminer maintenant</button>
+          <button type="button" id="quiz-quit-no" class="button secondary">Non, continuer</button>
+        </p>
+      </div>
+    </section>
+
+    <!-- Quiz result -->
+    <section id="quiz-result-screen" class="panel" hidden>
+      <h1 id="quiz-result-title"></h1>
+      <div class="result-row">
+        <div class="result-main">
+          <p id="quiz-result-score" class="stars-big"></p>
+          <p id="quiz-result-stars" class="star-note"></p>
+        </div>
+        <div class="chef-reaction">
+          <p id="quiz-result-chef-says" class="speech" aria-live="polite"></p>
+          <div id="quiz-result-chef" class="chef-small"></div>
+        </div>
+      </div>
+      <div id="quiz-missed-section">
+        <h2>Les mots à revoir <span class="muted">(they'll come back more often)</span></h2>
+        <div class="table-wrap"><table><tbody id="quiz-result-missed"></tbody></table></div>
+      </div>
+      <p class="button-row">
+        <button type="button" id="quiz-retry" class="button">Réessayer ↻</button>
+        <button type="button" id="quiz-levels" class="button secondary">Niveaux</button>
       </p>
     </section>
 
@@ -77,7 +125,9 @@
         <h1>Tout le vocabulaire</h1>
         <p class="star-pill"><span id="word-count">0</span>&nbsp;mots</p>
       </div>
-      <p class="subtitle">Every word in the game, from Lawless French. Tap 🔊 to hear it.</p>
+      <p class="subtitle">Every word in the game, from Lawless French. Tap 🔊 to hear it.
+        The dots show how well you know each word: words you miss come back more often until you master them.</p>
+      <p id="word-mastery" class="mastery-summary"></p>
       <div class="word-tools">
         <label for="word-search" class="visually-hidden">Chercher un mot</label>
         <input id="word-search" class="word-search" type="search" placeholder="🔍 Chercher (search in French or English)…" autocomplete="off">
@@ -397,6 +447,7 @@
       <p id="no-missed" class="good-text">Aucun mot à revoir. Excellent ! (No words to review.)</p>
 
       <p class="button-row">
+        <button id="report-quiz-button" class="button yellow">📝 Quiz du niveau</button>
         <button id="practice-button" class="button">Pratiquer ces mots</button>
         <button id="replay-level-button" class="button secondary">Rejouer le niveau ↻</button>
         <button id="levels-button" class="button secondary">Niveaux</button>
@@ -405,11 +456,26 @@
     </section>
   </main>
 
+  <!-- Surprise review question (quiz.js): pops up over the screen -->
+  <div id="surprise-popup" class="popup-backdrop" hidden>
+    <div class="panel popup" role="dialog" aria-modal="true" aria-labelledby="surprise-title">
+      <p id="surprise-title" class="popup-title">❓ Question surprise !</p>
+      <p class="muted">Right: +1 ⭐ · Wrong or skipped: −1 ⭐</p>
+      <div id="surprise-question" class="quiz-question"></div>
+      <p id="surprise-feedback" class="feedback" aria-live="polite"></p>
+      <p class="button-row">
+        <button type="button" id="surprise-skip" class="link-button">Passer (skip: −1 ⭐)</button>
+        <button type="button" id="surprise-continue" class="button" hidden>Continuer →</button>
+      </p>
+    </div>
+  </div>
+
   <script src="js/vocab.js"></script>
   <script src="js/recipes.js"></script>
   <script src="js/scoring.js"></script>
   <script src="js/check.js"></script>
   <script src="js/sound.js"></script>
+  <script src="js/memory.js"></script>
   <script src="js/progress.js"></script>
   <script src="js/chef.js"></script>
   <script src="js/game.js"></script>
@@ -419,5 +485,6 @@
   <script src="js/shop.js"></script>
   <script src="js/feedback.js"></script>
   <script src="js/wordlist.js"></script>
+  <script src="js/quiz.js"></script>
 </body>
 </html>

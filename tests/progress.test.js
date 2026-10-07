@@ -2,7 +2,7 @@
 // Run with:  node --test
 const test = require("node:test");
 const assert = require("node:assert");
-const { emptyProgress, earnLevelStars, starsEarned, buyItem, toggleWear } = require("../js/progress.js");
+const { emptyProgress, earnLevelStars, starsEarned, buyItem, toggleWear, changeStars, recordQuiz } = require("../js/progress.js");
 const { CLOTHES } = require("../js/chef.js");
 
 // A cheap hat and a more expensive hat from the shop.
@@ -68,4 +68,42 @@ test("you can't wear an item you don't own", () => {
   const p = emptyProgress();
   toggleWear(p, crown);
   assert.strictEqual(p.wearing.hat, undefined);
+});
+
+test("stars never go below 0", () => {
+  const p = emptyProgress();
+  assert.strictEqual(changeStars(p, -1), 0);
+  assert.strictEqual(p.stars, 0);
+  changeStars(p, 3);
+  assert.strictEqual(changeStars(p, -5), -3);
+  assert.strictEqual(p.stars, 0);
+});
+
+test("quiz: passing on the first try gives 10 stars, later tries give nothing", () => {
+  const p = emptyProgress();
+  const first = recordQuiz(p, "gouter", 17, 20); // 85%
+  assert.deepStrictEqual(first, { passed: true, first: true, starChange: 10 });
+  assert.strictEqual(p.stars, 10);
+  const again = recordQuiz(p, "gouter", 20, 20);
+  assert.deepStrictEqual(again, { passed: true, first: false, starChange: 0 });
+  assert.strictEqual(p.stars, 10);
+  assert.strictEqual(p.quizzes.gouter.attempts, 2);
+  assert.strictEqual(p.quizzes.gouter.best, 20);
+});
+
+test("quiz: failing the first try costs 5 stars (but not below 0), retries cost nothing", () => {
+  const p = emptyProgress();
+  changeStars(p, 7);
+  assert.strictEqual(recordQuiz(p, "diner", 10, 20).starChange, -5); // 50%
+  assert.strictEqual(p.stars, 2);
+  assert.strictEqual(recordQuiz(p, "diner", 5, 20).starChange, 0);
+  const poor = emptyProgress();
+  changeStars(poor, 2);
+  assert.strictEqual(recordQuiz(poor, "x", 0, 10).starChange, -2);
+  assert.strictEqual(poor.stars, 0);
+});
+
+test("quiz: 80% is a pass, just under is a fail", () => {
+  assert.ok(recordQuiz(emptyProgress(), "a", 8, 10).passed);
+  assert.ok(!recordQuiz(emptyProgress(), "a", 7, 10).passed);
 });

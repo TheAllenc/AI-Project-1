@@ -131,16 +131,6 @@ function pickFoodSquares(chef, avoid, count, random = Math.random) {
   return null; // should never happen; the tests check thousands of layouts
 }
 
-// Fisher–Yates shuffle with a chosen random function (so tests can repeat it).
-function shuffleWith(list, random) {
-  const copy = [...list];
-  for (let i = copy.length - 1; i > 0; i--) {
-    const j = Math.floor(random() * (i + 1));
-    [copy[i], copy[j]] = [copy[j], copy[i]];
-  }
-  return copy;
-}
-
 function safeSquares() {
   const squares = [];
   MAZE.forEach((row, y) => [...row].forEach((cell, x) => { if (cell === ".") squares.push({ x, y }); }));
@@ -258,9 +248,11 @@ function resetPositions() {
 // A new set of foods: the target plus others, on free squares away from the chef.
 function newFoods() {
   for (const food of maze.foods) food.el.remove();
-  const choices = shuffle(pictureFoods().filter((w) => !maze.target || w.id !== maze.target.id));
-  const words = choices.slice(0, FOODS_ON_BOARD);
-  maze.target = words[0];
+  // The food to find is picked by spaced repetition (weak words more often);
+  // the other foods on the board are random.
+  const choices = pictureFoods().filter((w) => !maze.target || w.id !== maze.target.id);
+  maze.target = pickWeighted(choices, (w) => wordWeight(progress.memory, w.id), 1)[0];
+  const words = [maze.target, ...shuffle(choices.filter((w) => w !== maze.target)).slice(0, FOODS_ON_BOARD - 1)];
 
   const free = pickFoodSquares(maze.chef, maze.mice, words.length);
 
@@ -316,6 +308,7 @@ function eatFood(food) {
   maze.foods = maze.foods.filter((f) => f !== food);
 
   if (food.word.id === maze.target.id) {
+    remember(food.word.id, true);
     maze.score++;
     playSound("good");
     mazeFeedback("Miam ! " + withArticle(food.word) + " ✓", "good");
@@ -326,6 +319,7 @@ function eatFood(food) {
     newFoods();
   } else {
     if (!maze.missed.includes(maze.target.id)) maze.missed.push(maze.target.id);
+    remember(maze.target.id, false);
     loseHeart("Non ! Ça, c'est " + withArticle(food.word) + " (" + food.word.en + ").");
   }
 }
@@ -415,6 +409,7 @@ if (typeof document !== "undefined") {
 }
 
 if (typeof module !== "undefined") {
+  globalThis.shuffleWith = globalThis.shuffleWith || require("./memory.js").shuffleWith; // for the tests
   module.exports = {
     MAZE, MAZE_LIVES, MOUSE_STARTS, CHEF_START,
     isOpen, isTrap, isSafe, openDirections, distancesFrom, safeSquares, mouseDirection, canReach, pickFoodSquares,

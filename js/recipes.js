@@ -128,22 +128,31 @@ const RECIPES_PER_LEVEL = 3;
 // How many pictures sit on the kitchen shelf (right ingredients + distractors).
 const SHELF_SIZE = 8;
 
+// How much a recipe "needs practice": the average weight of its words.
+// wordWeight(id) comes from memory.js (struggling and due words weigh most).
+function recipeWeight(recipe, wordWeight) {
+  return recipe.ingredients.reduce((sum, id) => sum + wordWeight(id), 0) / recipe.ingredients.length;
+}
+
 // Picks the recipes for one game of a level.
-// Menu level: one random option per course. Other levels: 3 random recipes from the pool.
-function pickRecipes(level) {
+// Recipes full of words the player struggles with (or hasn't seen) are MORE
+// likely; recipes full of mastered words are LESS likely (but still possible).
+// Menu level: one option per course. Other levels: 3 different recipes.
+// Without a wordWeight, every recipe is equally likely.
+function pickRecipes(level, wordWeight = () => 1, random = Math.random) {
+  const weightOf = (recipe) => recipeWeight(recipe, wordWeight);
   if (level.courses) {
     return level.courses.map((c) => {
-      const option = c.options[Math.floor(Math.random() * c.options.length)];
+      const option = pickWeighted(c.options, weightOf, 1, random)[0];
       return { ...option, course: c.course, mode: c.mode };
     });
   }
-  const pool = [...level.recipes];
-  const chosen = [];
-  while (chosen.length < RECIPES_PER_LEVEL && pool.length > 0) {
-    const index = Math.floor(Math.random() * pool.length);
-    chosen.push(pool.splice(index, 1)[0]); // take it out so it can't be picked twice
-  }
-  return chosen;
+  return pickWeighted(level.recipes, weightOf, RECIPES_PER_LEVEL, random);
+}
+
+// Every word a level uses, in all of its recipes (used for the level quiz).
+function levelWords(level) {
+  return [...new Set(allRecipesOf(level).flatMap((recipe) => recipe.ingredients))];
 }
 
 // Every recipe that can appear in a level (used for best scores and the tests).
@@ -155,5 +164,7 @@ function allRecipesOf(level) {
 }
 
 if (typeof module !== "undefined") {
-  module.exports = { LEVELS, RECIPES_PER_LEVEL, SHELF_SIZE, pickRecipes, allRecipesOf };
+  // In the tests, pickWeighted comes from memory.js (in the browser it's already loaded).
+  globalThis.pickWeighted = globalThis.pickWeighted || require("./memory.js").pickWeighted;
+  module.exports = { LEVELS, RECIPES_PER_LEVEL, SHELF_SIZE, pickRecipes, allRecipesOf, recipeWeight, levelWords };
 }

@@ -69,7 +69,8 @@ function nextCustomer() {
   cafe.customerNumber++;
 
   // The order: random foods with pictures.
-  cafe.order = shuffle(pictureFoods()).slice(0, orderSize(cafe.customerNumber));
+  // Customers order words picked by spaced repetition: weak words more often.
+  cafe.order = pickWeighted(pictureFoods(), (w) => wordWeight(progress.memory, w.id), orderSize(cafe.customerNumber));
   cafe.delivered = [];
   cafe.maxPatience = CAFE_SECONDS_BASE + CAFE_SECONDS_PER_ITEM * cafe.order.length;
   cafe.patience = cafe.maxPatience;
@@ -114,6 +115,7 @@ function serveItem(word, button) {
   if (wanted) {
     playSound("good");
     cafe.delivered.push(word.id);
+    remember(word.id, true);
     button.disabled = true;
     button.classList.add("used");
     const item = document.createElement("span");
@@ -154,6 +156,7 @@ function customerLeaves() {
   cafe.lost++;
   // The items not served go on the review list.
   for (const word of cafe.order) {
+    if (!cafe.delivered.includes(word.id)) remember(word.id, false);
     if (!cafe.delivered.includes(word.id) && !cafe.missed.includes(word.id)) cafe.missed.push(word.id);
   }
   playSound("bad");

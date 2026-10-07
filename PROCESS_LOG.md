@@ -223,3 +223,31 @@ I asked for a disclaimer at the bottom of the homepage saying that **I, Dillon A
 - Is the maze too hard now (3 chasing mice + traps)?
 - Do players notice and like the new look?
 - Check the new recipe names and the 17 typing clues.
+
+---
+
+## Session 9: Designing for memory (spaced repetition)
+
+### Discern: the play-test question that started this
+> "What's the logic behind the words, and how often do they appear? Do they reappear… How do we build on what we know about memory to help people revisit those things they've once learned, kind of like Membean or Duolingo?"
+
+Honest answer before this session: words did **not** come back on purpose. Recipes were random, and the game didn't remember what a player knew.
+
+### Describe: my requests
+1. Absorb that feedback and design for it.
+2. When replaying a level, words the player knows well should be **less likely**, and words they struggle with **more likely**. Keep each mode's focus area (fruits, etc.).
+3. Every so often, when moving between screens (e.g. menu → shop, or one mode → another), a **random question** pops up: right = +1 ⭐, wrong or not done = −1 ⭐, never below 0.
+4. At the end of each level, a **quiz on ALL its vocabulary**. Pass = +10 ⭐, fail = −5 ⭐. Infinite attempts, but stars only on the first try.
+
+### Design decisions the AI made (for me to review)
+- **Method:** spaced repetition with **Leitner boxes** (0–5), plus retrieval practice. The research and the reasons are written up in `LEARNING_DESIGN.md`.
+- **Waiting times:** 2 min, 10 min, 1 h, 1 day, 3 days (short, for class sessions).
+- **Weights:** struggling words 6, new 3, learning 4 or 2, mastered 1 or 0.5; due words count double.
+- **A word counts as right only with no mistake on it** in that recipe.
+- **Surprise questions:** only on menu screens (never in a timed game), 35% chance, at least 45 seconds apart, only about words already seen (due and weak first). "Skip" counts as not doing it (−1 ⭐).
+- **Quizzes:** one per level (5 total), covering every word in all the level's recipes, so together they cover all 124 words. Multiple choice (4 options), pass at 80%. Leaving a first try early counts as finishing it, so nobody can peek and leave. Quizzes open once their level is finished. Mini-games don't have their own quiz; their words are all covered by the level quizzes.
+- **Progress shown** on the vocabulary page (dots and labels, "À revoir" filter) and on the quiz cards.
+
+### Questions to think about
+- Is 80% the right pass mark? Is the surprise question too frequent or too rare?
+- Would a short before-and-after test with classmates show whether they actually remember more?

@@ -885,6 +885,75 @@ td.none { color: var(--muted); font-size: 0.8rem; }
 .start-over { margin-top: 22px; border-top: 3px dashed #e3c9a3; padding-top: 14px; }
 .confirm-box { background: #fff1ee; border: 3px solid var(--tomato); border-radius: 14px; padding: 8px 14px; }
 
+/* ---------- Quizzes and surprise questions (quiz.js) ---------- */
+.quiz-bar { height: 16px; margin: 6px 0 4px; background: #fff; border: 3px solid var(--ink); border-radius: 999px; overflow: hidden; }
+.quiz-bar-fill { height: 100%; width: 0; background: var(--mustard); transition: width 0.3s; }
+.quiz-question { display: flex; flex-direction: column; align-items: center; gap: 12px; margin: 10px 0; text-align: center; }
+.quiz-ask { margin: 0; font-weight: 800; color: var(--muted); }
+.quiz-prompt {
+  max-width: 100%;
+  padding: 12px 22px;
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 5vw, 2.3rem);
+  line-height: 1.15;
+  background: #fff;
+  border: 4px solid var(--ink);
+  border-radius: 20px;
+  box-shadow: 0 6px 0 var(--ink);
+  overflow-wrap: break-word;
+  animation: pop 0.35s ease-out;
+}
+.quiz-prompt.picture { font-size: 4.2rem; padding: 6px 26px; border-radius: 50%; }
+.quiz-options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; width: 100%; max-width: 620px; }
+@media (max-width: 520px) { .quiz-options { grid-template-columns: 1fr; } }
+.quiz-option {
+  padding: 12px 14px;
+  font: inherit;
+  font-weight: 900;
+  font-size: 1.1rem;
+  color: var(--ink);
+  background: #fff;
+  border: var(--outline);
+  border-radius: 14px;
+  box-shadow: 0 4px 0 var(--ink);
+  cursor: pointer;
+  overflow-wrap: break-word;
+  transition: transform 0.12s;
+}
+.quiz-option:hover:not(:disabled) { transform: translateY(-2px); background: var(--paper-2); }
+.quiz-option:focus-visible { outline: 4px solid var(--sky); outline-offset: 3px; }
+.quiz-option:disabled { cursor: default; opacity: 0.7; }
+.quiz-option.right { background: var(--leaf); color: #fff; opacity: 1; animation: pop 0.35s; }
+.quiz-option.wrong { background: var(--tomato); color: #fff; opacity: 1; animation: shake 0.4s; }
+.quiz-card .level-badge { background: #fff; }
+
+.popup-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: rgba(42, 26, 18, 0.55);
+  animation: fade-in 0.2s;
+}
+@keyframes fade-in { from { opacity: 0; } }
+.popup { width: min(100%, 640px); max-height: calc(100vh - 32px); overflow-y: auto; margin: 0; animation: popup-in 0.35s cubic-bezier(0.2, 1.5, 0.4, 1); }
+@keyframes popup-in { from { transform: scale(0.7) rotate(-3deg); opacity: 0; } }
+.popup-title {
+  display: inline-block;
+  margin: 0;
+  padding: 4px 14px;
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  color: #fff;
+  background: var(--grape);
+  border: var(--outline);
+  border-radius: 12px;
+  box-shadow: 0 4px 0 var(--ink);
+  transform: rotate(-2deg);
+}
+
 /* ---------- The word list (all the vocabulary) ---------- */
 .word-tools { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 14px; }
 .word-search {
@@ -951,6 +1020,19 @@ td.none { color: var(--muted); font-size: 0.8rem; }
 .gender-pill.f { background: var(--pink); }
 .gender-pill.pl { background: var(--grape); }
 .gender-pill.verb { background: var(--wood); }
+.mastery { margin-top: 3px; font-size: 0.78rem; font-weight: 900; letter-spacing: 0.02em; color: var(--muted); }
+.mastery.mastered { color: var(--leaf); }
+.mastery.review { color: var(--tomato); }
+.mastery.learning { color: #c98a00; }
+.mastery-summary {
+  display: inline-block;
+  padding: 6px 12px;
+  font-weight: 900;
+  background: #fff;
+  border: var(--outline);
+  border-radius: 12px;
+  box-shadow: 0 3px 0 var(--ink);
+}
 .say-button {
   flex: none;
   width: 2.2rem;

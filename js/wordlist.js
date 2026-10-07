@@ -4,11 +4,13 @@
 // Shows all of VOCAB (vocab.js) as cards, with a search box, category
 // buttons, and a 🔊 button that reads the word aloud with the browser's
 // built-in French voice (if the browser has one).
+// Each card also shows how well the player knows the word (memory.js):
+// 5 dots for its box, and "nouveau / à revoir / en progrès / maîtrisé".
 // Uses withArticle (vocab.js), removeAccents (check.js), showScreen (game.js).
 // ============================================================
 
 const wordList = {
-  category: "all", // "all" or a key of CATEGORY_NAMES
+  category: "all", // "all", "review" (words to review) or a key of CATEGORY_NAMES
   query: "",
 };
 
@@ -28,7 +30,7 @@ function showWordList() {
 function drawChips() {
   const row = document.getElementById("word-chips");
   row.innerHTML = "";
-  const choices = [["all", "Tous (all)"], ...Object.entries(CATEGORY_NAMES)];
+  const choices = [["all", "Tous (all)"], ["review", "🔁 À revoir (to review)"], ...Object.entries(CATEGORY_NAMES)];
   for (const [key, name] of choices) {
     const chip = document.createElement("button");
     chip.type = "button";
@@ -57,12 +59,33 @@ function genderLabel(word) {
   return word.gender === "m" ? ["masculin", "m"] : ["féminin", "f"];
 }
 
+// A CSS class (color) for each mastery label.
+const MASTERY_CLASS = { "nouveau": "new", "à revoir": "review", "en progrès": "learning", "maîtrisé": "mastered" };
+
+// How well the player knows a word: "nouveau", "à revoir", "en progrès" or "maîtrisé".
+function masteryOfWord(word) {
+  return masteryOf(wordRecord(progress.memory, word.id));
+}
+
+function inCategory(word) {
+  if (wordList.category === "all") return true;
+  if (wordList.category === "review") return masteryOfWord(word) === "à revoir";
+  return word.categories.includes(wordList.category);
+}
+
+// "12 maîtrisés · 30 en progrès · 5 à revoir · 77 nouveaux"
+function drawMasterySummary() {
+  const counts = { "maîtrisé": 0, "en progrès": 0, "à revoir": 0, "nouveau": 0 };
+  for (const word of VOCAB) counts[masteryOfWord(word)]++;
+  document.getElementById("word-mastery").textContent =
+    "🏆 " + counts["maîtrisé"] + " maîtrisés · 📈 " + counts["en progrès"] + " en progrès · 🔁 " +
+    counts["à revoir"] + " à revoir · ✨ " + counts["nouveau"] + " nouveaux";
+}
+
 function drawWordList() {
-  const words = VOCAB.filter((w) =>
-    (wordList.category === "all" || w.categories.includes(wordList.category)) &&
-    matchesSearch(w, wordList.query)
-  );
+  const words = VOCAB.filter((w) => inCategory(w) && matchesSearch(w, wordList.query));
   document.getElementById("word-count").textContent = VOCAB.length;
+  drawMasterySummary();
   document.getElementById("word-empty").hidden = words.length > 0;
 
   const grid = document.getElementById("word-grid");
@@ -89,7 +112,13 @@ function drawWordList() {
     const pill = document.createElement("span");
     pill.className = "gender-pill " + kind;
     pill.textContent = label;
-    text.append(fr, en, pill);
+    // How well the player knows it: a label and 5 dots (one per box).
+    const record = wordRecord(progress.memory, word.id);
+    const level = document.createElement("span");
+    level.className = "mastery " + MASTERY_CLASS[masteryOfWord(word)];
+    level.textContent = masteryOfWord(word) + " " + "●".repeat(record.box) + "○".repeat(5 - record.box);
+    level.title = "Vu " + record.seen + " fois · " + record.right + " juste(s) · " + record.wrong + " erreur(s)";
+    text.append(fr, en, pill, level);
 
     card.append(pic, text);
     if ("speechSynthesis" in window) {
