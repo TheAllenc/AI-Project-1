@@ -25,6 +25,8 @@ Each level picks 3 recipes at random from its pool, so every game is different. 
 
 **Chef Barbe**, the animated mascot, greets you on the homepage and reacts to your stars.
 
+**🗣️ The game speaks French** (the browser's built-in voice, no files or internet needed): the words to find, the right answers, Chef Barbe's reactions, the café customers' orders, and the quiz questions. Quizzes and surprise questions also include **listening questions** (hear the word, pick its meaning). The voice never reads an answer before you give it. 🗣️ turns it on or off, 🔁 repeats, and 🐢 repeats slowly. *(Suggested by a French teacher's play-test.)*
+
 **Stars and the shop:** each recipe earns 1–5 stars. The first time you finish a level, its stars (up to 15) go into your collection; the first time you complete a mini-game you get 1 star. Replaying earns nothing new unless you start over ("Recommencer à zéro" erases levels, stars and clothes). Spend stars (1–6 each) in *La Boutique du Chef* on 21 food-themed clothes, like a cheese hat or a jelly beard. Progress is saved in your browser.
 
 **Look:** a bright, chunky cartoon kitchen inspired by *Overcooked*, with lots of animation (it switches off for players who turn on "reduce motion").
@@ -63,6 +65,7 @@ Open **`vocab-check.html`** to see every word in a table. Rows marked with an or
 | `js/scoring.js` | Star rules (time + mistakes) |
 | `js/check.js` | Checks typed answers (accents, apostrophes, articles) and le/la/l’/les choices |
 | `js/sound.js` | Sound effects (made by the browser, no files) and the mute button |
+| `js/voice.js` | The French voice (browser text-to-speech), the 🗣️ on/off button and the 🔁/🐢 replay buttons |
 | `js/memory.js` | Spaced repetition: each word's Leitner box, when it's due, and weighted picking |
 | `js/progress.js` | Saved progress: collected stars, finished levels, the chef's clothes |
 | `js/chef.js` | The mascot: clothes list, the SVG drawing, and the chef's messages |
@@ -81,7 +84,8 @@ Open **`vocab-check.html`** to see every word in a table. Rows marked with an or
 | `tests/progress.test.js` | Checks the star collection and shop rules |
 | `tests/chef.test.js` | Checks the clothes list and the chef's messages |
 | `tests/memory.test.js` | Checks the spaced-repetition rules |
-| `tests/quiz.test.js` | Checks quiz questions (every word asked, one right answer, fair wrong options) |
+| `tests/quiz.test.js` | Checks quiz questions (every word asked, one right answer, fair wrong options, listening questions) |
+| `tests/voice.test.js` | Checks the voice only reads French |
 | `tests/maze.test.js` | Checks the maze: traps don't cut it off, mice chase, food is always reachable |
 | `PROCESS_LOG.md` | How AI was used in this project (4D framework log) |
 | `CODE_GUIDE.md` | Plain-English walkthrough of the code, for the showcase |

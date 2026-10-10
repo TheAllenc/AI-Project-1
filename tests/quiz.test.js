@@ -54,3 +54,28 @@ test("a picture question shows the emoji; a word with no picture shows its Engli
   assert.strictEqual(buildQuestion(pruneau, "en-fr").prompt, "“a dried plum”");
   assert.strictEqual(buildQuestion(pruneau, "fr-en").prompt, "le pruneau");
 });
+
+test("listening questions: you hear the French, nothing is written, you pick the English", () => {
+  for (const word of VOCAB) {
+    const q = buildQuestion(word, "listen");
+    assert.strictEqual(q.speak, withArticle(word));
+    assert.strictEqual(q.prompt, "🔊", word.id + ": the word must not be written");
+    assert.strictEqual(q.options[q.answerIndex], word.en);
+    assert.strictEqual(new Set(q.options).size, QUIZ_CHOICES, word.id);
+  }
+});
+
+test("the voice never reads the answer of a 'how do you say it in French?' question", () => {
+  for (const word of VOCAB) {
+    assert.strictEqual(buildQuestion(word, "en-fr").speak, "", word.id);
+    assert.strictEqual(buildQuestion(word, "fr-en").speak, withArticle(word), word.id);
+  }
+});
+
+test("a level quiz can mix in listening questions and still asks every word", () => {
+  for (const level of LEVELS) {
+    const quiz = buildLevelQuiz(level, Math.random, ["fr-en", "en-fr", "listen"]);
+    assert.deepStrictEqual(quiz.map((q) => q.wordId).sort(), [...levelWords(level)].sort());
+    for (const q of quiz) assert.ok(["fr-en", "en-fr", "listen"].includes(q.kind));
+  }
+});

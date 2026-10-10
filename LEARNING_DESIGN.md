@@ -15,6 +15,7 @@ This document answers that question. It explains the learning science the game i
 | **Leitner boxes** | A simple way to do spaced repetition with flashcards: cards you know move to boxes you review less often; cards you miss go back to the first box. | Sebastian Leitner, *So lernt man lernen* (1972) |
 | **Retrieval practice (the testing effect)** | Trying to *recall* an answer strengthens memory more than reading it again, even when you get it wrong and then see the answer. | Roediger & Karpicke, "Test-enhanced learning," *Psychological Science* (2006) |
 | **Feedback** | Seeing the right answer straight after a mistake helps fix the error. | (common finding across the same research) |
+| **Dual coding** | Words are remembered better when they're linked to more than one kind of memory, like a picture *and* a sound, not just text. | Allan Paivio, *Imagery and Verbal Processes* (1971) |
 
 Apps like Duolingo and Membean combine these ideas: they track each word, bring back the ones you're about to forget, and make you *recall* them rather than just see them.
 
@@ -60,7 +61,10 @@ After finishing a level, its quiz asks about **every word in all of the level's 
 - Pass mark: 80%. **First try only:** pass = **+10 ⭐**, fail = **−5 ⭐**. Retries are unlimited and free, and the best score is kept.
 - Every quiz answer updates the word's box, and missed words are listed as "les mots à revoir".
 
-### 5. Players can see their progress
+### 5. Hearing the words (dual coding) — `js/voice.js`
+Every French word is linked to a picture, its spelling **and** its sound. The game reads the words aloud with the browser's French voice. **Listening questions** in the quizzes and surprise questions test understanding by ear, which is a separate skill from reading. To keep retrieval practice honest, the voice never reads an answer before the player gives it (Level 3 typing and "say it in French" questions stay silent until they answer).
+
+### 6. Players can see their progress
 The **📖 Tout le vocabulaire** page shows every word's box as dots (●●○○○), its label, and a summary ("🏆 12 maîtrisés · 📈 30 en progrès · 🔁 5 à revoir · ✨ 77 nouveaux"). The **🔁 À revoir** filter lists exactly the words that need work. The quiz cards on the level select screen show "X maîtrisés" for each level.
 
 ## So, do words reappear?
@@ -77,6 +81,7 @@ A word stops coming back often only after the player has got it right several ti
 
 ## Limits (honest notes)
 
+- The voice depends on the computer: most have a French voice, but quality varies, and a few browsers have none (then the voice buttons are hidden and everything is still written).
 - The waiting times (2 min → 3 days) are shorter than in flashcard apps because a class plays in short sessions. They are one line in `js/memory.js` (`BOX_WAIT_MINUTES`) and easy to change.
 - Progress is saved in one browser. A classmate on another computer starts fresh.
 - Multiple choice is easier than typing a word from memory; the typing levels (3, 4 and 5) give harder recall practice.

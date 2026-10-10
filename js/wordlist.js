@@ -121,29 +121,16 @@ function drawWordList() {
     text.append(fr, en, pill, level);
 
     card.append(pic, text);
-    if ("speechSynthesis" in window) {
+    if (canSpeak()) {
       const say = document.createElement("button");
       say.type = "button";
       say.className = "say-button";
       say.textContent = "🔊";
       say.setAttribute("aria-label", "Écouter : " + withArticle(word));
-      say.addEventListener("click", () => speakFrench(withArticle(word)));
+      say.addEventListener("click", () => speakFrench(withArticle(word), { force: true }));
       card.appendChild(say);
     }
     grid.appendChild(card);
-  }
-}
-
-// Reads French text aloud with the browser's French voice.
-function speakFrench(text) {
-  try {
-    const speech = new SpeechSynthesisUtterance(text.replace("’", "'"));
-    speech.lang = "fr-FR";
-    speech.rate = 0.9;
-    speechSynthesis.cancel(); // stop any word still being read
-    speechSynthesis.speak(speech);
-  } catch (error) {
-    // No voice available: the card still shows the word.
   }
 }
 

@@ -344,9 +344,18 @@ function startTimer() {
 function askForNext() {
   const word = currentTarget();
   const mode = state.mode;
-  if (mode === "click") prompt("Trouve : " + withArticle(word));
-  if (mode === "gender") prompt("Trouve : " + word.fr);
+  // The voice reads the word too, but never gives away the answer:
+  // in gender mode it reads the noun without its article, in type mode nothing.
+  if (mode === "click") {
+    prompt("Trouve : " + withArticle(word));
+    speakFrench(withArticle(word), { queue: true });
+  }
+  if (mode === "gender") {
+    prompt("Trouve : " + word.fr);
+    speakFrench(word.fr, { queue: true });
+  }
   if (mode === "type") {
+    forgetVoice();
     state.tries = 0;
     prompt("Écris le mot en français (with le / la / l’ / les if you want) :");
     const clue = document.getElementById("clue");
@@ -479,6 +488,7 @@ function pickArticle(choice, button) {
     const tip = hiddenGenderTip(word);
     if (tip) message += " (" + tip + ")";
     say(message, "good");
+    speakFrench(answer);
     state.pendingButton = null;
     document.getElementById("article-area").hidden = true;
     collect(word);
@@ -500,12 +510,15 @@ function submitTyped() {
   const result = checkTyped(input.value, word);
   if (result === "correct") {
     say("Oui ! " + withArticle(word) + " ✓", "good");
+    speakFrench(withArticle(word));
     collect(word);
   } else if (result === "accent") {
     say("Presque ! N'oublie pas les accents : " + withArticle(word), "warn");
+    speakFrench(withArticle(word));
     collect(word);
   } else if (result === "article") {
     say("Oui, mais attention à l'article : " + withArticle(word), "warn");
+    speakFrench(withArticle(word));
     collect(word);
   } else {
     mistake(word);
@@ -523,6 +536,7 @@ function submitTyped() {
 function revealAnswer(word) {
   if (state.tries === 0) mistake(word); // "Je ne sais pas" counts as one mistake
   say("La réponse : " + withArticle(word) + " (" + word.en + ")", "bad");
+  speakFrench(withArticle(word));
   collect(word, true);
 }
 
@@ -714,6 +728,11 @@ document.getElementById("mode-levels-button").addEventListener("click", showLeve
 for (const button of document.querySelectorAll(".sound-button")) {
   button.addEventListener("click", toggleSound);
 }
+
+// Click Chef Barbe's speech bubble on the title screen to hear him say it.
+document.getElementById("title-bubble").addEventListener("click", (event) => {
+  speakFrench(frenchPart(event.currentTarget.textContent), { force: true });
+});
 
 for (const button of document.querySelectorAll(".article-button")) {
   button.addEventListener("click", () => pickArticle(button.dataset.article, button));

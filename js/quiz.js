@@ -11,7 +11,7 @@
 //
 // Every answer here also updates the word's memory (memory.js).
 // Uses: VOCAB/withArticle/getWord (vocab.js), levelWords (recipes.js),
-// memory.js, progress.js, and showScreen/shuffle/addRow/celebrate (game.js).
+// memory.js, progress.js, speakFrench/voice (voice.js), and showScreen/shuffle/addRow/celebrate (game.js).
 // ============================================================
 
 const QUIZ_CHOICES = 4;
@@ -24,12 +24,15 @@ function clueText(word) {
 }
 
 // One multiple-choice question about a word.
-//   kind "fr-en": see the French word, pick its meaning in English.
-//   kind "en-fr": see the picture or English clue, pick the French word.
+//   kind "fr-en":  see the French word, pick its meaning in English.
+//   kind "en-fr":  see the picture or English clue, pick the French word.
+//   kind "listen": HEAR the French word (nothing written), pick its meaning in English.
+// "speak" is what the voice reads when the question appears ("" = nothing,
+// because reading it would give the answer away).
 // Wrong answers come from the same category when possible (harder to guess),
 // and never mean the same thing or look the same as the right answer.
 function buildQuestion(word, kind, random = Math.random) {
-  const answerOf = (w) => (kind === "fr-en" ? w.en : withArticle(w));
+  const answerOf = (w) => (kind === "en-fr" ? withArticle(w) : w.en);
   const looksSame = (w) =>
     w.id === word.id || w.fr === word.fr || w.en === word.en || answerOf(w) === answerOf(word) ||
     (word.emoji && w.emoji === word.emoji);
@@ -46,18 +49,26 @@ function buildQuestion(word, kind, random = Math.random) {
   return {
     wordId: word.id,
     kind,
-    prompt: kind === "fr-en" ? withArticle(word) : clueText(word),
-    isPicture: kind === "en-fr" && Boolean(word.emoji),
+    prompt: kind === "fr-en" ? withArticle(word) : kind === "listen" ? "🔊" : clueText(word),
+    isPicture: kind !== "fr-en" && Boolean(word.emoji || kind === "listen"),
+    speak: kind === "en-fr" ? "" : withArticle(word),
     options,
     answerIndex: options.indexOf(answerOf(word)),
   };
 }
 
-// A quiz on every word of a level, in random order, mixing both kinds of question.
-function buildLevelQuiz(level, random = Math.random) {
+const BASIC_KINDS = ["fr-en", "en-fr"];
+
+// A quiz on every word of a level, in random order, mixing the kinds of question.
+function buildLevelQuiz(level, random = Math.random, kinds = BASIC_KINDS) {
   return shuffleWith(levelWords(level), random).map((id) =>
-    buildQuestion(getWord(id), random() < 0.5 ? "fr-en" : "en-fr", random)
+    buildQuestion(getWord(id), kinds[Math.floor(random() * kinds.length)], random)
   );
+}
+
+// Listening questions only when the browser can speak and the voice is on.
+function questionKinds() {
+  return canSpeak() && voice.on ? [...BASIC_KINDS, "listen"] : BASIC_KINDS;
 }
 
 // ---------- The level quiz screen ----------
@@ -74,7 +85,7 @@ const quiz = {
 
 function startQuiz(level) {
   quiz.level = level;
-  quiz.questions = buildLevelQuiz(level);
+  quiz.questions = buildLevelQuiz(level, Math.random, questionKinds());
   quiz.index = 0;
   quiz.score = 0;
   quiz.missed = [];
@@ -105,10 +116,21 @@ function drawQuestion(q, box, onAnswer) {
   box.innerHTML = "";
   const ask = document.createElement("p");
   ask.className = "quiz-ask";
-  ask.textContent = q.kind === "fr-en" ? "Qu'est-ce que ça veut dire ? (What does it mean?)" : "Comment dit-on en français ? (How do you say it in French?)";
-  const prompt = document.createElement("div");
+  ask.textContent = {
+    "fr-en": "Qu'est-ce que ça veut dire ? (What does it mean?)",
+    "en-fr": "Comment dit-on en français ? (How do you say it in French?)",
+    listen: "Écoute ! Qu'est-ce que ça veut dire ? (Listen! What does it mean?)",
+  }[q.kind];
+  const prompt = document.createElement(q.kind === "listen" ? "button" : "div");
   prompt.className = q.isPicture ? "quiz-prompt picture" : "quiz-prompt";
   prompt.textContent = q.prompt;
+  if (q.kind === "listen") {
+    // The big 🔊 replays the word; the small 🐢 says it slowly.
+    prompt.type = "button";
+    prompt.classList.add("listen-button");
+    prompt.setAttribute("aria-label", "Réécouter (listen again)");
+    prompt.addEventListener("click", () => speakFrench(q.speak, { force: true }));
+  }
   const grid = document.createElement("div");
   grid.className = "quiz-options";
   q.options.forEach((text, i) => {
@@ -120,6 +142,17 @@ function drawQuestion(q, box, onAnswer) {
     grid.appendChild(button);
   });
   box.append(ask, prompt, grid);
+  if (q.speak) {
+    const slow = document.createElement("button");
+    slow.type = "button";
+    slow.className = "replay-slow-button";
+    slow.textContent = "🐢";
+    slow.title = "Plus lentement (slower)";
+    slow.addEventListener("click", () => speakFrench(q.speak, { force: true, slow: true }));
+    prompt.after(slow);
+  }
+  speakFrench(q.speak);
+  if (!q.speak) forgetVoice();
   grid.firstChild.focus({ preventScroll: true });
 }
 
@@ -141,6 +174,7 @@ function answerQuiz(picked, grid) {
   remember(q.wordId, correct);
   const word = getWord(q.wordId);
   const box = document.getElementById("quiz-feedback");
+  speakFrench(withArticle(word)); // hear the answer either way
   if (correct) {
     quiz.score++;
     playSound("good");
@@ -227,7 +261,8 @@ function maybeSurprise(fromId, toId, random = Math.random) {
 }
 
 function openSurprise(word) {
-  surprise.question = buildQuestion(word, Math.random() < 0.5 ? "fr-en" : "en-fr");
+  const kinds = questionKinds();
+  surprise.question = buildQuestion(word, kinds[Math.floor(Math.random() * kinds.length)]);
   surprise.open = true;
   surprise.answered = false;
   surprise.lastTime = Date.now();
@@ -260,6 +295,7 @@ function finishSurprise(correct, start) {
   saveProgress();
   renderChefs();
   playSound(correct ? "good" : "bad");
+  speakFrench(withArticle(word), { queue: true });
   const starNote = change > 0 ? " (+1 ⭐)" : change < 0 ? " (−1 ⭐)" : " (0 ⭐)";
   const box = document.getElementById("surprise-feedback");
   box.textContent = start + withArticle(word) + " = " + word.en + starNote;
@@ -292,5 +328,5 @@ if (typeof document !== "undefined") {
 }
 
 if (typeof module !== "undefined") {
-  module.exports = { QUIZ_CHOICES, clueText, buildQuestion, buildLevelQuiz, SURPRISE_CHANCE, SURPRISE_COOLDOWN_MS };
+  module.exports = { QUIZ_CHOICES, BASIC_KINDS, clueText, buildQuestion, buildLevelQuiz, SURPRISE_CHANCE, SURPRISE_COOLDOWN_MS };
 }

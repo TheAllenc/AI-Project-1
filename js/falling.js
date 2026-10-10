@@ -61,6 +61,7 @@ function newTarget() {
   const choices = pictureFoods().filter((w) => !fall.target || w.id !== fall.target.id);
   fall.target = pickWeighted(choices, (w) => wordWeight(progress.memory, w.id), 1)[0]; // weak words more often
   document.getElementById("fall-target").textContent = withArticle(fall.target);
+  speakFrench(withArticle(fall.target), { queue: true });
   drawFallStatus();
 }
 

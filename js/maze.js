@@ -267,6 +267,7 @@ function newFoods() {
   });
 
   document.getElementById("maze-target").textContent = withArticle(maze.target);
+  speakFrench(withArticle(maze.target), { queue: true });
   drawMazeStatus();
 }
 

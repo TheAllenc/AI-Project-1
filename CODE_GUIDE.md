@@ -17,7 +17,7 @@ vocab.js ─┐
 recipes.js┼─► game.js ──► cafe.js, falling.js, feedback.js
 scoring.js│     ▲
 check.js ─┤     │ uses
-sound.js ─┘     └── showScreen, shuffle, pictureFoods, addRow…
+sound.js, voice.js ─┘     └── showScreen, shuffle, pictureFoods, addRow…
 ```
 
 **One-sentence version:** "The word list and recipes are data files; the game reads them, shows one screen at a time, checks each answer with small rule functions, and keeps score in one `state` object."
@@ -99,6 +99,14 @@ sound.js ─┘     └── showScreen, shuffle, pictureFoods, addRow…
 ### `js/sound.js`
 - Beeps made by the browser's Web Audio API: no sound files. `playSound("good" | "bad" | "done")`.
 
+### `js/voice.js`: the game speaks French
+- Uses the browser's built-in voice (`speechSynthesis`), so there are no sound files and it works offline. `frenchVoice()` picks a France-French voice if the computer has one.
+- `speakFrench(text)` is called wherever French appears: the word to find (Level 1), the noun without its article (Level 2, so it doesn't give away le/la/l'/les), the answer after you get it right, the café orders and "Merci ! Au revoir !", the falling-food and maze targets, quiz questions, and Chef Barbe's reactions.
+- **It never reads an answer before you give it:** Level 3 typing and "how do you say it in French?" questions stay silent until you answer (`forgetVoice()` also empties the 🔁 button).
+- `frenchPart("Bravo ! (Well done!)")` → `"Bravo !"`: the chef's lines are "French (English)", and the voice only reads the French.
+- Options: `{ force: true }` speaks even when the voice is off (the 🔊 buttons you click on purpose); `{ queue: true }` waits for the sentence before it, so "l'orange" isn't cut off by the next word; `{ slow: true }` is the 🐢 button.
+- 🗣️ turns the voice on or off (saved in `localStorage`). 🔁 replays the last sentence, and 🐢 says it slowly. If the browser can't speak, these buttons are hidden.
+
 ---
 
 ### `js/progress.js`: collected stars and clothes
@@ -109,7 +117,7 @@ sound.js ─┘     └── showScreen, shuffle, pictureFoods, addRow…
 
 ### `js/wordlist.js`: all the vocabulary
 - `showWordList()` draws a card for every word in `VOCAB`. The category chips and the search box filter them (`matchesSearch` ignores accents and capitals).
-- `speakFrench(text)` uses the browser's built-in French voice (`speechSynthesis`) for the 🔊 buttons.
+- Each card's 🔊 button calls `speakFrench(word, { force: true })` from `voice.js`.
 
 ### `js/chef.js`: the mascot
 - `drawChef(wearing)` builds the chef as SVG text, in layers: body → apron → face → beard → neck item → hat → accessory. Each clothing item in `CLOTHES_SVG` is one small piece of SVG, so dressing him up just swaps pieces in. A beard item (jelly, chocolate, spaghetti, cotton candy) replaces his brown beard.
@@ -137,14 +145,15 @@ sound.js ─┘     └── showScreen, shuffle, pictureFoods, addRow…
 - `game.js` calls `remember(wordId, correct)` after every answer in the game.
 
 ### `js/quiz.js`: quizzes and surprise questions
-- `buildQuestion(word, kind)` makes a 4-option question, either French → English or picture/English → French. Wrong options come from the same category and never mean the same thing as the answer.
+- `buildQuestion(word, kind)` makes a 4-option question: French → English, picture/English → French, or **listen** (hear the word, nothing written, pick the English). Wrong options come from the same category and never mean the same thing as the answer. `speak` says what the voice reads, and it's empty when reading would give the answer away.
+- `questionKinds()` only adds listening questions when the browser can speak and the voice is on.
 - `buildLevelQuiz(level)` asks about **every** word in all of the level's recipes (`levelWords`).
 - `recordQuiz()` (progress.js) gives +10 ⭐ for passing (80%) or −5 ⭐ for failing, **only on the first try**. Leaving a first try early counts as finishing it.
 - `maybeSurprise()` runs every time `showScreen()` changes screen. On menu screens only, with a 35% chance and a 45-second cooldown, it asks about a word picked by `chooseReviewWord()` (due and weak words first). Right +1 ⭐, wrong or skipped −1 ⭐; `changeStars()` never goes below 0.
 
 ## Tests (`tests/`)
 
-Run `node --test`. There are 78 automatic checks, including:
+Run `node --test`. There are 85 automatic checks, including:
 - **Vocab:** no duplicate ids; articles match genders; no two words share an emoji.
 - **Recipes:** every ingredient exists; picture levels only use words with emoji; English clues never equal the French answer; each game picks 3 different recipes.
 - **Scoring and checking:** star rules and accent/article rules give the expected answers.
@@ -152,7 +161,9 @@ Run `node --test`. There are 78 automatic checks, including:
 - **Maze:** traps never cut the map apart; mice avoid traps; a chasing mouse reaches a still chef by the shortest path; in 2,000 random layouts the right food is always reachable without touching a trap or another food.
 - **Vocabulary:** every word on the list appears in a recipe, and no typing clue gives away its answer.
 - **Memory:** right answers move words up, mistakes send them to box 1, waiting times grow, and struggling words are picked far more often than mastered ones.
-- **Quizzes:** every level quiz asks every word once; every question has exactly one right answer; first-try-only stars; stars never below 0.
+- **Quizzes:** every level quiz asks every word once; every question has exactly one right answer; first-try-only stars; stars never below 0; listening questions don't show the word, and the voice never reads the answer to a "say it in French" question.
+- **Articles:** every word starting with a vowel takes *l'* in Level 2 (except *le yaourt* and *le hors d'œuvre*).
+- **Voice:** the voice reads only the French part of the chef's messages.
 
 **Why tests matter for the 4D framework (Diligence):** they catch mistakes automatically every time something changes. A real example: a test blocks any picture-level recipe that uses a word with no emoji.
 

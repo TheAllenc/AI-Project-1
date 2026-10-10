@@ -15,7 +15,7 @@
     <section id="title-screen" class="panel title-card">
       <div class="title-hero">
         <div class="chef-slot chef-title"></div>
-        <div class="title-bubble speech">Bonjour ! Je suis Chef Barbe. On cuisine ? (Hi! I'm Chef Barbe. Let's cook!)</div>
+        <div class="title-bubble speech" id="title-bubble" title="Clique pour écouter (click to listen)">Bonjour ! Je suis Chef Barbe. On cuisine ? (Hi! I'm Chef Barbe. Let's cook!)</div>
       </div>
       <h1 class="logo" aria-label="La Cuisine"><span>L</span><span>a</span>&nbsp;<span>C</span><span>u</span><span>i</span><span>s</span><span>i</span><span>n</span><span>e</span></h1>
       <p class="ribbon">Le jeu du vocabulaire de la nourriture · A French food vocabulary game</p>
@@ -43,6 +43,7 @@
 
       <p class="title-links">
         <button type="button" class="sound-button" aria-label="Couper le son (mute)">🔊</button>
+          <button type="button" class="voice-button" aria-label="Voix française (French voice)">🗣️</button>
         <a href="vocab-check.html">Vérification du vocabulaire (pour le prof)</a>
       </p>
 
@@ -143,7 +144,8 @@
       <div class="kitchen-top">
         <p class="level-tag" id="level-name"></p>
         <p class="timer">⏱ <span id="timer">0</span> s <span class="muted">/ objectif <span id="target-time"></span> s</span>
-          <button type="button" class="sound-button" aria-label="Couper le son (mute)">🔊</button></p>
+          <button type="button" class="sound-button" aria-label="Couper le son (mute)">🔊</button>
+          <button type="button" class="voice-button" aria-label="Voix française (French voice)">🗣️</button></p>
       </div>
       <div class="kitchen">
         <div class="panel recipe-card">
@@ -155,7 +157,7 @@
           <ul id="recipe-list"></ul>
         </div>
         <div class="panel play-area">
-          <p id="prompt" class="prompt"></p>
+          <div class="prompt-row"><p id="prompt" class="prompt"></p><span class="replay-buttons"><button type="button" class="replay-button" title="Réécouter (listen again)" aria-label="Réécouter (listen again)">🔁</button><button type="button" class="replay-slow-button" title="Plus lentement (slower)" aria-label="Plus lentement (slower)">🐢</button></span></div>
 
           <!-- Levels 1 & 2: the shelf of pictures -->
           <div id="shelf-area">
@@ -210,12 +212,14 @@
       <div class="kitchen-top">
         <p class="level-tag">☕ Le Café</p>
         <p class="timer"><span id="cafe-status"></span>
-          <button type="button" class="sound-button" aria-label="Couper le son (mute)">🔊</button></p>
+          <button type="button" class="sound-button" aria-label="Couper le son (mute)">🔊</button>
+          <button type="button" class="voice-button" aria-label="Voix française (French voice)">🗣️</button></p>
       </div>
       <div class="kitchen">
         <div class="panel customer-card">
           <div id="cafe-face" class="customer-face"></div>
           <p id="cafe-order" class="speech"></p>
+          <p class="cafe-replay"><span class="replay-buttons"><button type="button" class="replay-button" title="Réécouter (listen again)" aria-label="Réécouter (listen again)">🔁</button><button type="button" class="replay-slow-button" title="Plus lentement (slower)" aria-label="Plus lentement (slower)">🐢</button></span></p>
           <div class="patience" aria-label="Patience du client"><div id="cafe-patience" class="patience-fill"></div></div>
           <p class="muted">Patience du client (customer's patience)</p>
         </div>
@@ -235,9 +239,10 @@
       <div class="kitchen-top">
         <p class="level-tag">🌧️ La Pluie de Nourriture</p>
         <p class="timer"><span id="fall-status"></span>
-          <button type="button" class="sound-button" aria-label="Couper le son (mute)">🔊</button></p>
+          <button type="button" class="sound-button" aria-label="Couper le son (mute)">🔊</button>
+          <button type="button" class="voice-button" aria-label="Voix française (French voice)">🗣️</button></p>
       </div>
-      <p class="prompt banner">Attrape : <span id="fall-target" class="fall-target"></span></p>
+      <p class="prompt banner">Attrape : <span id="fall-target" class="fall-target"></span> <span class="replay-buttons"><button type="button" class="replay-button" title="Réécouter (listen again)" aria-label="Réécouter (listen again)">🔁</button><button type="button" class="replay-slow-button" title="Plus lentement (slower)" aria-label="Plus lentement (slower)">🐢</button></span></p>
       <div id="fall-area" class="fall-area"></div>
       <p id="fall-feedback" class="feedback" aria-live="polite"></p>
       <p><button id="fall-quit-button" class="button secondary">Quitter</button></p>
@@ -248,9 +253,10 @@
       <div class="kitchen-top">
         <p class="level-tag">🧑‍🍳 Le Labyrinthe du Chef</p>
         <p class="timer"><span id="maze-status"></span>
-          <button type="button" class="sound-button" aria-label="Couper le son (mute)">🔊</button></p>
+          <button type="button" class="sound-button" aria-label="Couper le son (mute)">🔊</button>
+          <button type="button" class="voice-button" aria-label="Voix française (French voice)">🗣️</button></p>
       </div>
-      <p class="prompt banner">Ramasse : <span id="maze-target" class="fall-target"></span></p>
+      <p class="prompt banner">Ramasse : <span id="maze-target" class="fall-target"></span> <span class="replay-buttons"><button type="button" class="replay-button" title="Réécouter (listen again)" aria-label="Réécouter (listen again)">🔁</button><button type="button" class="replay-slow-button" title="Plus lentement (slower)" aria-label="Plus lentement (slower)">🐢</button></span></p>
       <div class="maze-wrap">
         <div id="maze-board" class="maze-board"></div>
       </div>
@@ -476,6 +482,7 @@
   <script src="js/scoring.js"></script>
   <script src="js/check.js"></script>
   <script src="js/sound.js"></script>
+  <script src="js/voice.js"></script>
   <script src="js/memory.js"></script>
   <script src="js/progress.js"></script>
   <script src="js/chef.js"></script>

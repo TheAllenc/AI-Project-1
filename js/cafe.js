@@ -76,8 +76,9 @@ function nextCustomer() {
   cafe.patience = cafe.maxPatience;
 
   document.getElementById("cafe-face").textContent = CUSTOMER_FACES[Math.floor(Math.random() * CUSTOMER_FACES.length)];
-  document.getElementById("cafe-order").textContent =
-    "Bonjour ! Pour moi, " + listInFrench(cafe.order) + ", s'il vous plaît.";
+  const order = "Bonjour ! Pour moi, " + listInFrench(cafe.order) + ", s'il vous plaît.";
+  document.getElementById("cafe-order").textContent = order;
+  speakFrench(order, { queue: true }); // the customer says the order out loud
   document.getElementById("cafe-tray").innerHTML = "";
   cafeFeedback("", "");
   drawCafeCounter();
@@ -146,6 +147,7 @@ function customerServed() {
   playSound("done");
   document.getElementById("cafe-face").textContent = "😊";
   cafeFeedback("Merci ! Au revoir ! (+" + tip + " € de pourboire)", "good");
+  speakFrench("Merci ! Au revoir !");
   drawCafeStatus();
   setTimeout(nextCustomer, 1300);
 }

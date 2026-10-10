@@ -275,3 +275,10 @@ In Milestone 3 the AI decided that for *l'* words the right answer would be the 
 
 ### Problems found in testing (and fixed)
 - A new test checked that no word starting with a vowel is answered with le or la. It flagged **yaourt**, but *le yaourt* is correct, because "y" acts like a consonant there. So the test was wrong, not the game. The "vowel" check now leaves out y. *Le hors d'œuvre* also keeps "le" (h aspiré).
+
+### Audio: design decisions the AI made (for me to review)
+- **Browser voice** (my choice): no recordings, so it works offline and costs nothing. The quality depends on the computer.
+- **What speaks:** the word to find (Level 1), the noun without its article (Level 2, so it doesn't give away the answer), every right answer, Chef Barbe's reactions (French only, never the English in brackets), the café orders and "Merci ! Au revoir !", the falling-food and maze targets, and quiz questions.
+- **What stays silent:** Level 3 typing and "how do you say it in French?" questions until you answer, because hearing the word would give away the answer.
+- **New question type:** "Écoute !" listening questions (hear the word, nothing written, pick the English), mixed into quizzes and surprise questions when the voice is on.
+- **Controls:** 🗣️ on/off (remembered), 🔁 repeat, 🐢 slow repeat. Click the chef's bubble on the homepage to hear him. The voice starts **on**; in a classroom, students may need headphones.

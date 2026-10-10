@@ -139,13 +139,15 @@ main > section { animation: screen-in 0.35s cubic-bezier(0.2, 1.4, 0.4, 1); }
 .button.big { font-size: 1.6rem; padding: 0.55em 1.6em; border-radius: 18px; }
 
 .button:focus-visible, .food:focus-visible, .level-card:focus-visible, .chip:focus-visible,
-.accent-button:focus-visible, .dpad-button:focus-visible, .sound-button:focus-visible, .link-button:focus-visible {
+.accent-button:focus-visible, .dpad-button:focus-visible, .sound-button:focus-visible, .link-button:focus-visible,
+.voice-button:focus-visible, .replay-button:focus-visible, .replay-slow-button:focus-visible, .listen-button:focus-visible {
   outline: 4px solid var(--sky);
   outline-offset: 3px;
 }
 .button-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
 
-.sound-button {
+/* Round buttons: sound, voice and replay */
+.sound-button, .voice-button, .replay-button, .replay-slow-button {
   display: inline-grid;
   place-items: center;
   width: 2.3rem;
@@ -158,7 +160,16 @@ main > section { animation: screen-in 0.35s cubic-bezier(0.2, 1.4, 0.4, 1); }
   cursor: pointer;
   vertical-align: middle;
 }
-.sound-button:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--ink); }
+.sound-button:active, .voice-button:active, .replay-button:active, .replay-slow-button:active {
+  transform: translateY(2px); box-shadow: 0 1px 0 var(--ink);
+}
+.voice-button.off { filter: grayscale(1); opacity: 0.5; } /* voice turned off */
+.replay-buttons { display: inline-flex; gap: 6px; vertical-align: middle; }
+.replay-buttons button { width: 2rem; height: 2rem; font-size: 1rem; }
+.prompt-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.cafe-replay { margin: 6px 0 0; text-align: center; }
+.listen-button { cursor: pointer; } /* the big 🔊 in a listening question */
+#title-bubble { cursor: pointer; }
 
 .link-button {
   padding: 0;

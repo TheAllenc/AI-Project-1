@@ -22,7 +22,9 @@ function renderChefs() {
 function showChefReaction(where, stars) {
   const chef = document.getElementById(where + "-chef");
   chef.innerHTML = drawChef(progress.wearing, stars === 3 ? "cheer" : "");
-  document.getElementById(where + "-chef-says").textContent = chefSays(stars);
+  const message = chefSays(stars);
+  document.getElementById(where + "-chef-says").textContent = message;
+  speakFrench(frenchPart(message)); // Chef Barbe says the French part out loud
 }
 
 // ---------- The shop screen ----------
