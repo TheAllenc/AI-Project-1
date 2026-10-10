@@ -3,7 +3,8 @@
 const test = require("node:test");
 const assert = require("node:assert");
 const { getWord } = require("../js/vocab.js");
-const { checkTyped, genderArticle, splitArticle } = require("../js/check.js");
+const { checkTyped, definiteArticle, hiddenGenderTip, splitArticle } = require("../js/check.js");
+const { VOCAB } = require("../js/vocab.js");
 
 const w = getWord;
 
@@ -63,11 +64,28 @@ test("splitArticle finds the article", () => {
   assert.deepStrictEqual(splitArticle("pomme"), { article: null, noun: "pomme" });
 });
 
-test("genderArticle uses the hidden gender of l' and un words", () => {
-  assert.strictEqual(genderArticle(w("pomme")), "la");
-  assert.strictEqual(genderArticle(w("pain")), "le");
-  assert.strictEqual(genderArticle(w("orange")), "la");
-  assert.strictEqual(genderArticle(w("ananas")), "le");
-  assert.strictEqual(genderArticle(w("oeuf")), "le");
-  assert.strictEqual(genderArticle(w("bonbons")), "les");
+test("the article level asks for the real article: le, la, l' or les", () => {
+  assert.strictEqual(definiteArticle(w("pomme")), "la");
+  assert.strictEqual(definiteArticle(w("pain")), "le");
+  assert.strictEqual(definiteArticle(w("bonbons")), "les");
+  // Before a vowel it's always l' (never "la orange" or "le ananas")
+  assert.strictEqual(definiteArticle(w("orange")), "l'");
+  assert.strictEqual(definiteArticle(w("ananas")), "l'");
+  assert.strictEqual(definiteArticle(w("oignon")), "l'");
+  assert.strictEqual(definiteArticle(w("oeuf")), "l'"); // un œuf -> l'œuf
+  assert.strictEqual(definiteArticle(w("hors-doeuvre")), "le"); // h aspiré: le hors d'œuvre
+  assert.strictEqual(definiteArticle(w("yaourt")), "le"); // y acts like a consonant: le yaourt
+});
+
+test("no word starting with a vowel is ever answered with le or la", () => {
+  for (const word of VOCAB) {
+    if (!word.article || word.plural) continue;
+    if (/^[aeiouàâéèêîïôûœ]/i.test(word.fr)) assert.strictEqual(definiteArticle(word), "l'", word.id);
+  }
+});
+
+test("for l' words the game explains the hidden gender", () => {
+  assert.strictEqual(hiddenGenderTip(w("orange")), "orange est féminin : une orange");
+  assert.strictEqual(hiddenGenderTip(w("ananas")), "ananas est masculin : un ananas");
+  assert.strictEqual(hiddenGenderTip(w("pomme")), "");
 });

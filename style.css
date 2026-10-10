@@ -619,7 +619,8 @@ main > section { animation: screen-in 0.35s cubic-bezier(0.2, 1.4, 0.4, 1); }
 .article-button { font-size: 1.5rem; min-width: 5rem; }
 .article-button:nth-child(1) { background: var(--teal); }
 .article-button:nth-child(2) { background: var(--pink); }
-.article-button:nth-child(3) { background: var(--grape); }
+.article-button:nth-child(3) { background: var(--mustard); color: var(--ink); text-shadow: none; }
+.article-button:nth-child(4) { background: var(--grape); }
 
 /* Level 3: typing */
 .clue {

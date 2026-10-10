@@ -4,7 +4,7 @@
 //
 // There are three kinds of level ("modes"):
 //   click   Level 1: read the French word, click the matching picture
-//   gender  Level 2: click the picture, then pick le / la / les
+//   gender  Level 2: click the picture, then pick le / la / l' / les
 //   type    Level 3: see the picture (or English word), type the French word
 // Level 4 (the menu) mixes them: each course says which mode it uses.
 //
@@ -14,7 +14,7 @@
 // is drawn by chef.js and dressed in the shop (shop.js).
 //
 // Uses VOCAB/withArticle/getWord (vocab.js), LEVELS/SHELF_SIZE/pickRecipes (recipes.js),
-// targetTime/starsFor/starText (scoring.js), checkTyped/genderArticle (check.js)
+// targetTime/starsFor/starText (scoring.js), checkTyped/definiteArticle/hiddenGenderTip (check.js)
 // and playSound/toggleSound (sound.js).
 // ============================================================
 
@@ -28,7 +28,7 @@ const state = {
   found: [],            // ids of ingredients already put in the bowl
   mistakes: 0,          // mistakes in this recipe
   tries: 0,             // wrong typed answers for the current word (type mode)
-  pendingButton: null,  // gender mode: the picture clicked, waiting for le/la/les
+  pendingButton: null,  // gender mode: the picture clicked, waiting for le/la/l'/les
   startTime: 0,         // when this recipe started (milliseconds)
   timerId: null,        // the ticking clock, so we can stop it
   results: [],          // one entry per finished recipe: { recipe, seconds, mistakes, stars }
@@ -348,7 +348,7 @@ function askForNext() {
   if (mode === "gender") prompt("Trouve : " + word.fr);
   if (mode === "type") {
     state.tries = 0;
-    prompt("Écris le mot en français (with le / la / les if you want) :");
+    prompt("Écris le mot en français (with le / la / l’ / les if you want) :");
     const clue = document.getElementById("clue");
     clue.textContent = clueFor(word);
     clue.className = word.emoji ? "clue" : "clue clue-text"; // English clues use smaller letters
@@ -434,7 +434,7 @@ function mistake(word) {
 
 function pickFood(word, button) {
   const target = currentTarget();
-  if (!target || state.pendingButton) return; // finished, or waiting for le/la/les
+  if (!target || state.pendingButton) return; // finished, or waiting for the article
 
   if (word.id === target.id) {
     button.disabled = true;
@@ -447,8 +447,8 @@ function pickFood(word, button) {
       // Gender mode: right picture, now ask for the article.
       state.pendingButton = button;
       playSound("good");
-      say("Oui, c'est ça ! Maintenant : le, la ou les ?", "good");
-      prompt("___ " + word.fr + " : le, la ou les ?");
+      say("Oui, c'est ça ! Maintenant : le, la, l' ou les ?", "good");
+      prompt("___ " + word.fr + " : le, la, l' ou les ?");
       showArticleButtons();
     }
   } else {
@@ -461,7 +461,7 @@ function pickFood(word, button) {
   }
 }
 
-// ---------- Mode 2: choosing le / la / les ----------
+// ---------- Mode 2: choosing le / la / l' / les ----------
 
 function showArticleButtons() {
   for (const button of document.querySelectorAll(".article-button")) button.disabled = false;
@@ -472,12 +472,12 @@ function pickArticle(choice, button) {
   const word = currentTarget();
   if (!word || !state.pendingButton) return;
 
-  if (choice === genderArticle(word)) {
-    let message = "Oui ! " + withArticle(word) + " ✓";
-    // Words written with l' or un hide their gender, so explain it.
-    if (word.article === "l'" || word.article === "un") {
-      message += " (" + word.fr + " est " + (word.gender === "m" ? "masculin" : "féminin") + ")";
-    }
+  if (choice === definiteArticle(word)) {
+    const answer = choice === "l'" ? "l’" + word.fr : choice + " " + word.fr;
+    let message = "Oui ! " + answer + " ✓";
+    // l' hides the gender, so explain it: "orange est féminin : une orange".
+    const tip = hiddenGenderTip(word);
+    if (tip) message += " (" + tip + ")";
     say(message, "good");
     state.pendingButton = null;
     document.getElementById("article-area").hidden = true;
@@ -485,7 +485,8 @@ function pickArticle(choice, button) {
   } else {
     mistake(word);
     button.disabled = true;
-    say("Non, pas « " + choice + " ». Essaie encore ! (Try again!)", "bad");
+    const hint = startsWithVowel(word.fr) ? " Indice : " + word.fr + " commence par une voyelle. (Hint: it starts with a vowel.)" : "";
+    say("Non, pas « " + (choice === "l'" ? "l’" : choice) + " ». Essaie encore !" + hint, "bad");
   }
 }
 
@@ -715,7 +716,7 @@ for (const button of document.querySelectorAll(".sound-button")) {
 }
 
 for (const button of document.querySelectorAll(".article-button")) {
-  button.addEventListener("click", () => pickArticle(button.textContent, button));
+  button.addEventListener("click", () => pickArticle(button.dataset.article, button));
 }
 
 // The typing form: Enter or "Valider" checks the answer.

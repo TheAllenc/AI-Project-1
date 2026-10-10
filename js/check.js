@@ -49,13 +49,32 @@ function checkTyped(input, word) {
   return result;
 }
 
-// The article to pick in the gender level: le, la or les.
-// Words written with l' (l'orange) or un (un œuf) still have a gender: l'orange → la.
-function genderArticle(word) {
+// The article to pick in the article level: le, la, l' or les.
+// Before a vowel, French uses l' (l'orange, l'ananas, l'oignon), never le/la.
+// "un œuf" becomes "l'œuf" for the same reason.
+// (Thanks to a French teacher's play-test for catching that the first
+// version wrongly asked for "la orange".)
+// "y" is left out on purpose: it's "le yaourt", not "l'yaourt".
+function startsWithVowel(text) {
+  return /^[aeiouàâäéèêëîïôöùûüœæ]/i.test(text);
+}
+
+function definiteArticle(word) {
   if (word.plural) return "les";
+  if (word.article === "le" || word.article === "la" || word.article === "l'") return word.article;
+  if (startsWithVowel(word.fr)) return "l'";
   return word.gender === "m" ? "le" : "la";
 }
 
+// For words with l', the gender is hidden, so the game explains it:
+// "orange est féminin : une orange".
+function hiddenGenderTip(word) {
+  if (definiteArticle(word) !== "l'") return "";
+  return word.gender === "m"
+    ? word.fr + " est masculin : un " + word.fr
+    : word.fr + " est féminin : une " + word.fr;
+}
+
 if (typeof module !== "undefined") {
-  module.exports = { normalize, removeAccents, splitArticle, checkTyped, genderArticle };
+  module.exports = { normalize, removeAccents, splitArticle, checkTyped, startsWithVowel, definiteArticle, hiddenGenderTip };
 }

@@ -37,7 +37,7 @@ sound.js ─┘     └── showScreen, shuffle, pictureFoods, addRow…
 ### `js/recipes.js`: levels and recipes
 - `LEVELS` lists the 4 levels. Each has a `mode` that says how it's played:
   - `click`: read the word, click the picture (Level 1)
-  - `gender`: click the picture, then pick le/la/les (Level 2)
+  - `gender`: click the picture, then pick le/la/l’/les (Level 2)
   - `type`: type the French word (Level 3)
   - `menu`: three courses, each with its own mode (Level 4)
 - Every level has a pool of recipes, and `pickRecipes(level)` picks **3 at random** each game. Level 4 picks one option per course (3 entrées, 5 main courses, 4 desserts).
@@ -59,7 +59,8 @@ sound.js ─┘     └── showScreen, shuffle, pictureFoods, addRow…
   1. `normalize`: lowercase, trim, one space, ’ → ', œ → oe.
   2. `splitArticle`: separate "la" from "pomme" (the article is optional).
   3. Compare. If only the accents differ, the result is `"accent"`, which counts but is flagged.
-- `genderArticle(word)` gives the right le/la/les, even for *l'* and *un* words.
+- `definiteArticle(word)` gives the right answer for Level 2: **le, la, l' or les**. Before a vowel French uses *l'* (*l'orange*, *l'ananas*, *l'oignon*), so that's the answer there. `startsWithVowel` leaves out "y" on purpose (*le yaourt*), and *le hors d'œuvre* keeps "le" because its h is "aspiré".
+- `hiddenGenderTip(word)`: *l'* hides the gender, so after a correct *l'* the game adds "orange est féminin : une orange".
 
 ---
 
@@ -70,7 +71,7 @@ sound.js ─┘     └── showScreen, shuffle, pictureFoods, addRow…
 - **Flow:** `showLevels()` → `startLevel(level)` → `startRecipe()` → the player answers → `collect(word)` → `finishRecipe()` → `nextRecipe()` → `showReport()`.
 - **The three ways to answer:**
   - `pickFood(word, button)`: a picture was clicked (modes click and gender).
-  - `pickArticle(choice)`: le/la/les was clicked (gender mode).
+  - `pickArticle(choice)`: le/la/l'/les was clicked (gender mode). If the word starts with a vowel and you pick wrong, the hint reminds you.
   - `submitTyped()`: the typing box was sent (type mode). It uses `checkTyped`.
 - **`currentTarget()`:** the game asks for **one ingredient at a time**, so when you get one wrong, it knows which word you didn't know. `mistake(word)` adds it to the "words to review" list.
 - **`drawRecipeCard()`** never gives away the answer: in gender mode it shows "___ fraise"; in type mode it shows the picture or English clue.

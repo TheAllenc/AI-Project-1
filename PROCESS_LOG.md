@@ -38,7 +38,8 @@ A running record of how AI was used to build *La Cuisine*. Add to it after every
 | 7 | *les frites* = "chips" (British) → shown as "fries / chips" | |
 | 8 | *la tartine* and *le pain grillé* are both "toast" | |
 
-**Mistakes I caught in the AI's work:** *(add any here)*
+**Mistakes I caught in the AI's work:**
+- *(Session 10)* Level 2 asked for **"la orange"** and **"le ananas"**. A French teacher play-testing the game caught it: before a vowel it's always *l'*. See Session 10.
 
 ### Diligence
 - The README credits AI help and the vocab source.
@@ -251,3 +252,26 @@ Honest answer before this session: words did **not** come back on purpose. Recip
 ### Questions to think about
 - Is 80% the right pass mark? Is the surprise question too frequent or too rare?
 - Would a short before-and-after test with classmates show whether they actually remember more?
+
+---
+
+## Session 10: Feedback from a French teacher
+
+### Discern: what the teacher said
+A French teacher play-tested the game. They said it's impressive and could be used in French 1–3 classes. Their points:
+1. **Level 2 is wrong for words like *ananas* and *orange*.** The choices were le/la/les, so the game wanted "la orange" / "le ananas". In French it's *l'orange* and *l'ananas*.
+2. **Audio:** it would help to hear Chef Barbe and the customers say the words.
+3. They **loved the surprise question**.
+4. Could there be a **sign-in or a way to save** progress?
+
+### A mistake the AI made (and I approved)
+In Milestone 3 the AI decided that for *l'* words the right answer would be the "hidden gender" (*l'orange* → **la**), and I accepted it. But nobody says "la orange". That taught the wrong French. A real French speaker caught it in one play-test. That's why a human has to check AI work, and why I asked a teacher.
+
+**Lesson:** the AI also filled in the genders of the *l'* words (marked `verify` in `vocab.js`). I should ask my teacher to check those too.
+
+### Decisions I made
+- **Order:** 1. fix l', 2. audio (the browser's built-in French voice), 3. saving.
+- **The l' fix:** Level 2 now has four buttons: **le, la, l', les**. Before a vowel the answer is *l'*. After a correct *l'*, the game still teaches the gender: "orange est féminin : une orange". If you pick wrong on a vowel word, it hints "it starts with a vowel". This also fixes *l'oignon* in the Level 4 entrée (*une soupe à l'oignon*).
+
+### Problems found in testing (and fixed)
+- A new test checked that no word starting with a vowel is answered with le or la. It flagged **yaourt**, but *le yaourt* is correct, because "y" acts like a consonant there. So the test was wrong, not the game. The "vowel" check now leaves out y. *Le hors d'œuvre* also keeps "le" (h aspiré).

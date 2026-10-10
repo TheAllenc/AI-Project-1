@@ -33,7 +33,7 @@
       <h2 class="section-heading">Comment jouer <span class="muted">(how to play)</span></h2>
       <div class="how-to">
         <div class="how-card" style="--c: #ffc93c"><span class="how-emoji">🥐</span><strong>1 · Le Petit-Déjeuner</strong><p>Read the French word, click the picture.</p></div>
-        <div class="how-card" style="--c: #ff7eb6"><span class="how-emoji">🍓</span><strong>2 · Le Goûter</strong><p>Click the picture, then choose <em>le, la</em> or <em>les</em>.</p></div>
+        <div class="how-card" style="--c: #ff7eb6"><span class="how-emoji">🍓</span><strong>2 · Le Goûter</strong><p>Click the picture, then choose <em>le, la, l’</em> or <em>les</em>.</p></div>
         <div class="how-card" style="--c: #1fb5a8"><span class="how-emoji">🍝</span><strong>3 · Le Déjeuner</strong><p>See the picture, type the French word.</p></div>
         <div class="how-card" style="--c: #8e5cf7"><span class="how-emoji">🍽️</span><strong>4 · Le Dîner</strong><p>Cook a whole menu: l'entrée, le plat principal, le dessert.</p></div>
         <div class="how-card" style="--c: #ff5a3c"><span class="how-emoji">🍷</span><strong>5 · Le Restaurant</strong><p>Meals, the menu and verbs: type them all!</p></div>
@@ -165,9 +165,10 @@
 
           <!-- Level 2: pick the article -->
           <div id="article-area" class="article-area" hidden>
-            <button type="button" class="button article-button">le</button>
-            <button type="button" class="button article-button">la</button>
-            <button type="button" class="button article-button">les</button>
+            <button type="button" class="button article-button" data-article="le">le</button>
+            <button type="button" class="button article-button" data-article="la">la</button>
+            <button type="button" class="button article-button" data-article="l'">l’</button>
+            <button type="button" class="button article-button" data-article="les">les</button>
           </div>
 
           <!-- Level 3: type the word -->

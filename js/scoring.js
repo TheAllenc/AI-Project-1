@@ -12,7 +12,7 @@
 // Typing takes longer than clicking, so it gets more time.
 const SECONDS_PER_INGREDIENT = {
   click: 6,   // Level 1: click the picture
-  gender: 8,  // Level 2: click the picture, then pick le/la/les
+  gender: 8,  // Level 2: click the picture, then pick le/la/l'/les
   type: 12,   // Level 3: type the French word
 };
 

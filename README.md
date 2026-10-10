@@ -4,7 +4,7 @@ A browser cooking game that helps French 1–2 students learn **food vocabulary*
 Players read French recipe cards and gather the right ingredients. The levels get harder as you go:
 
 1. **Le Petit-Déjeuner**: click the picture that matches the French word (recognition)
-2. **Le Goûter**: also pick the right article: *le / la / les* (gender)
+2. **Le Goûter**: also pick the right article: *le / la / l’ / les* (gender)
 3. **Le Déjeuner**: see the picture (or an English clue) and type the French word (recall)
 4. **Le Dîner**: build a full menu (*l'entrée → le plat principal → le dessert*)
 5. **Le Restaurant**: the meal words, the menu words and the verbs, plus more dishes (typing)
@@ -35,7 +35,7 @@ Each level picks 3 recipes at random from its pool, so every game is different. 
 No install needed. Download the folder and double-click **`index.html`**. It runs in any modern browser.
 
 ## Scoring
-Each recipe starts at ★★★★★. You lose 1 star per mistake (at most 3) and 1 if you're slower than the target time: 6 seconds per ingredient for clicking, 8 for choosing le/la/les, and 12 for typing. You always get at least ★ for finishing.
+Each recipe starts at ★★★★★. You lose 1 star per mistake (at most 3) and 1 if you're slower than the target time: 6 seconds per ingredient for clicking, 8 for choosing le/la/l’/les, and 12 for typing. You always get at least ★ for finishing.
 
 ## Typing rules
 - Capital letters, extra spaces, and ’ vs ' don't matter. "oe" counts as "œ".
@@ -61,7 +61,7 @@ Open **`vocab-check.html`** to see every word in a table. Rows marked with an or
 | `js/vocab.js` | The word list (from Lawless French, supplied by Dillon Allen) |
 | `js/recipes.js` | The levels and their recipes |
 | `js/scoring.js` | Star rules (time + mistakes) |
-| `js/check.js` | Checks typed answers (accents, apostrophes, articles) and le/la/les choices |
+| `js/check.js` | Checks typed answers (accents, apostrophes, articles) and le/la/l’/les choices |
 | `js/sound.js` | Sound effects (made by the browser, no files) and the mute button |
 | `js/memory.js` | Spaced repetition: each word's Leitner box, when it's due, and weighted picking |
 | `js/progress.js` | Saved progress: collected stars, finished levels, the chef's clothes |

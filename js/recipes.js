@@ -37,8 +37,8 @@ const LEVELS = [
     name: "Le Goûter",
     emoji: "🍓",
     color: "#ff7eb6",
-    goal: "Le, la ou les ? (Pick the right article.)",
-    mode: "gender", // click the picture, then pick le / la / les
+    goal: "Le, la, l’ ou les ? (Pick the right article.)",
+    mode: "gender", // click the picture, then pick le / la / l' / les
     recipes: [
       { name: "une salade de fruits", emoji: "🥣", ingredients: ["pomme", "banane", "fraise", "orange", "ananas"] },
       { name: "une coupe glacée", emoji: "🍨", ingredients: ["glace", "cerise", "chocolat", "biscuit"] },
