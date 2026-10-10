@@ -114,6 +114,13 @@ sound.js, voice.js ─┘     └── showScreen, shuffle, pictureFoods, addRo
 - `earnLevelStars(p, levelId, stars)` adds stars **only the first time** a level is finished, and returns 0 after that. This is the rule that stops players from farming stars by replaying.
 - `buyItem` and `toggleWear` are the shop rules. `startOver()` erases everything, clothes included.
 - It's saved with `localStorage` (in the player's browser) inside `try/catch`, so the game still works if the browser blocks saving.
+- **Save codes:** `encodeSave(progress)` turns the progress into text: `CUISINE1-` + the progress as base64 + `-` + a checksum. `decodeSave(code)` checks the start, recomputes the checksum (`checksum()`, the short "djb2" hash) and only then reads the progress. A typo or a missing piece gives a friendly error instead of broken progress. The checksum catches accidents, not cheating: there's no server, so a determined player could still edit their own code.
+- `saveSummary(p)` writes "⭐ 17 · 2 niveaux finis · 1 vêtement" (French uses the singular for 0 and 1).
+
+### `js/save.js`: the save screen
+- `showSave()` fills the box with your code. `copySaveCode()` copies it; if the browser blocks copying, it selects the code so you can press Ctrl+C.
+- Loading takes **two steps**: `checkSaveCode()` checks the code and shows what's in it next to what's on this computer, then `loadSaveCode()` replaces the progress only after "Oui".
+- Why no sign-in? Accounts would mean storing students' names and passwords on a server, which brings privacy rules for a school project. A code gives the same result with no student data.
 
 ### `js/wordlist.js`: all the vocabulary
 - `showWordList()` draws a card for every word in `VOCAB`. The category chips and the search box filter them (`matchesSearch` ignores accents and capitals).
@@ -153,11 +160,11 @@ sound.js, voice.js ─┘     └── showScreen, shuffle, pictureFoods, addRo
 
 ## Tests (`tests/`)
 
-Run `node --test`. There are 85 automatic checks, including:
+Run `node --test`. There are 90 automatic checks, including:
 - **Vocab:** no duplicate ids; articles match genders; no two words share an emoji.
 - **Recipes:** every ingredient exists; picture levels only use words with emoji; English clues never equal the French answer; each game picks 3 different recipes.
 - **Scoring and checking:** star rules and accent/article rules give the expected answers.
-- **Progress:** a level's stars count only once; you can't buy what you can't afford.
+- **Progress:** a level's stars count only once; you can't buy what you can't afford; a save code brings back exactly the same progress, and a code with a typo is refused.
 - **Maze:** traps never cut the map apart; mice avoid traps; a chasing mouse reaches a still chef by the shortest path; in 2,000 random layouts the right food is always reachable without touching a trap or another food.
 - **Vocabulary:** every word on the list appears in a recipe, and no typing clue gives away its answer.
 - **Memory:** right answers move words up, mistakes send them to box 1, waiting times grow, and struggling words are picked far more often than mastered ones.

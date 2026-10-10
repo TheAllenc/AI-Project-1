@@ -282,3 +282,15 @@ In Milestone 3 the AI decided that for *l'* words the right answer would be the 
 - **What stays silent:** Level 3 typing and "how do you say it in French?" questions until you answer, because hearing the word would give away the answer.
 - **New question type:** "Écoute !" listening questions (hear the word, nothing written, pick the English), mixed into quizzes and surprise questions when the voice is on.
 - **Controls:** 🗣️ on/off (remembered), 🔁 repeat, 🐢 slow repeat. Click the chef's bubble on the homepage to hear him. The voice starts **on**; in a classroom, students may need headphones.
+
+### Saving: design decisions the AI made (for me to review)
+- **No sign-in** (we agreed): accounts would mean keeping students' names and passwords on a server, which brings school privacy rules. Instead:
+  - **A:** the homepage now says that progress is saved **in this browser, on this computer**.
+  - **B:** a **save code** (💾 on the homepage and in the shop). Copy it, then paste it on another computer.
+- **Safety:** the code has a checksum, so a typo or a half-copied code is refused instead of loading broken progress. Before loading, the game shows what's in the code ("⭐ 17 · 2 niveaux finis · 1 vêtement") and asks to confirm.
+- **Honest limit:** the checksum catches accidents, not cheating. A student who understands base64 could edit their own stars. With no server, that can't be prevented, and stars aren't grades.
+- A save code for a player who has seen many words is long (up to about 12,000 characters), because it holds every word's memory. Copy and paste handles it fine.
+
+### Questions to think about
+- Should the voice start on or off in a classroom? (It starts on; 🗣️ turns it off.)
+- Ask my teacher to check the genders the AI filled in for the *l'* words.

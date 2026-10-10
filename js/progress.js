@@ -16,6 +16,10 @@
 // Progress is saved in this browser (localStorage), so it survives closing
 // the page. If the browser blocks saving (e.g. a private window), the game
 // still works; progress just lasts until the page is closed.
+//
+// SAVE CODES: to move progress to another computer, encodeSave() turns it
+// into a code to copy, and decodeSave() reads it back. There are no
+// accounts: no name, email or password, and nothing is sent anywhere.
 // ============================================================
 
 // "v2": recipes now give up to 5 stars and the clothes changed, so old
@@ -96,6 +100,55 @@ function toggleWear(p, item) {
   else p.wearing[item.slot] = item.id;
 }
 
+// ---------- Save codes (pure, so the tests can check them) ----------
+// A code looks like:  CUISINE1-<the progress as base64 text>-<checksum>
+// The checksum is a number made from the text. If a letter is lost or
+// changed when copying, the checksum won't match and we refuse the code
+// instead of loading broken progress. (It catches accidents, not cheating.)
+
+const SAVE_PREFIX = "CUISINE1";
+
+function checksum(text) {
+  let hash = 5381; // the "djb2" hash: a classic, very short checksum
+  for (let i = 0; i < text.length; i++) hash = (hash * 33 + text.charCodeAt(i)) % 1000000007;
+  return hash.toString(36);
+}
+
+function encodeSave(p) {
+  const text = btoa(unescape(encodeURIComponent(JSON.stringify(p)))); // base64, safe for accents
+  return SAVE_PREFIX + "-" + text + "-" + checksum(text);
+}
+
+// Returns { ok: true, progress } or { ok: false, reason } (reason in French + English).
+function decodeSave(code) {
+  const parts = String(code).replace(/\s+/g, "").split("-"); // ignore spaces and line breaks
+  if (parts.length !== 3 || parts[0] !== SAVE_PREFIX) {
+    return { ok: false, reason: "Ce n'est pas un code de La Cuisine. (That's not a La Cuisine save code.)" };
+  }
+  const [, text, check] = parts;
+  if (checksum(text) !== check) {
+    return { ok: false, reason: "Le code est incomplet ou a une faute. Recopie-le en entier. (The code is incomplete or has a typo.)" };
+  }
+  try {
+    const saved = JSON.parse(decodeURIComponent(escape(atob(text))));
+    const valid = saved && Number.isInteger(saved.stars) && saved.stars >= 0 &&
+      typeof saved.completed === "object" && Array.isArray(saved.owned) && typeof saved.wearing === "object";
+    if (!valid) throw new Error("bad shape");
+    return { ok: true, progress: { ...emptyProgress(), ...saved } };
+  } catch (error) {
+    return { ok: false, reason: "Ce code ne marche pas. (This code doesn't work.)" };
+  }
+}
+
+// A short summary to show before loading a code: "⭐ 23 · 3 niveaux · 4 vêtements".
+function saveSummary(p) {
+  const levels = Object.keys(p.completed).length;
+  const clothes = p.owned.length;
+  // In French, 0 and 1 take the singular: "0 niveau fini", "2 niveaux finis".
+  return "⭐ " + p.stars + " · " + levels + (levels > 1 ? " niveaux finis" : " niveau fini") +
+    " · " + clothes + (clothes > 1 ? " vêtements" : " vêtement");
+}
+
 // ---------- Saving and loading ----------
 
 let progress = loadProgress();
@@ -123,9 +176,16 @@ function startOver() {
   saveProgress();
 }
 
+// Replaces this browser's progress with a loaded save code.
+function replaceProgress(loaded) {
+  progress = loaded;
+  saveProgress();
+}
+
 if (typeof module !== "undefined") {
   module.exports = {
     QUIZ_PASS, QUIZ_PASS_STARS, QUIZ_FAIL_STARS, REVIEW_STARS,
     emptyProgress, earnLevelStars, starsEarned, buyItem, toggleWear, changeStars, recordQuiz,
+    SAVE_PREFIX, checksum, encodeSave, decodeSave, saveSummary,
   };
 }

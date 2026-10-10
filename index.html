@@ -29,6 +29,9 @@
         <button type="button" class="button grape open-feedback-button">💬 Donner mon avis</button>
         <button type="button" id="see-feedback-button" class="button secondary" hidden>Voir les avis (owner)</button>
       </p>
+      <p class="save-note">💾 Ta progression est enregistrée <strong>dans ce navigateur, sur cet ordinateur</strong>.
+        <span class="muted">(Your progress is saved in this browser, on this computer.)</span>
+        <button type="button" class="link-button open-save-button">Changer d'ordinateur ? Code de sauvegarde →</button></p>
 
       <h2 class="section-heading">Comment jouer <span class="muted">(how to play)</span></h2>
       <div class="how-to">
@@ -288,6 +291,7 @@
         <p class="button-row">
           <button type="button" id="shop-levels-button" class="button">Jouer ▶</button>
           <button type="button" id="shop-back-button" class="button secondary">← Retour</button>
+          <button type="button" class="button secondary open-save-button">💾 Code de sauvegarde (save code)</button>
           <button type="button" id="start-over-button" class="button danger">Recommencer à zéro (start over)</button>
         </p>
         <div id="start-over-confirm" class="confirm-box" hidden>
@@ -298,6 +302,50 @@
           </p>
         </div>
       </div>
+    </section>
+
+    <!-- Save codes: move progress to another computer (save.js) -->
+    <section id="save-screen" class="panel" hidden>
+      <div class="screen-head">
+        <h1>💾 Ma sauvegarde</h1>
+        <p class="star-pill">⭐ <span class="star-count">0</span></p>
+      </div>
+      <p class="subtitle">Ta progression est enregistrée <strong>dans ce navigateur, sur cet ordinateur</strong>.
+        Sur un autre ordinateur, ou si le navigateur efface ses données, tu recommences à zéro… sauf si tu gardes ton code !</p>
+      <p class="muted">(Your progress is saved in this browser on this computer. To continue somewhere else, keep your save code.
+        There's no account: no name, no email, no password, and nothing is sent anywhere.)</p>
+
+      <div class="save-box">
+        <h2>1 · Garder mon code <span class="muted">(keep my code)</span></h2>
+        <p class="muted">Copie ce code et garde-le (dans un e-mail à toi-même, un document, Google Classroom…).</p>
+        <textarea id="save-code-out" class="save-code" rows="4" readonly aria-label="Mon code de sauvegarde (my save code)"></textarea>
+        <p class="button-row">
+          <button type="button" id="save-copy-button" class="button">📋 Copier (copy)</button>
+          <span id="save-copy-message" class="good-text" aria-live="polite"></span>
+        </p>
+      </div>
+
+      <div class="save-box">
+        <h2>2 · Charger un code <span class="muted">(load a code)</span></h2>
+        <p class="muted">Colle ton code ici pour retrouver tes étoiles, tes niveaux et tes vêtements. (Paste your code here.)</p>
+        <textarea id="save-code-in" class="save-code" rows="4" aria-label="Coller un code (paste a code)"></textarea>
+        <p class="button-row"><button type="button" id="save-load-button" class="button yellow">Charger (load)</button></p>
+        <p id="save-load-message" class="feedback" aria-live="polite"></p>
+        <div id="save-load-confirm" class="confirm-box" hidden>
+          <p><strong>Remplacer ta progression ?</strong> <span id="save-load-summary"></span><br>
+            Ce code va remplacer ce qui est enregistré sur cet ordinateur (<span id="save-current-summary"></span>).
+            <span class="muted">(This replaces the progress saved on this computer.)</span></p>
+          <p class="button-row">
+            <button type="button" id="save-load-yes" class="button danger">Oui, charger ce code (yes)</button>
+            <button type="button" id="save-load-cancel" class="button secondary">Non (cancel)</button>
+          </p>
+        </div>
+      </div>
+
+      <p class="button-row">
+        <button type="button" id="save-back-button" class="button secondary">← Retour</button>
+        <button type="button" id="save-levels-button" class="button">Jouer ▶</button>
+      </p>
     </section>
 
     <!-- Mini-game results -->
@@ -494,5 +542,6 @@
   <script src="js/feedback.js"></script>
   <script src="js/wordlist.js"></script>
   <script src="js/quiz.js"></script>
+  <script src="js/save.js"></script>
 </body>
 </html>

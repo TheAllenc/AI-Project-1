@@ -27,7 +27,9 @@ Each level picks 3 recipes at random from its pool, so every game is different. 
 
 **🗣️ The game speaks French** (the browser's built-in voice, no files or internet needed): the words to find, the right answers, Chef Barbe's reactions, the café customers' orders, and the quiz questions. Quizzes and surprise questions also include **listening questions** (hear the word, pick its meaning). The voice never reads an answer before you give it. 🗣️ turns it on or off, 🔁 repeats, and 🐢 repeats slowly. *(Suggested by a French teacher's play-test.)*
 
-**Stars and the shop:** each recipe earns 1–5 stars. The first time you finish a level, its stars (up to 15) go into your collection; the first time you complete a mini-game you get 1 star. Replaying earns nothing new unless you start over ("Recommencer à zéro" erases levels, stars and clothes). Spend stars (1–6 each) in *La Boutique du Chef* on 21 food-themed clothes, like a cheese hat or a jelly beard. Progress is saved in your browser.
+**Stars and the shop:** each recipe earns 1–5 stars. The first time you finish a level, its stars (up to 15) go into your collection; the first time you complete a mini-game you get 1 star. Replaying earns nothing new unless you start over ("Recommencer à zéro" erases levels, stars and clothes). Spend stars (1–6 each) in *La Boutique du Chef* on 21 food-themed clothes, like a cheese hat or a jelly beard.
+
+**Saving:** progress is saved **in this browser, on this computer** (the homepage says so). There are **no accounts**: no names, emails or passwords, and no student data is sent anywhere. To continue on another computer, open **💾 Code de sauvegarde** (on the homepage or in the shop), copy your save code, and paste it on the other computer. The code has a checksum, so a code with a typo or a missing piece is refused instead of loading broken progress. Before loading, the game shows what's in the code and asks to confirm. *(Suggested by a French teacher's play-test.)*
 
 **Look:** a bright, chunky cartoon kitchen inspired by *Overcooked*, with lots of animation (it switches off for players who turn on "reduce motion").
 
@@ -67,7 +69,7 @@ Open **`vocab-check.html`** to see every word in a table. Rows marked with an or
 | `js/sound.js` | Sound effects (made by the browser, no files) and the mute button |
 | `js/voice.js` | The French voice (browser text-to-speech), the 🗣️ on/off button and the 🔁/🐢 replay buttons |
 | `js/memory.js` | Spaced repetition: each word's Leitner box, when it's due, and weighted picking |
-| `js/progress.js` | Saved progress: collected stars, finished levels, the chef's clothes |
+| `js/progress.js` | Saved progress: collected stars, finished levels, the chef's clothes, and save codes |
 | `js/chef.js` | The mascot: clothes list, the SVG drawing, and the chef's messages |
 | `js/shop.js` | The chef's shop, the "start over" button, and drawing the chef on each screen |
 | `js/maze.js` | Mini-game: Le Labyrinthe du Chef (Pac-Man style) |
@@ -77,11 +79,12 @@ Open **`vocab-check.html`** to see every word in a table. Rows marked with an or
 | `js/feedback.js` | Play-test feedback form |
 | `js/wordlist.js` | "Tout le vocabulaire": every word, with search, categories, pronunciation and mastery |
 | `js/quiz.js` | Level quizzes and surprise review questions |
+| `js/save.js` | The "💾 Ma sauvegarde" screen: copy your save code, or load one |
 | `tests/vocab.test.js` | Automatic checks for mistakes in the word list |
 | `tests/recipes.test.js` | Checks every recipe is playable |
 | `tests/scoring.test.js` | Checks the star rules |
 | `tests/check.test.js` | Checks the answer checker |
-| `tests/progress.test.js` | Checks the star collection and shop rules |
+| `tests/progress.test.js` | Checks the star collection, shop rules and save codes |
 | `tests/chef.test.js` | Checks the clothes list and the chef's messages |
 | `tests/memory.test.js` | Checks the spaced-repetition rules |
 | `tests/quiz.test.js` | Checks quiz questions (every word asked, one right answer, fair wrong options, listening questions) |

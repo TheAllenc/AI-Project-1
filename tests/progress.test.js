@@ -107,3 +107,57 @@ test("quiz: 80% is a pass, just under is a fail", () => {
   assert.ok(recordQuiz(emptyProgress(), "a", 8, 10).passed);
   assert.ok(!recordQuiz(emptyProgress(), "a", 7, 10).passed);
 });
+
+// ---------- Save codes ----------
+const { encodeSave, decodeSave, saveSummary, SAVE_PREFIX } = require("../js/progress.js");
+
+function samplePlayer() {
+  const p = emptyProgress();
+  p.completed = { "petit-dejeuner": 12, gouter: 9 };
+  p.stars = 17;
+  p.owned = ["cheese-hat"];
+  p.wearing = { hat: "cheese-hat" };
+  p.memory = { pomme: { box: 3, seen: 4, right: 3, wrong: 1, last: 1760000000000 }, "pomme-de-terre": { box: 1, seen: 1, right: 0, wrong: 1, last: 1760000000000 } };
+  p.quizzes = { "petit-dejeuner": { firstScore: 14, total: 16, passedFirst: true, best: 15, attempts: 2 } };
+  return p;
+}
+
+test("a save code brings back exactly the same progress", () => {
+  const p = samplePlayer();
+  const code = encodeSave(p);
+  assert.ok(code.startsWith(SAVE_PREFIX + "-"));
+  const result = decodeSave(code);
+  assert.strictEqual(result.ok, true);
+  assert.deepStrictEqual(result.progress, p);
+});
+
+test("spaces and line breaks pasted into the code don't matter", () => {
+  const code = encodeSave(samplePlayer());
+  const messy = "  " + code.slice(0, 20) + "\n" + code.slice(20, 50) + " " + code.slice(50) + "\n";
+  assert.strictEqual(decodeSave(messy).ok, true);
+});
+
+test("a code with a typo or a missing piece is refused (nothing broken gets loaded)", () => {
+  const code = encodeSave(samplePlayer());
+  const typo = code.slice(0, 15) + (code[15] === "A" ? "B" : "A") + code.slice(16);
+  assert.strictEqual(decodeSave(typo).ok, false);
+  assert.strictEqual(decodeSave(code.slice(0, code.length - 10)).ok, false);
+  assert.strictEqual(decodeSave("").ok, false);
+  assert.strictEqual(decodeSave("hello").ok, false);
+  assert.ok(decodeSave("hello").reason.length > 0);
+});
+
+test("an old save code still loads and gets the newer parts empty", () => {
+  const old = { completed: {}, stars: 3, owned: [], wearing: {} }; // no memory or quizzes yet
+  const text = Buffer.from(JSON.stringify(old)).toString("base64");
+  const { checksum } = require("../js/progress.js");
+  const result = decodeSave(SAVE_PREFIX + "-" + text + "-" + checksum(text));
+  assert.strictEqual(result.ok, true);
+  assert.deepStrictEqual(result.progress.memory, {});
+  assert.deepStrictEqual(result.progress.quizzes, {});
+});
+
+test("the summary shown before loading a code", () => {
+  assert.strictEqual(saveSummary(samplePlayer()), "⭐ 17 · 2 niveaux finis · 1 vêtement");
+  assert.strictEqual(saveSummary(emptyProgress()), "⭐ 0 · 0 niveau fini · 0 vêtement");
+});
